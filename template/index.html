@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MetaServer</title>
+    <style>
+        .table {
+            display: table;
+            width: auto;
+        }
+        .row {
+            display: table-row;
+        }
+        .cell {
+            display: table-cell;
+            border: solid;
+            border-width: thin;
+        }
+        .json {
+            font-family: monospace;
+            white-space: pre;
+        }
+        #shadow {
+            position:     fixed;
+            padding:      0;
+            margin:       0;
+
+            top:        0;
+            left:       0;
+
+            width:        100%;
+            height:       100%;
+            background:     rgba(0,0,0,0.5);
+            display:      none;
+            z-index:      999999;
+        }
+        #window {
+            text-align:     center;
+            margin:       0;
+            position:       fixed;
+            top:        50%;
+            left:         50%;
+            transform:      translate(-50%, -50%);
+            display:      none;
+
+            background-color:   white;
+            border-radius:    2px;
+            box-shadow:     0 0 15px;
+            font-size:      14px;
+            font-weight:    bold;
+            background-color:   #EEEEEE;
+            z-index:      1000000;
+            width:        90%;
+            height:       90%;
+        }
+        #window_data {
+            width: 100%;
+            height:calc(100% - 50px);
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Last Block Scanned:</h1>
+    <div id="last_block">Loading</div>
+    <h1>New Meta Data:</h1>
+    <div id="unsorted" class="table">Loading</div>
+    <br>
+    <h1>Approved Meta Data</h1>
+    <div id="approved" class="table">Loading</div>
+
+    <div id="window">
+        <iframe id="window_data"></iframe><br>
+        <button id="window_approve" class="approve">Approve</button>
+        <button id="window_reject" class="reject">Reject</button>
+        <button id="window_close" class="close">Close</button>
+    </div>
+    <div id="shadow"></div>
+
+
+    <script
+        src="https://code.jquery.com/jquery-2.1.4.min.js"
+        integrity="sha256-8WqyJLuWKRBVhxXIL1jBDD7SDxU936oZkCnxQbWwJVw="
+        crossorigin="anonymous"></script>
+
+    <script>
+        //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
+        let getHeight=()=>{
+            $.getJSON('/api/last_block.json').then((height)=> {
+                $("#last_block").html(height);
+            });
+        }
+        setInterval(getHeight,60000);
+        getHeight();
+
+        //show the cid data
+        let lists={unsorted:[],approved:[]};
+        let redraw=()=> {
+            $.getJSON('/api/cid/list_unsorted.json').then((cids) => {
+                lists.unsorted=cids;
+                let html = '<div class="row"><div class="cell">CID</div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>';
+                for (let cid of cids) {
+                    html += `<div class="row"><div class="cell">${cid}</div><div class="cell view button" cid="${cid}" list="unsorted">View</div><div class="cell approve button" cid="${cid}">Approve</div><div class="cell reject button" cid="${cid}">Reject</div></div>`;
+                }
+                $("#unsorted").html(html);
+            });
+            $.getJSON('/api/cid/list_approved.json').then((cids) => {
+                lists.approved=cids;
+                let html = '<div class="row"><div class="cell">CID</div><div class="cell"></div></div>';
+                for (let cid of cids) {
+                    html += `<div class="row"><div class="cell">${cid}</div><div class="cell view button" cid="${cid}" list="approved">View</div></div>`;
+                }
+                $("#approved").html(html);
+            });
+        }
+        redraw();
+        setInterval(redraw,60000);
+
+        //handle view click event
+        let list="";
+        let showView=(cid)=>{
+            $.get('/api/cid/'+cid+'.html').then((data)=> {
+                if (data.type==="url") {
+                    $("#window_data").attr('src',data.src);
+                } else {
+                    $("#window_data").contents().find('html').html(data.html);
+                }
+
+                $("#window_approve").attr('cid', cid);
+                $("#window_reject").attr('cid', cid);
+                $("#window").show();
+                $("#shadow").show();
+            });
+        }
+        $(document).on('click','.view',function(){
+            let cid=$(this).attr('cid');
+            list=$(this).attr('list');
+            showView(cid);
+        });
+
+        //handle approve click event
+        $(document).on('click','.approve',function(){
+            //approve the meta data
+            let cid=$(this).attr('cid');
+            $.getJSON('/api/approve/'+cid).then(redraw);
+
+            //see if there are more and open next value if there are
+            let next="";
+            if (list!=="") {
+                for (let nextCid of lists[list]) {
+                    if (nextCid!==cid) {
+                        next=nextCid;
+                        break;
+                    }
+                }
+            }
+
+            if (next==="") {
+                //close if no more left
+                $("#window").hide();
+                $("#shadow").hide();
+            } else {
+                //open next if there are
+                showView(next);
+            }
+        });
+
+        //handle reject click event
+        $(document).on('click','.reject',function(){
+            let cid=$(this).attr('cid');
+            $.getJSON('/api/reject/'+cid).then(redraw);
+
+            //see if there are more and open next value if there are
+            let next="";
+            if (list!=="") {
+                for (let nextCid of lists[list]) {
+                    if (nextCid!==cid) {
+                        next=nextCid;
+                        break;
+                    }
+                }
+            }
+
+            if (next==="") {
+                //close if no more left
+                $("#window").hide();
+                $("#shadow").hide();
+            } else {
+                //open next if there are
+                showView(next);
+            }
+        });
+
+        //handle close click event
+        $(document).on('click','.close',function(){
+            list="";    //reset list value
+            $("#window").hide();
+            $("#shadow").hide();
+            $("#window_data").attr('src','/blank.html');
+        });
+
+    </script>
+</body>
+</html>
