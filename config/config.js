@@ -1,9 +1,8 @@
 module.exports={
-    bucket: 'chain-data-address',
+    bucket: 'chaindata-digibyte',
     s3: {
-        //temp metaserver user(they are not valid anymore left as example)
-        accessKeyId:        'AKIAXFQVKFPO6ZX2JT7K',
-        secretAccessKey:    'KGYhn4N5VkgSbvHw84+nWVYVJS4V+aIjE9rRtOUh'
+        accessKeyId:        'REDACTED',
+        secretAccessKey:    'REDACTED'
     },
     includeMedia:   {               //set to false if not to include media
         maxSize:    1000000,        //max file size to accept in bytes.  Default 1MB
