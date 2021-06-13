@@ -1,6 +1,6 @@
 {
   "name": "digiasset_ipfs_metadata_server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Clones DigiAsset Meta Data so there are many sources.",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
     "express-http-proxy": "^1.6.2",
     "form-data": "^3.0.0",
     "got": "^11.8.1",
-    "ipfs-simple": "0.0.5",
+    "ipfs-simple": "^0.0.6",
     "mime-types": "^2.1.28",
     "sleep-promise": "^9.1.0"
   },
