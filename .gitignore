@@ -1,0 +1,5 @@
+config/approved.json
+config/lastindex.txt
+config/rejected.json
+.idea
+node_modules
