@@ -86,7 +86,6 @@
     <script>
         //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
         let getHeight=()=>{
-            console.log("get height");
             $.getJSON('/api/last_block.json').then((height)=> {
                 $("#last_block").html(height);
             });
@@ -97,7 +96,6 @@
         //show the cid data
         let lists={unsorted:[],approved:[]};
         let redraw=()=> {
-            console.log("Redraw");
             $.getJSON('/api/cid/list_unsorted.json').then((cids) => {
                 lists.unsorted=cids;
                 let html = '<div class="row"><div class="cell">CID</div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>';

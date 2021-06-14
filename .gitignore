@@ -1,5 +1,4 @@
-config/approved.json
-config/lastindex.txt
-config/rejected.json
+_config
+bin/_config
 .idea
 node_modules
