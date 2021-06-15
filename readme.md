@@ -5,7 +5,8 @@
 
 ##Step 2 (Install this app):
 1) Copy file from bin folder for your OS to your computer
-2) run it 
+2) Copy the template folder to the same location as you did in 1
+3) run it 
 
 ## Compile Instructions(for programmers)
 ```bash
