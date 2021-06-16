@@ -82,13 +82,12 @@
         src="https://code.jquery.com/jquery-2.1.4.min.js"
         integrity="sha256-8WqyJLuWKRBVhxXIL1jBDD7SDxU936oZkCnxQbWwJVw="
         crossorigin="anonymous"></script>
-
+    <script src="/js/api.js"></script>
     <script>
         //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
-        let getHeight=()=>{
-            $.getJSON('/api/last_block.json').then((height)=> {
-                $("#last_block").html(height);
-            });
+        let getHeight=async()=>{
+            let height=await api.getHeight();
+            $("#last_block").html(height);
         }
         setInterval(getHeight,60000);
         getHeight();
@@ -96,7 +95,7 @@
         //show the cid data
         let lists={unsorted:[],approved:[]};
         let redraw=()=> {
-            $.getJSON('/api/cid/list_unsorted.json').then((cids) => {
+            api.list.unsorted().then((cids) => {
                 lists.unsorted=cids;
                 let html = '<div class="row"><div class="cell">CID</div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>';
                 for (let cid of cids) {
@@ -104,7 +103,7 @@
                 }
                 $("#unsorted").html(html);
             });
-            $.getJSON('/api/cid/list_approved.json').then((cids) => {
+            api.list.approved().then((cids) => {
                 lists.approved=cids;
                 let html = '<div class="row"><div class="cell">CID</div><div class="cell"></div></div>';
                 for (let cid of cids) {
@@ -118,19 +117,18 @@
 
         //handle view click event
         let list="";
-        let showView=(cid)=>{
-            $.get('/api/cid/'+cid+'.html').then((data)=> {
-                if (data.type==="url") {
-                    $("#window_data").attr('src',data.src);
-                } else {
-                    $("#window_data").contents().find('html').html(data.html);
-                }
+        let showView=async(cid)=>{
+            let data=await api.cid(cid);
+            if (data.type==="url") {
+                $("#window_data").attr('src',data.src);
+            } else {
+                $("#window_data").contents().find('html').html(data.html);
+            }
 
-                $("#window_approve").attr('cid', cid);
-                $("#window_reject").attr('cid', cid);
-                $("#window").show();
-                $("#shadow").show();
-            });
+            $("#window_approve").attr('cid', cid);
+            $("#window_reject").attr('cid', cid);
+            $("#window").show();
+            $("#shadow").show();
         }
         $(document).on('click','.view',function(){
             let cid=$(this).attr('cid');
@@ -142,7 +140,7 @@
         $(document).on('click','.approve',function(){
             //approve the meta data
             let cid=$(this).attr('cid');
-            $.getJSON('/api/approve/'+cid).then(redraw);
+            api.approve(cid).then(redraw);
 
             //see if there are more and open next value if there are
             let next="";
@@ -168,7 +166,7 @@
         //handle reject click event
         $(document).on('click','.reject',function(){
             let cid=$(this).attr('cid');
-            $.getJSON('/api/reject/'+cid).then(redraw);
+            api.reject(cid).then(redraw);
 
             //see if there are more and open next value if there are
             let next="";
