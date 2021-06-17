@@ -19,7 +19,6 @@
     "express-http-proxy": "^1.6.2",
     "express-session": "^1.17.2",
     "form-data": "^3.0.0",
-    "github-download-directory": "^2.0.0",
     "got": "^11.8.1",
     "ipfs-simple": "^0.0.6",
     "memorystore": "^1.6.6",
