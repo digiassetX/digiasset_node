@@ -1,4 +1,4 @@
-//min_api_version: 1
+//min_api_version: 2
 
 window.api={};
 
@@ -36,5 +36,9 @@ window.api={
     },
     approve:    async(cid)=>get('/api/approve/'+cid),
     reject:     async(cid)=>get('/api/reject/'+cid),
-    cid:        async(cid)=>get('/api/cid/'+cid+'.html')
+    cid:        async(cid)=>get('/api/cid/'+cid+'.html'),
+    version: {
+        list:   async()=>get('/api/version/list.json'),
+        update: async(version="newest")=>post('/api/version/update',{version})
+    }
 }

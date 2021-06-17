@@ -120,3 +120,33 @@ $(document).on('click','.close',function(){
     $("#shadow").hide();
     $("#window_data").attr('src','/blank.html');
 });
+
+//handle upgrade
+$(document).on('click','#updateBtn',async()=>{
+    let state=await api.version.update();
+    if (state===true) {
+        location.reload();
+    } else {
+        //todo state.error will have a message
+    }
+});
+
+//check if newest
+const isNewest=async()=>{
+    let {compatible,newer,current}=await api.version.list();
+    let newestAvailable=compatible.pop();
+    console.log(newestAvailable);
+    if (newestAvailable===current) {
+        $("#updateBtn").hide();  //we have updated
+    } else {
+        $("#updateBtn").text(`Update Available (Version: ${newestAvailable})`).show();
+    }
+}
+isNewest();//check at start
+setInterval(isNewest,86400000);//recheck daily
+
+//check if logged in
+$(document).ready(async()=>{
+    let isLogedIn=await api.user.state();
+    if (!isLogedIn) (new bootstrap.Modal(document.getElementById('LoginModal'))).show();
+});
