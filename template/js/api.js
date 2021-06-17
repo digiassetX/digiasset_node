@@ -25,7 +25,9 @@ window.api={
         login:  async(user,pass)=>post('/api/login.json',{user,pass}),
         logout: async()=>get('/api/logout.json'),
         state:  async()=>get('/api/userState.json'),
-        add:    async(user,pass)=>post('/api/config/addUser.json',{user,pass})
+        add:    async(user,pass)=>post('/api/config/addUser.json',{user,pass}),
+        remove: async(user)=>post('/api/config/remove.json',{user}),    //will return error if user doesn't exist or last user
+        list:   async()=>get('/api/config/users.json')
     },
     getHeight:  async()=>get('/api/last_block.json'),
     list: {
@@ -39,6 +41,7 @@ window.api={
     cid:        async(cid)=>get('/api/cid/'+cid+'.html'),
     version: {
         list:   async()=>get('/api/version/list.json'),
-        update: async(version="newest")=>post('/api/version/update',{version})
+        update: async(version="newest")=>post('/api/version/update',{version}),
+        current:async()=>get('/api/version/current.json'),
     }
 }
