@@ -150,3 +150,15 @@ $(document).ready(async()=>{
     let isLogedIn=await api.user.state();
     if (!isLogedIn) (new bootstrap.Modal(document.getElementById('LoginModal'))).show();
 });
+
+//handle login request
+$(document).on('click','#login_submit',async()=>{
+    let user=$("#login_user").val().trim();
+    let pass=$("#login_pass").val().trim();
+    let success=await api.user.login(user,pass);
+    if (success) {
+        location.reload();
+    } else {
+        //todo show success.error
+    }
+});
