@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MetaServer</title>
     <style>
         .table {
@@ -57,37 +58,95 @@
             width: 100%;
             height:calc(100% - 50px);
         }
-
+        #updateBtn {
+            margin-bottom: 10px;
+        }
+        table {
+            background-color:#0066CC;
+        }
+        thead{
+            color: white;
+        }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 </head>
 <body>
-    <h1>Last Block Scanned:</h1>
-    <div id="last_block">Loading</div>
-    <h1>New Meta Data:</h1>
-    <div id="unsorted" class="table">Loading</div>
-    <br>
-    <h1>Approved Meta Data</h1>
-    <div id="approved" class="table">Loading</div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #002252 !important;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#" style="color:white">DigiAsset</a>
+        <div class="pull-right">
+            <div id="last_block" style="color:white">Loading</div>
+        </div>
+      </div>
+    </nav>
+    <div style="padding:10px">
+        <div id="updateBtn">
+            <button class="btn btn-success" >Update Available (Version: 2.2.4)</button>
+        </div>
+        <h4>Meta Data:</h4>
+        <hr class="col-md-8">
+        <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
+        <div class="table-responsive col-md-8">
+            <table class="table table-bordered table-striped" id="unsorted">
+                
+            </table>
+        </div>
+        <br>
+        <h4>Approved Meta Data</h4>
+        <hr class="col-md-8">
+        <div class="table-responsive col-md-8">
+            <table class="table table-bordered" id="approved">
+                
+            </table>
+        </div>
 
-    <div id="window">
-        <iframe id="window_data"></iframe><br>
-        <button id="window_approve" class="approve">Approve</button>
-        <button id="window_reject" class="reject">Reject</button>
-        <button id="window_close" class="close">Close</button>
+        <div id="window">
+            <iframe id="window_data"></iframe><br>
+            <button id="window_approve" class="approve btn btn-success">Approve</button>
+            <button id="window_reject" class="reject btn btn-danger">Reject</button>
+            <button id="window_close" class="close btn btn-primary">Close</button>
+        </div>
+        <div id="shadow"></div>
     </div>
-    <div id="shadow"></div>
 
+    <!-- Button modal -->
+    <!--
+    TRIGGER MODAL USING FUNCTION 
+        var loginM = new bootstrap.Modal(document.getElementById('LoginModal'))
+        loginM.show()
+    -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LoginModal">
+      Popup Demo
+    </button>
 
-    <script
-        src="https://code.jquery.com/jquery-2.1.4.min.js"
-        integrity="sha256-8WqyJLuWKRBVhxXIL1jBDD7SDxU936oZkCnxQbWwJVw="
-        crossorigin="anonymous"></script>
+    <!-- Modal -->
+    <div class="modal fade" id="LoginModal" tabindex="-1" aria-labelledby="MLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="MLabel">Sign in / Sign Up</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--modal end-->
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="/js/api.js"></script>
     <script>
         //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
         let getHeight=async()=>{
             let height=await api.getHeight();
-            $("#last_block").html(height);
+            $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
         }
         setInterval(getHeight,60000);
         getHeight();
@@ -97,19 +156,24 @@
         let redraw=()=> {
             api.list.unsorted().then((cids) => {
                 lists.unsorted=cids;
-                let html = '<div class="row"><div class="cell">CID</div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div>';
+                let html = '<thead><tr><th>Cid</th><th></th><th></th><th></th></tr></thead><tbody>';
                 for (let cid of cids) {
-                    html += `<div class="row"><div class="cell">${cid}</div><div class="cell view button" cid="${cid}" list="unsorted">View</div><div class="cell approve button" cid="${cid}">Approve</div><div class="cell reject button" cid="${cid}">Reject</div></div>`;
+                    html += `<tr><td>${cid}</td><td class="cell view button" cid="${cid}" list="unsorted">View</td><td class="cell approve button" cid="${cid}">Approve</td><td class="cell reject button" cid="${cid}">Reject</td></tr>`;
                 }
+                html += `</tbody>`
+                
                 $("#unsorted").html(html);
+                $('#unsorted').DataTable();
             });
             api.list.approved().then((cids) => {
                 lists.approved=cids;
-                let html = '<div class="row"><div class="cell">CID</div><div class="cell"></div></div>';
+                let html = '<thead><tr><th>Cid</th><th>Btn</th></tr></thead><tbody>';
                 for (let cid of cids) {
-                    html += `<div class="row"><div class="cell">${cid}</div><div class="cell view button" cid="${cid}" list="approved">View</div></div>`;
+                    html += `<tr><td>${cid}</td><td class="cell view button" cid="${cid}" list="approved">View</td></tr>`;
                 }
+                html += `</tbody>`
                 $("#approved").html(html);
+                $('#approved').DataTable();
             });
         }
         redraw();
@@ -198,5 +262,7 @@
         });
 
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 </body>
 </html>
