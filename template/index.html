@@ -21,18 +21,24 @@
               <a class="nav-link active" aria-current="page" href="#">Meta Data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" style="color:grey !important" disabled="disabled">Asset Creator</a>
+              <a class="nav-link" disabled>Asset Creator</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a class="nav-link dropdown-toggle" href="#" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
                 Settings
               </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#">Add User</a></li>
+              <ul class="dropdown-menu" aria-labelledby="menu_settings">
+                <li><a class="dropdown-item" href="#" id="menu_add_user">Add User</a></li>
+              </ul>
+              <ul class="dropdown-menu" aria-labelledby="menu_settings">
+                <li><a class="dropdown-item" href="#" id="menu_remove_user">Remove User</a></li>
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link" style="display: none;">Logout</a>
+              <a class="nav-link" style="display: none;" id="menu_login" href="#">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" style="display: none;" id="menu_logout" href="#">Logout</a>
             </li>
           </ul>
         </div>
@@ -94,6 +100,53 @@
           </div>
         </div>
       </div>
+    </div>
+    <!--modal end-->
+
+    <!-- Modal -->
+    <div class="modal fade" id="AddModal" tabindex="-1" aria-labelledby="AMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AMLabel">Add User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="add_user" placeholder="Username">
+                        <label for="add_user">User Name</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="add_pass" placeholder="Password">
+                        <label for="add_pass">Password</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="add_submit"class="btn btn-primary">Add User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal end-->
+
+    <!-- Modal -->
+    <div class="modal fade" id="RemoveModal" tabindex="-1" aria-labelledby="RMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="RMLabel">Remove User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <select id="remove_user"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="remove_submit"class="btn btn-primary">Remove User</button>
+                </div>
+            </div>
+        </div>
     </div>
     <!--modal end-->
 

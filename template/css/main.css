@@ -71,3 +71,8 @@ thead{
     border-radius: 5px;
     padding: 18px;
 }
+
+a[disabled] {
+    color:grey !important;
+    cursor: default;
+}
