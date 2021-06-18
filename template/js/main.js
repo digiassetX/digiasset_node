@@ -17,9 +17,9 @@ let redraw=()=> {
         for (let cid of cids) {
             dataTableUnsorted.row.add([
                 cid,
-                `<button class="cell view button" cid="${cid}" list="unsorted">View</button>`,
-                `<button class="cell approve button" cid="${cid}">Approve</button>`,
-                `<button class="cell reject button" cid="${cid}">Reject</button>`
+                `<button class="cell view button btn btn-outline-dark" cid="${cid}" list="unsorted">View</button>`,
+                `<button class="cell approve button btn btn-outline-success" cid="${cid}">Approve</button>`,
+                `<button class="cell reject button btn btn-outline-danger" cid="${cid}">Reject</button>`
             ]);
         }
         dataTableUnsorted.draw(false);

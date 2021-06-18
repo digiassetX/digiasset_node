@@ -60,3 +60,14 @@ table {
 thead{
     color: white;
 }
+
+.nav-link {
+    color:  white !important;
+}
+
+.navbar-light .navbar-toggler-icon {
+    color: white;
+    background-color: white;
+    border-radius: 5px;
+    padding: 18px;
+}
