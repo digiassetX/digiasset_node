@@ -42,17 +42,21 @@ setInterval(redraw,60000);
 //handle view click event
 let list="";
 let showView=async(cid)=>{
-    let data=await api.cid(cid);
-    if (data.type==="url") {
-        $("#window_data").attr('src',data.src);
-    } else {
-        $("#window_data").contents().find('html').html(data.html);
-    }
+    try {
+        let data = await api.cid(cid);
+        if (data.type === "url") {
+            $("#window_data").attr('src', data.src);
+        } else {
+            $("#window_data").contents().find('html').html(data.html);
+        }
 
-    $("#window_approve").attr('cid', cid);
-    $("#window_reject").attr('cid', cid);
-    $("#window").show();
-    $("#shadow").show();
+        $("#window_approve").attr('cid', cid);
+        $("#window_reject").attr('cid', cid);
+        $("#window").show();
+        $("#shadow").show();
+    } catch (e) {
+        location.reload();
+    }
 }
 $(document).on('click','.view',function(){
     let cid=$(this).attr('cid');
@@ -159,7 +163,7 @@ $(document).ready(async()=>{
         let userList=await api.user.list();
         if (userList.length>0) $("#menu_logout").show();    //actually logged in
         if (userList.length>1) {
-            $("#menu_remove_user").removeAttr('disabled');
+            $("#menu_remove_user").show();
             for (let user of userList) {
                 $('#remove_user').append(new Option(user, user));
             }
