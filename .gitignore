@@ -2,3 +2,5 @@ _config
 bin/_config
 .idea
 node_modules
+.DS_Store
+*/.DS_Store

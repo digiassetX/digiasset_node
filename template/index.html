@@ -4,14 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MetaServer</title>
-    <link href="/css/main.css" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.min.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #002252 !important;">
       <div class="container-fluid">
         <a class="navbar-brand" href="#" style="color:white">DigiAsset</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Meta Data</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="alert('Coming Soon')" disabled>Asset Creator</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
+                Settings
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="menu_settings">
+                <li><a class="dropdown-item" href="#" id="menu_add_user">Add User</a></li>
+                <li><a class="dropdown-item" href="#" id="menu_remove_user" style="display: none">Remove User</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" style="display: none;" id="menu_login" href="#">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" style="display: none;" id="menu_logout" href="#">Logout</a>
+            </li>
+          </ul>
+        </div>
         <div class="pull-right">
             <div id="last_block" style="color:white">Loading</div>
         </div>
@@ -24,7 +52,7 @@
         <h4>Meta Data:</h4>
         <hr class="col-md-8">
         <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
-        <div class="table-responsive col-md-8">
+        <div class="table-responsive col-md-12">
             <table class="table table-bordered table-striped" id="unsorted">
                 <thead><tr><th>Cid</th><th></th><th></th><th></th></tr></thead>
             </table>
@@ -32,7 +60,7 @@
         <br>
         <h4>Approved Meta Data</h4>
         <hr class="col-md-8">
-        <div class="table-responsive col-md-8">
+        <div class="table-responsive col-md-12">
             <table class="table table-bordered" id="approved">
                 <thead><tr><th>Cid</th><th></th></tr></thead><tbody>
             </table>
@@ -56,14 +84,67 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <label for="login_user">User Name:</label><input type="text" id="login_user"><br>
-              <label for="login_pass">Password:</label><input type="password" id="login_pass"><br>
-          </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="login_user" placeholder="Username">
+                    <label for="login_user">User Name</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="login_pass" placeholder="Password">
+                    <label for="login_pass">Password</label>
+                </div>
+           </div>
           <div class="modal-footer">
             <button type="button" id="login_submit"class="btn btn-primary">Login</button>
           </div>
         </div>
       </div>
+    </div>
+    <!--modal end-->
+
+    <!-- Modal -->
+    <div class="modal fade" id="AddModal" tabindex="-1" aria-labelledby="AMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AMLabel">Add User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="add_user" placeholder="Username">
+                        <label for="add_user">User Name</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="add_pass" placeholder="Password">
+                        <label for="add_pass">Password</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="add_submit"class="btn btn-primary">Add User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal end-->
+
+    <!-- Modal -->
+    <div class="modal fade" id="RemoveModal" tabindex="-1" aria-labelledby="RMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="RMLabel">Remove User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <select id="remove_user"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="remove_submit"class="btn btn-primary">Remove User</button>
+                </div>
+            </div>
+        </div>
     </div>
     <!--modal end-->
 
