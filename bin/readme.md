@@ -8,6 +8,9 @@ Thanks for your interest in supporting the DigiAsset Network.  This tool creates
 ### Install:
 
 1) Copy the file that corresponds to your operating system
+   [Windows](digiasset_ipfs_metadata_server-win.exe),
+   [macOS](digiasset_ipfs_metadata_server-macos),
+   [Linux](digiasset_ipfs_metadata_server-linux)
 2) Install IPFS Desktop(https://docs.ipfs.io/install/ipfs-desktop/)
 3) Run the program
 
