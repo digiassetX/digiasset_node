@@ -17,9 +17,9 @@ let redraw=()=> {
         for (let cid of cids) {
             dataTableUnsorted.row.add([
                 cid,
-                `<button class="cell view button" cid="${cid}" list="unsorted">View</button>`,
-                `<button class="cell approve button" cid="${cid}">Approve</button>`,
-                `<button class="cell reject button" cid="${cid}">Reject</button>`
+                `<button class="cell view button btn btn-outline-dark" cid="${cid}" list="unsorted">View</button>`,
+                `<button class="cell approve button btn btn-outline-success" cid="${cid}">Approve</button>`,
+                `<button class="cell reject button btn btn-outline-danger" cid="${cid}">Reject</button>`
             ]);
         }
         dataTableUnsorted.draw(false);
@@ -42,17 +42,21 @@ setInterval(redraw,60000);
 //handle view click event
 let list="";
 let showView=async(cid)=>{
-    let data=await api.cid(cid);
-    if (data.type==="url") {
-        $("#window_data").attr('src',data.src);
-    } else {
-        $("#window_data").contents().find('html').html(data.html);
-    }
+    try {
+        let data = await api.cid(cid);
+        if (data.type === "url") {
+            $("#window_data").attr('src', data.src);
+        } else {
+            $("#window_data").contents().find('html').html(data.html);
+        }
 
-    $("#window_approve").attr('cid', cid);
-    $("#window_reject").attr('cid', cid);
-    $("#window").show();
-    $("#shadow").show();
+        $("#window_approve").attr('cid', cid);
+        $("#window_reject").attr('cid', cid);
+        $("#window").show();
+        $("#shadow").show();
+    } catch (e) {
+        location.reload();
+    }
 }
 $(document).on('click','.view',function(){
     let cid=$(this).attr('cid');
@@ -146,10 +150,27 @@ isNewest();//check at start
 setInterval(isNewest,86400000);//recheck daily
 
 //check if logged in
+const showLoginBox=()=>(new bootstrap.Modal(document.getElementById('LoginModal'))).show();
 $(document).ready(async()=>{
     let isLogedIn=await api.user.state();
-    if (!isLogedIn) (new bootstrap.Modal(document.getElementById('LoginModal'))).show();
+    if (!isLogedIn) {
+        //not logged in and needs to be
+        showLoginBox();
+        $("#menu_login").show();
+    } else {
+        //logged in or no login
+        $("#menu_settings").removeAttr('disabled');
+        let userList=await api.user.list();
+        if (userList.length>0) $("#menu_logout").show();    //actually logged in
+        if (userList.length>1) {
+            $("#menu_remove_user").show();
+            for (let user of userList) {
+                $('#remove_user').append(new Option(user, user));
+            }
+        }
+    }
 });
+$(document).on('click','#menu_login',showLoginBox);
 
 //handle login request
 $(document).on('click','#login_submit',async()=>{
@@ -162,3 +183,40 @@ $(document).on('click','#login_submit',async()=>{
         //todo show success.error
     }
 });
+
+//handle logout request
+$(document).on('click','#menu_logout',async()=>{
+    await api.user.logout();
+    location.reload();
+});
+
+//handle adding user
+$(document).on('click','#menu_add_user',async()=>{
+    (new bootstrap.Modal(document.getElementById('AddModal'))).show();
+});
+$(document).on('click','#add_submit',async()=>{
+    let user=$("#add_user").val().trim();
+    let pass=$("#add_pass").val().trim();
+    let success=await api.user.add(user,pass);
+    if (success) {
+        //todo make better success screen
+        location.reload();
+    } else {
+        //todo show success.error
+    }
+});
+
+//handle remove user
+$(document).on('click','#menu_remove_user',async()=>{
+    (new bootstrap.Modal(document.getElementById('RemoveModal'))).show();
+});
+$(document).on('click','#remove_submit',async()=>{
+    let user=$("#remove_user").val();
+    let success=await api.user.remove(user);
+    if (success) {
+        location.reload();
+    } else {
+        //todo show success.error
+    }
+});
+
