@@ -1,4 +1,4 @@
-//min_api_version: 2
+//min_api_version: 3
 
 window.api={};
 
@@ -16,10 +16,7 @@ const post=async(url,data)=>{
 
 const get=async(url)=>$.getJSON(url);
 
-/**
- * Gets the current heights synced block
- * @return {Promise<int>}
- */
+
 window.api={
     user:   {
         login:  async(user,pass)=>post('/api/login.json',{user,pass}),
@@ -43,5 +40,46 @@ window.api={
         list:   async()=>get('/api/version/list.json'),
         update: async(version="newest")=>post('/api/version/update',{version}),
         current:async()=>get('/api/version/current.json'),
-    }
+    },
+    config: {
+        includeMedia: {
+            maxSize: {
+                get: async () => get('/api/config/includeMedia/getMaxSize.json'),
+                set: async (size) => post('/api/config/includeMedia/setMaxSize.json', {size})
+            },
+            names: {
+                acceptAll:  async()=>get('/api/config/includeMedia/acceptAllNames.json'),
+                add:        async(name)=>post('/api/config/includeMedia/addName.json',{name}),
+                remove:     async(name)=>post('/api/config/includeMedia/removeName.json',{name}),
+                list:       async()=>get('/api/config/includeMedia/getNames.json')
+            },
+            mimeTypes: {
+                acceptAll:  async()=>get('/api/config/includeMedia/acceptAllMimes.json'),
+                add:        async(name)=>post('/api/config/includeMedia/addMime.json',{name}),
+                remove:     async(name)=>post('/api/config/includeMedia/removeMime.json',{name}),
+                list:       async()=>get('/api/config/includeMedia/getMimes.json')
+            }
+        },
+        timeout: {
+            get:    async()=>get('/api/config/timeout.json'),
+            set:    async(timeInMS)=>post('/api/config/timeout.json',{time: timeInMS})
+        },
+        errorDelay: {
+            get:    async()=>get('/api/config/errorDelay.json'),
+            set:    async(timeInMS)=>post('/api/config/errorDelay.json',{time: timeInMS})
+        },
+        stream:     async(accessKeyId,secretAccessKey)=>post('/api/config/stream.json',{accessKeyId,secretAccessKey}),
+        config:     async(user,pass,host="127.0.0.1",port=14022)=>post('/api/config/wallet.json',{user,pass,host,port})
+    },
+    wallet: {
+        blockHeight:async()=>get('/api/wallet/height.json'),        //mainly there to test connection works
+        addresses: {
+            list:   async()=>get('/api/wallet/addresses.json'),
+            kyc:    async(address,password=undefined)=>get('/api/wallet/kyc.json',{address,password}),  //gets the url to sign up for kyc
+            new:    async(label="")=>post('/api/wallet/newAddress.json',{label})      //creates a new address
+        },
+        utxos:      async(addresses)=>post('/api/wallet/utxos.json',{addresses}),
+        send:       async(from,to,password=undefined)=>post('/api/wallet/send.json',{from,to,password})
+    },
+    stream:         async(key)=>get('/api/stream/'+key+'.json')
 }
