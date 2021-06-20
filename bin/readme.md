@@ -13,6 +13,8 @@ Thanks for your interest in supporting the DigiAsset Network.  This tool creates
    [Linux](digiasset_ipfs_metadata_server-linux)
 2) Install IPFS Desktop(https://docs.ipfs.io/install/ipfs-desktop/)
 3) Run the program
+4) Forward port 4001 to this machine
+5) Go to http:127.0.0.1:8090 to see the user interface.
 
 ### Install Raspberry Pi:
 
