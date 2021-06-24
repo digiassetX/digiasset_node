@@ -1,85 +1,472 @@
 //min_api_version: 3
-
-window.api={};
+const api={};
 
 const post=async(url,data)=>{
-    return new Promise(resolve=>{
+    return new Promise((resolve,reject)=>{
         $.ajax({
             type: "POST",
             url,
             data,
-            success: resolve,
+            success: (response)=>{
+                if (response.error!==undefined) return reject(response.error);
+                resolve(response);
+            },
             dataType: "json"
         });
     });
 }
 
-const get=async(url)=>$.getJSON(url);
-
-
-window.api={
-    user:   {
-        login:  async(user,pass)=>post('/api/login.json',{user,pass}),
-        logout: async()=>get('/api/logout.json'),
-        state:  async()=>get('/api/userState.json'),
-        add:    async(user,pass)=>post('/api/config/addUser.json',{user,pass}),
-        remove: async(user)=>post('/api/config/remove.json',{user}),    //will return error if user doesn't exist or last user
-        list:   async()=>get('/api/config/users.json')
-    },
-    getHeight:  async()=>get('/api/last_block.json'),
-    list: {
-        all:      async()=>get('/api/cid/list_all.json'),
-        approved: async()=>get('/api/cid/list_approved.json'),
-        unsorted: async()=>get('/api/cid/list_unsorted.json'),
-        rejected: async()=>get('/api/cid/list_rejected.json')
-    },
-    approve:    async(cid)=>get('/api/approve/'+cid),
-    reject:     async(cid)=>get('/api/reject/'+cid),
-    cid:        async(cid)=>get('/api/cid/'+cid+'.html'),
-    version: {
-        list:   async()=>get('/api/version/list.json'),
-        update: async(version="newest")=>post('/api/version/update',{version}),
-        current:async()=>get('/api/version/current.json'),
-    },
-    config: {
-        includeMedia: {
-            maxSize: {
-                get: async () => get('/api/config/includeMedia/getMaxSize.json'),
-                set: async (size) => post('/api/config/includeMedia/setMaxSize.json', {size})
-            },
-            names: {
-                acceptAll:  async()=>get('/api/config/includeMedia/acceptAllNames.json'),
-                add:        async(name)=>post('/api/config/includeMedia/addName.json',{name}),
-                remove:     async(name)=>post('/api/config/includeMedia/removeName.json',{name}),
-                list:       async()=>get('/api/config/includeMedia/getNames.json')
-            },
-            mimeTypes: {
-                acceptAll:  async()=>get('/api/config/includeMedia/acceptAllMimes.json'),
-                add:        async(name)=>post('/api/config/includeMedia/addMime.json',{name}),
-                remove:     async(name)=>post('/api/config/includeMedia/removeMime.json',{name}),
-                list:       async()=>get('/api/config/includeMedia/getMimes.json')
-            }
-        },
-        timeout: {
-            get:    async()=>get('/api/config/timeout.json'),
-            set:    async(timeInMS)=>post('/api/config/timeout.json',{time: timeInMS})
-        },
-        errorDelay: {
-            get:    async()=>get('/api/config/errorDelay.json'),
-            set:    async(timeInMS)=>post('/api/config/errorDelay.json',{time: timeInMS})
-        },
-        stream:     async(accessKeyId,secretAccessKey)=>post('/api/config/stream.json',{accessKeyId,secretAccessKey}),
-        config:     async(user,pass,host="127.0.0.1",port=14022)=>post('/api/config/wallet.json',{user,pass,host,port})
-    },
-    wallet: {
-        blockHeight:async()=>get('/api/wallet/height.json'),        //mainly there to test connection works
-        addresses: {
-            list:   async()=>get('/api/wallet/addresses.json'),
-            kyc:    async(address,password=undefined)=>get('/api/wallet/kyc.json',{address,password}),  //gets the url to sign up for kyc
-            new:    async(label="")=>post('/api/wallet/newAddress.json',{label})      //creates a new address
-        },
-        utxos:      async(addresses)=>post('/api/wallet/utxos.json',{addresses}),
-        send:       async(from,to,password=undefined)=>post('/api/wallet/send.json',{from,to,password})
-    },
-    stream:         async(key)=>get('/api/stream/'+key+'.json')
+const get=async(url)=>{
+    let response=await $.getJSON(url);
+    if (response.error!==undefined) throw response.error;
+    return response;
 }
+
+
+/*
+██╗   ██╗███████╗███████╗██████╗
+██║   ██║██╔════╝██╔════╝██╔══██╗
+██║   ██║███████╗█████╗  ██████╔╝
+██║   ██║╚════██║██╔══╝  ██╔══██╗
+╚██████╔╝███████║███████╗██║  ██║
+ ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝
+Calls in this section are callable at any time even if not logged in
+ */
+api.user={};
+
+/**
+ * Logs a user in
+ * @param {string}  user
+ * @param {string}  pass
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "Invalid username or password"
+ */
+api.user.login=async(user,pass)=>post('/api/user/login.json',{user,pass});
+
+/**
+ * Logs a user out if logged in
+ * @return {Promise<void>}
+ */
+api.user.logout=async()=>get('/api/user/logout.json');
+
+/**
+ * Returns if a user is logged in or not
+ * @return {Promise<boolean>}
+ */
+api.user.state=async()=>get('/api/user/state.json');
+
+
+/*
+ ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗
+██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝
+██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+ */
+api.config={};
+
+/*_   _
+ | | | |___ ___ _ _
+ | |_| (_-</ -_) '_|
+  \___//__/\___|_|
+ */
+api.config.user={};
+
+/**
+ * Adds a user to approved list
+ * @param {string}  user
+ * @param {string}  pass
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "User parameter not set","Pass parameter not set","Username can't be blank","Username already set"
+ */
+api.config.user.add=async(user,pass)=>post('/api/config/user/add.json',{user,pass});
+
+/**
+ * Lists all approved users
+ * @return {Promise<string[]>}
+ */
+api.config.user.list=async()=>get('/api/config/user/list.json');
+
+/**
+ * Remove a user from approved list.  Can not remove the last user.
+ * @param {string}  user
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "User parameter not set","User does not exist","Can't remove only user"
+ */
+api.config.user.remove=async(user)=>post('/api/config/user/remove.json',{user});
+
+/*_      __    _ _     _
+ \ \    / /_ _| | |___| |_
+  \ \/\/ / _` | | / -_)  _|
+   \_/\_/\__,_|_|_\___|\__|
+*/
+api.config.wallet={};
+
+/**
+ * Sets core wallet credentials.  Will test if correct and return true if they work
+ * @param {string}  user
+ * @param {string}  pass
+ * @param {string?} host
+ * @param {int?}    port
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "User parameter not set","Pass parameter not set","Invalid Credentials"
+ */
+api.config.wallet.set=async(user,pass,host="127.0.0.1",port=14022)=>post('/api/config/wallet/set.json',{user,pass,host,port});
+
+/**
+ * Tries to set core wallet credentials from hard drive data.  Returns true if successful.
+ * @return {Promise<boolean>}
+ */
+api.config.wallet.auto=async()=>get('/api/config/wallet/autoSet.json');
+
+/*___ _
+ / __| |_ _ _ ___ __ _ _ __
+ \__ \  _| '_/ -_) _` | '  \
+ |___/\__|_| \___\__,_|_|_|_|
+ */
+/**
+ * Sets streaming service keys
+ * @param {string}  accessKeyId
+ * @param {string}  secretAccessKey
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "accessKeyId parameter not set","secretAccessKey parameter not set","Invalid Credentials"
+ */
+api.config.stream=async(accessKeyId,secretAccessKey)=>post('/api/config/stream.json',{accessKeyId,secretAccessKey});
+
+/*__  __        _ _
+ |  \/  |___ __| (_)__ _
+ | |\/| / -_) _` | / _` |
+ |_|  |_\___\__,_|_\__,_|
+ */
+api.config.media={};
+
+/**
+ * Gets the media config settings
+ * @return {Promise<{
+ *      maxSize:    int|boolean,
+ *      names:      string[]|boolean,
+ *      mimeTypes:  string[]|boolean
+ *  }|boolean>}
+ */
+api.config.media.get=async () => get('/api/config/media.json');
+
+/**
+ * Sets the media config settings.
+ *
+ * Set to true for unlimited size and types.
+ * Set to false to ignore all included media
+ *
+ * @param {{
+ *      maxSize:    int|boolean,
+ *      names:      string[]|boolean,
+ *      mimeTypes:  string[]|boolean
+ *  }|boolean}  config
+ *
+ * Expected Errors: "All parameter not set","media.maxSize parameter not set","media.names parameter not set",
+ *                  "media.mimeTypes parameter not set","media.maxSize must be an integer or true",
+ *                  "media.maxSize must be greater then zero","media.names must be an array of names",
+ *                  "media.mimeTypes must be an array of mime types"
+ */
+api.config.media.set=async (config) => post('/api/config/media.json',{media:config});
+
+/*___      _    _ _    _    _
+ | _ \_  _| |__| (_)__| |_ (_)_ _  __ _
+ |  _/ || | '_ \ | (_-< ' \| | ' \/ _` |
+ |_|  \_,_|_.__/_|_/__/_||_|_|_||_\__, |
+                                  |___/
+ */
+api.config.publishing={};
+/**
+ * Enables publishing of your approved/reject lists so you can share with other asset nodes.
+ * You must reboot the asset node after setting to enable.
+ * You must port forward the chosen port to this machine for publishing to work
+ * Default is disabled
+ *
+ * @param {int|boolean} port    - set to port number to enable false to disable
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "port parameter not set","port must be an integer","port must be greater then 1024",
+ *                  "port must be less the 65536"
+ */
+api.config.publishing.set=async(port=false)=>post('/api/config/publishing.json',{port});
+api.config.publishing.get=async()=>get('/api/config/publishing.json');
+
+/*
+██╗   ██╗███████╗██████╗ ███████╗██╗ ██████╗ ███╗   ██╗
+██║   ██║██╔════╝██╔══██╗██╔════╝██║██╔═══██╗████╗  ██║
+██║   ██║█████╗  ██████╔╝███████╗██║██║   ██║██╔██╗ ██║
+╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║██║██║   ██║██║╚██╗██║
+ ╚████╔╝ ███████╗██║  ██║███████║██║╚██████╔╝██║ ╚████║
+  ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+ */
+api.version={};
+
+/**
+ * Gets a list of available versions
+ * @return {Promise<{
+ *      compatible:string[],
+ *      current:string,
+ *      newer:string[]?
+ * }>}
+ */
+api.version.list=async()=>get('/api/version/list.json');
+
+/**
+ * Gets current version
+ * @return {Promise<string>}
+ */
+api.version.current=async()=>get('/api/version/current.json');
+
+/**
+ * Updates the template version
+ * @param version
+ * @return {Promise<unknown>}
+ */
+api.version.update=async(version="newest")=>post('/api/version/update.json',{version});
+
+/*
+██╗     ██╗███████╗████████╗
+██║     ██║██╔════╝╚══██╔══╝
+██║     ██║███████╗   ██║
+██║     ██║╚════██║   ██║
+███████╗██║███████║   ██║
+╚══════╝╚═╝╚══════╝   ╚═╝
+ */
+api.list={};
+
+/**
+ * Returns a list of all assets and there cids
+ * @return {Promise<{
+ *      assetId: string,
+ *      cid:string
+ * }[]>}
+ */
+api.list.all=async()=>get('/api/list/all.json');
+
+/**
+ * Returns a list of all approved assets and there cids
+ * @return {Promise<{
+ *      assetId: string,
+ *      cid:string
+ * }[]>}
+ */
+api.list.approved=async()=>get('/api/list/approved.json');
+
+/**
+ * Returns a list of all unsorted assets and there cids
+ * @return {Promise<{
+ *      assetId: string,
+ *      cid:string
+ * }[]>}
+ */
+api.list.unsorted=async()=>get('/api/list/unsorted.json');
+
+/**
+ * Returns a list of all rejected assets and there cids
+ * @return {Promise<{
+ *      assetId: string,
+ *      cid:string
+ * }[]>}
+ */
+api.list.rejected=async()=>get('/api/list/rejected.json');
+
+/*
+ ██████╗██╗██████╗
+██╔════╝██║██╔══██╗
+██║     ██║██║  ██║
+██║     ██║██║  ██║
+╚██████╗██║██████╔╝
+ ╚═════╝╚═╝╚═════╝
+ */
+api.cid={};
+
+/**
+ * Approves a cid
+ * @param {string}  assetId
+ * @param {String}  cid
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "assetId parameter not set","cid parameter not set"
+ */
+api.cid.approve=async(assetId,cid)=>post('/api/cid/approve.json',{assetId,cid});
+
+/**
+ * Rejects a cid
+ * @param {string}  assetId
+ * @param {String}  cid
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "assetId parameter not set","cid parameter not set"
+ */
+api.cid.reject=async(assetId,cid)=>post('/api/cid/reject.json',{assetId,cid});
+
+/**
+ * Generate an html page for a cid or if non text data redirects to IPFS browser
+ * @param {string}  cid
+ * @return {Promise<string>}
+ */
+api.cid.page=async(cid)=>get('/api/cid/'+cid+'.html');
+
+/*
+ █████╗ ███████╗███████╗███████╗████████╗██╗██████╗
+██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝██║██╔══██╗
+███████║███████╗███████╗█████╗     ██║   ██║██║  ██║
+██╔══██║╚════██║╚════██║██╔══╝     ██║   ██║██║  ██║
+██║  ██║███████║███████║███████╗   ██║   ██║██████╔╝
+╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝   ╚═╝╚═════╝
+ */
+api.assetId={};
+
+/**
+ * Approves an assetId
+ * @param {string}  assetId
+ * @param {String}  cid
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "assetId parameter not set","cid parameter not set"
+ */
+api.assetId.approve=async(assetId,cid)=>get('/api/assetId/approve.json',{assetId,cid});
+
+/**
+ * Rejects an assetId
+ * @param {string}  assetId
+ * @param {String}  cid
+ * @return {Promise<void>}
+ *
+ * Expected Errors: "assetId parameter not set","cid parameter not set"
+ */
+api.assetId.reject=async(assetId,cid)=>get('/api/assetId/reject.json',{assetId,cid});
+
+/*
+███████╗██╗   ██╗███╗   ██╗ ██████╗    ██╗  ██╗███████╗██╗ ██████╗ ██╗  ██╗████████╗
+██╔════╝╚██╗ ██╔╝████╗  ██║██╔════╝    ██║  ██║██╔════╝██║██╔════╝ ██║  ██║╚══██╔══╝
+███████╗ ╚████╔╝ ██╔██╗ ██║██║         ███████║█████╗  ██║██║  ███╗███████║   ██║
+╚════██║  ╚██╔╝  ██║╚██╗██║██║         ██╔══██║██╔══╝  ██║██║   ██║██╔══██║   ██║
+███████║   ██║   ██║ ╚████║╚██████╗    ██║  ██║███████╗██║╚██████╔╝██║  ██║   ██║
+╚══════╝   ╚═╝   ╚═╝  ╚═══╝ ╚═════╝    ╚═╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝
+ */
+/**
+ * Gets the last block height we found an asset in
+ * @return {Promise<int|"Loading">}
+ */
+api.height=async()=>get('/api/last_block.json');
+
+/*
+██████╗████████╗██████╗ ███████╗ █████╗ ███╗   ███╗
+██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗████╗ ████║
+███████╗   ██║   ██████╔╝█████╗  ███████║██╔████╔██║
+╚════██║   ██║   ██╔══██╗██╔══╝  ██╔══██║██║╚██╔╝██║
+███████║   ██║   ██║  ██║███████╗██║  ██║██║ ╚═╝ ██║
+╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+ */
+/**
+ * Gets a digiassetX DigiAsset Data Stream
+ * @param {string}  key
+ * @return {Promise<*>}
+ *
+ * Expected Errors: "Stream not configured","Invalid key"
+ */
+api.stream=async(key)=>get('/api/stream/'+key+'.json');
+
+/*
+██╗    ██╗ █████╗ ██╗     ██╗     ███████╗████████╗
+██║    ██║██╔══██╗██║     ██║     ██╔════╝╚══██╔══╝
+██║ █╗ ██║███████║██║     ██║     █████╗     ██║
+██║███╗██║██╔══██║██║     ██║     ██╔══╝     ██║
+╚███╔███╔╝██║  ██║███████╗███████╗███████╗   ██║
+ ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝
+ */
+api.wallet={addresses:{}};
+
+/**
+ * Gets the current wallet sync height
+ * @return {Promise<int>}
+ *
+ * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
+ */
+api.wallet.blockHeight=async()=>get('/api/wallet/height.json');
+
+/**
+ * Gets a list of addresses that are in the wallet
+ * If stream service is enabled also returns balance, kyc state, and if has issued any assets
+ * @param {string?} label
+ * @return {Promise<{
+ *     label:   string,
+ *     address: string,
+ *     balance: string?
+ *     kyc:     KycState?,
+ *     issuance:string[]?
+ * }[]>}
+ *
+ * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
+ */
+api.wallet.addresses.list=async(label)=>post('/api/wallet/addresses/list.json',{label});
+
+/**
+ * Returns a new bech32 address
+ * @param {string?} label
+ * @return {Promise<string>}
+ *
+ * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
+ */
+api.wallet.addresses.new=async(label="")=>post('/api/wallet/addresses/new.json',{label});
+
+/**
+ * Returns the URL needed to complete KYC verification.  All signatures are precomputed for user.
+ * If wallet is password protected password is needed.  Otherwise it can be left undefined
+ *
+ * Options:
+ * type: public - no other parameters
+ * type: secret - pin is required
+ * type: donate - label is required, goal is optional value in sats
+ *
+ * @param {string}  addresses
+ * @param {{
+ *     type:    "public"|"donate"|"secret",
+ *     pin:     string?,
+ *     label:   string?,
+ *     goal:    int?
+ * }?}   options
+ * @param {string?}  password
+ * @return {Promise<string>}
+ *
+ * Expected Errors: "Wallet not set up","Wallet offline or config has changed","donate type requires a label",
+ *                  "donate label must be at least 2 characters","secret type requires a pin",
+ *                  "secret pin must be at least 4 characters","Unknown option type","addresses must be an array of string"
+ */
+api.wallet.kyc=async(addresses,options,password=undefined)=>post('/api/wallet/kyc.json',{addresses,password});
+
+/**
+ * Returns a list of UTXOs
+ * @param {string[]}    addresses
+ * @return {Promise<UTXO[]>}
+ */
+api.wallet.utxos=async(addresses)=>post('/api/wallet/utxos.json',{addresses});
+
+/**
+ * Sends a transaction and returns the txid
+ * @param {{
+ *      "txid": string,
+ *      "vout": int
+ * }[]}                         from
+ * @param {Object<string>[]}    to
+ * @param {string?}             password
+ * @return {Promise<string>}
+ *
+ * Expected Errors: "Wallet not set up","Wallet offline or config has changed",
+ */
+api.wallet.send=async(from,to,password=undefined)=>post('/api/wallet/send.json',{from,to,password});
+
+
+
+
+
+
+
+window.api=api;

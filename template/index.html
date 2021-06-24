@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,7 +22,7 @@
               <a class="nav-link active" aria-current="page" href="#">Meta Data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" onclick="alert('Coming Soon')" disabled>Asset Creator</a>
+              <a class="nav-link" data-tooltip="Requires Wallet Setup" disabled>Asset Creator</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
@@ -30,6 +31,9 @@
               <ul class="dropdown-menu" aria-labelledby="menu_settings">
                 <li><a class="dropdown-item" href="#" id="menu_add_user">Add User</a></li>
                 <li><a class="dropdown-item" href="#" id="menu_remove_user" style="display: none">Remove User</a></li>
+                <li><a class="dropdown-item" href="#" id="menu_included_media">Set Media Limits</a></li>
+                <li><a class="dropdown-item" href="#" id="menu_wallet">Wallet</a></li>
+                <li><a class="dropdown-item" href="#" id="menu_stream">Stream</a></li>
               </ul>
             </li>
             <li class="nav-item">
@@ -45,7 +49,9 @@
         </div>
       </div>
     </nav>
-    <div style="padding:10px">
+
+    <!-- Page Meta Data -->
+    <div class="page" id="page_metadata" style="padding:10px">
         <div>
             <button id="updateBtn" class="btn btn-success" >Update Available</button>
         </div>
@@ -54,7 +60,7 @@
         <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
         <div class="table-responsive col-md-12">
             <table class="table table-bordered table-striped" id="unsorted">
-                <thead><tr><th>Cid</th><th></th><th></th><th></th></tr></thead>
+                <thead><tr><th>assetId</th><th>Cid</th><th></th><th></th><th></th></tr></thead>
             </table>
         </div>
         <br>
@@ -62,7 +68,7 @@
         <hr class="col-md-8">
         <div class="table-responsive col-md-12">
             <table class="table table-bordered" id="approved">
-                <thead><tr><th>Cid</th><th></th></tr></thead><tbody>
+                <thead><tr><th>assetId</th><th>Cid</th><th></th></tr></thead><tbody>
             </table>
         </div>
 
@@ -74,8 +80,15 @@
         </div>
         <div id="shadow"></div>
     </div>
+    <!-- Page Meta Data end -->
 
-    <!-- Modal -->
+    <!-- Page Meta Data -->
+    <div class="page" id="page_assetcreator" style="padding:10px">
+        <h1>Asset Creator</h1>
+    </div>
+    <!-- Page Meta Data end -->
+
+    <!-- Modal Login -->
     <div class="modal fade" id="LoginModal" tabindex="-1" aria-labelledby="MLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -94,14 +107,14 @@
                 </div>
            </div>
           <div class="modal-footer">
-            <button type="button" id="login_submit"class="btn btn-primary">Login</button>
+            <button type="button" id="login_submit" class="btn btn-primary">Login</button>
           </div>
         </div>
       </div>
     </div>
-    <!--modal end-->
+    <!--modal Login end-->
 
-    <!-- Modal -->
+    <!-- Modal Add User -->
     <div class="modal fade" id="AddModal" tabindex="-1" aria-labelledby="AMLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -120,14 +133,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="add_submit"class="btn btn-primary">Add User</button>
+                    <button type="button" id="add_submit" class="btn btn-primary">Add User</button>
                 </div>
             </div>
         </div>
     </div>
-    <!--modal end-->
+    <!--modal Add User end-->
 
-    <!-- Modal -->
+    <!-- Modal Remove User -->
     <div class="modal fade" id="RemoveModal" tabindex="-1" aria-labelledby="RMLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -141,12 +154,125 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="remove_submit"class="btn btn-primary">Remove User</button>
+                    <button type="button" id="remove_submit" class="btn btn-primary">Remove User</button>
                 </div>
             </div>
         </div>
     </div>
-    <!--modal end-->
+    <!--modal Remove User end-->
+
+    <!-- Modal Included Media -->
+    <div class="modal fade" id="IncludedMediaModal" tabindex="-1" aria-labelledby="IMMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="IMMLabel">Media to Include</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p>Put 0 in box if you wish to accept all values and set max size to -1 if dont want to allow any</p>
+                <div class="modal-body">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="im_maxsize" placeholder="Max Size">
+                        <label for="im_maxsize">Max Size</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="im_names" placeholder="Names">
+                        <label for="im_names">Names</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="im_mimeTypes" placeholder="Mime Types">
+                        <label for="im_mimeTypes">Mime Types</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="included_media_submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Included Media end-->
+
+    <!-- Modal Wallet -->
+    <div class="modal fade" id="WalletModal" tabindex="-1" aria-labelledby="WMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="WMLabel">Wallet Setup</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p>For DigiAsset Creator to function you must have core wallet setup and have RPC Username and Password set in media</p>
+
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="wallet_user" placeholder="User">
+                        <label for="wallet_user">User</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="wallet_pass" placeholder="Password">
+                        <label for="wallet_pass">Password</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="wallet_host" placeholder="Host" value="127.0.0.1">
+                        <label for="wallet_host">Host</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="wallet_port" placeholder="Port" value="14022">
+                        <label for="wallet_port">Port</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="wallet_submit" class="btn btn-primary">Save Wallet Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Wallet end-->
+
+    <!-- Modal Stream -->
+    <div class="modal fade" id="StreamModal" tabindex="-1" aria-labelledby="SMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="SMLabel">digiassetX Data Stream Setup</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p>Some features of DigiAsset Creator require access to DigiByte data stream.  Signing up for API Keys is free and Amazon only charges for bandwidth used with free levels covering most users.</p>
+
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="stream_accessKeyId" placeholder="accessKeyId">
+                        <label for="stream_accessKeyId">accessKeyId</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="stream_secretAccessKey" placeholder="secretAccessKey">
+                        <label for="stream_secretAccessKey">secretAccessKey</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="stream_submit" class="btn btn-primary">Save Stream Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Stream end-->
+
+
+
+
+
+    <!-- Modal Error -->
+    <div class="modal fade" id="ErrorModal" tabindex="-1" aria-labelledby="EMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="EMLabel">Error</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p id="error_message"></p>
+            </div>
+        </div>
+    </div>
+    <!--modal Wallet end-->
 
     <script src="/js/jquery-3.5.1.js"></script>
     <script src="/js/api.js"></script>

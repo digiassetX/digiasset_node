@@ -76,3 +76,11 @@ a[disabled] {
     color:grey !important;
     cursor: default;
 }
+
+.page {
+    display: none;
+}
+
+#page_metadata {
+    display: block;
+}

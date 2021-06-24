@@ -6,6 +6,11 @@ let getHeight=async()=>{
 setInterval(getHeight,60000);
 getHeight();
 
+const showError=(e)=>{
+    $("#error_message").text(e);
+    (new bootstrap.Modal(document.getElementById('ErrorModal'))).show();
+}
+
 //show the cid data
 let lists={unsorted:[],approved:[]};
 let dataTableUnsorted = $('#unsorted').DataTable();
@@ -14,8 +19,9 @@ let redraw=()=> {
     api.list.unsorted().then((cids) => {
         lists.unsorted=cids;
         dataTableUnsorted.clear();
-        for (let cid of cids) {
+        for (let {assetId,cid} of cids) {
             dataTableUnsorted.row.add([
+                assetId,
                 cid,
                 `<button class="cell view button btn btn-outline-dark" cid="${cid}" list="unsorted">View</button>`,
                 `<button class="cell approve button btn btn-outline-success" cid="${cid}">Approve</button>`,
@@ -27,8 +33,9 @@ let redraw=()=> {
     api.list.approved().then((cids) => {
         lists.approved=cids;
         dataTableApproved.clear();
-        for (let cid of cids) {
+        for (let {assetId,cid} of cids) {
             dataTableApproved.row.add([
+                assetId,
                 cid,
                 `<button class="cell view button" cid="${cid}" list="approved">View</button>`
             ]);
@@ -176,11 +183,11 @@ $(document).on('click','#menu_login',showLoginBox);
 $(document).on('click','#login_submit',async()=>{
     let user=$("#login_user").val().trim();
     let pass=$("#login_pass").val().trim();
-    let success=await api.user.login(user,pass);
-    if (success) {
+    try {
+        await api.user.login(user,pass);
         location.reload();
-    } else {
-        //todo show success.error
+    } catch(e) {
+        showError(e);
     }
 });
 
@@ -197,26 +204,104 @@ $(document).on('click','#menu_add_user',async()=>{
 $(document).on('click','#add_submit',async()=>{
     let user=$("#add_user").val().trim();
     let pass=$("#add_pass").val().trim();
-    let success=await api.user.add(user,pass);
-    if (success) {
+    try {
+        await api.user.add(user,pass);
         //todo make better success screen
         location.reload();
-    } else {
-        //todo show success.error
+    } catch(e) {
+        showError(e);
     }
 });
 
 //handle remove user
-$(document).on('click','#menu_remove_user',async()=>{
+$(document).on('click','#remove_user',async()=>{
     (new bootstrap.Modal(document.getElementById('RemoveModal'))).show();
 });
 $(document).on('click','#remove_submit',async()=>{
-    let user=$("#remove_user").val();
-    let success=await api.user.remove(user);
-    if (success) {
+    let user=$("#remove_user").val().trim();
+    try {
+        await api.user.remove(user);
         location.reload();
-    } else {
-        //todo show success.error
+    } catch(e) {
+        showError(e);
     }
 });
 
+//handle configure wallet
+$(document).on('click','#menu_wallet',async()=>{
+    (new bootstrap.Modal(document.getElementById('WalletModal'))).show();
+});
+$(document).on('click','#wallet_submit',async()=>{
+    let user=$("#wallet_user").val().trim();
+    let pass=$("#wallet_pass").val().trim();
+    let host=$("#wallet_host").val().trim();
+    let port=parseInt($("#wallet_port").val().trim());
+    try {
+        await api.config.wallet.set(user,pass,host,port);
+        //todo make better success screen
+        location.reload();
+    } catch(e) {
+        showError(e);
+    }
+});
+
+//handle configure stream
+$(document).on('click','#menu_stream',async()=>{
+    (new bootstrap.Modal(document.getElementById('StreamModal'))).show();
+});
+$(document).on('click','#stream_submit',async()=>{
+    let accessKeyId=$("#stream_accessKeyId").val().trim();
+    let secretAccessKey=$("#stream_secretAccessKey").val().trim();
+    try {
+        await api.config.stream(accessKeyId,secretAccessKey);
+        //todo make better success screen
+        location.reload();
+    } catch(e) {
+        showError(e);
+    }
+});
+
+//handle included media
+$(document).on('click','#menu_included_media',async()=>{
+    let currentData=await api.config.media.get();
+    //current mime config format is awkward should make better.
+    if (currentData===false){
+        $("#im_maxsize").val("-1");
+        $("#im_names").val("");
+        $("#im_mimeTypes").val("");
+    } else if (currentData===true){
+        $("#im_maxsize").val("0");
+        $("#im_names").val("0");
+        $("#im_mimeTypes").val("0");
+    } else {
+        $("#im_maxsize").val(currentData.maxSize===true?"0":currentData.maxSize);
+        $("#im_names").val(currentData.names===true?"0":JSON.stringify(currentData.names));
+        $("#im_mimeTypes").val(currentData.mimeTypes===true?"0":JSON.stringify(currentData.mimeTypes));
+    }
+    (new bootstrap.Modal(document.getElementById('IncludedMediaModal'))).show();
+});
+$(document).on('click','#included_media_submit',async()=>{
+    try {
+        let maxSize=parseInt($("#im_maxsize").val().trim());
+        let names=$("#im_names").val().trim();
+        let mimeTypes=$("#im_mimeTypes").val().trim();
+
+        let data;
+        if (maxSize===-1) {
+            data=false;
+        } else if ((maxSize===0)&&(names==="0")&&(mimeTypes==="0")) {
+            data=true;
+        } else {
+            maxSize=(maxSize===0)?true:maxSize;
+            names=(names==="0")?true:JSON.stringify(names);
+            mimeTypes=(mimeTypes==="0")?true:JSON.stringify(mimeTypes);
+            data={maxSize,names,mimeTypes};
+        }
+
+        await api.config.media.set(data);
+        //todo make better success screen
+        location.reload();
+    } catch(e) {
+        showError(e);
+    }
+});
