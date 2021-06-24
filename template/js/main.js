@@ -16,28 +16,30 @@ let lists={unsorted:[],approved:[]};
 let dataTableUnsorted = $('#unsorted').DataTable();
 let dataTableApproved = $('#approved').DataTable();
 let redraw=()=> {
-    api.list.unsorted().then((cids) => {
-        lists.unsorted=cids;
+    api.list.unsorted().then((lines) => {
+        lists.unsorted=lines;
         dataTableUnsorted.clear();
-        for (let {assetId,cid} of cids) {
+        for (let {assetId,cid} of lines) {
+            // noinspection HtmlUnknownAttribute
             dataTableUnsorted.row.add([
                 assetId,
                 cid,
-                `<button class="cell view button btn btn-outline-dark" cid="${cid}" list="unsorted">View</button>`,
-                `<button class="cell approve button btn btn-outline-success" cid="${cid}">Approve</button>`,
-                `<button class="cell reject button btn btn-outline-danger" cid="${cid}">Reject</button>`
+                `<button class="cell view button btn btn-outline-dark" assetId="${assetId}" cid="${cid}" list="unsorted">View</button>`,
+                `<button class="cell approve button btn btn-outline-success" assetId="${assetId}" cid="${cid}">Approve</button>`,
+                `<button class="cell reject button btn btn-outline-danger" assetId="${assetId}" cid="${cid}">Reject</button>`
             ]);
         }
         dataTableUnsorted.draw(false);
     });
-    api.list.approved().then((cids) => {
-        lists.approved=cids;
+    api.list.approved().then((lines) => {
+        lists.approved=lines;
         dataTableApproved.clear();
-        for (let {assetId,cid} of cids) {
+        for (let {assetId,cid} of lines) {
+            // noinspection HtmlUnknownAttribute
             dataTableApproved.row.add([
                 assetId,
                 cid,
-                `<button class="cell view button" cid="${cid}" list="approved">View</button>`
+                `<button class="cell view button" assetId="${assetId}" cid="${cid}" list="approved">View</button>`
             ]);
         }
         dataTableApproved.draw(false);
@@ -48,11 +50,11 @@ setInterval(redraw,60000);
 
 //handle view click event
 let list="";
-let showView=async(cid)=>{
+let showView=async(assetId,cid)=>{
     try {
         $("#window_data").attr('src', api.cid.page(cid));
-        $("#window_approve").attr('cid', cid);
-        $("#window_reject").attr('cid', cid);
+        $("#window_approve").attr('assetId',assetId).attr('cid', cid);
+        $("#window_reject").attr('assetId',assetId).attr('cid', cid);
         $("#window").show();
         $("#shadow").show();
     } catch (e) {
@@ -60,62 +62,50 @@ let showView=async(cid)=>{
     }
 }
 $(document).on('click','.view',function(){
+    let assetId=$(this).attr('assetId');
     let cid=$(this).attr('cid');
     list=$(this).attr('list');
-    showView(cid);
+    showView(assetId,cid);
 });
+
+const processARclick=(type,assetId,cid)=>{
+    api.cid[type](assetId,cid).then(redraw);
+
+    //see if there are more and open next value if there are
+    let next="";
+    if (list!=="") {
+        for (let {assetId,cid: nextCid} of lists[list]) {
+            if (nextCid!==cid) {
+                next={assetId,cid:nextCid};
+                break;
+            }
+        }
+    }
+
+    if (next==="") {
+        //close if no more left
+        $("#window").hide();
+        $("#shadow").hide();
+    } else {
+        //open next if there are
+        showView(next.assetId,next.cid);
+    }
+
+}
 
 //handle approve click event
 $(document).on('click','.approve',function(){
     //approve the meta data
+    let assetId=$(this).attr('assetId');
     let cid=$(this).attr('cid');
-    api.approve(cid).then(redraw);
-
-    //see if there are more and open next value if there are
-    let next="";
-    if (list!=="") {
-        for (let nextCid of lists[list]) {
-            if (nextCid!==cid) {
-                next=nextCid;
-                break;
-            }
-        }
-    }
-
-    if (next==="") {
-        //close if no more left
-        $("#window").hide();
-        $("#shadow").hide();
-    } else {
-        //open next if there are
-        showView(next);
-    }
+    processARclick("approve",assetId,cid);
 });
 
 //handle reject click event
 $(document).on('click','.reject',function(){
+    let assetId=$(this).attr('assetId');
     let cid=$(this).attr('cid');
-    api.reject(cid).then(redraw);
-
-    //see if there are more and open next value if there are
-    let next="";
-    if (list!=="") {
-        for (let nextCid of lists[list]) {
-            if (nextCid!==cid) {
-                next=nextCid;
-                break;
-            }
-        }
-    }
-
-    if (next==="") {
-        //close if no more left
-        $("#window").hide();
-        $("#shadow").hide();
-    } else {
-        //open next if there are
-        showView(next);
-    }
+    processARclick("reject",assetId,cid);
 });
 
 //handle close click event
