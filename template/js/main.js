@@ -150,15 +150,23 @@ $(document).ready(async()=>{
         $("#menu_login").show();
     } else {
         //logged in or no login
-        $("#menu_settings").removeAttr('disabled');
-        let userList=await api.config.user.list();
-        if (userList.length>0) $("#menu_logout").show();    //actually logged in
+        $("#menu_settings").removeAttr('disabled');     //enable settings
+        let userList=await api.config.user.list();            //find out how many users there are
+        if (userList.length>0) $("#menu_logout").show();      //actually logged in so show logout button
+
+        //more then 1 user so enable the remove user option
         if (userList.length>1) {
             $("#menu_remove_user").show();
             for (let user of userList) {
                 $('#remove_user').append(new Option(user, user));
             }
         }
+
+        //if wallet set up enable kyc and create asset options
+        try {
+            await api.wallet.blockHeight();
+            $('.needwallet').removeAttr('disabled');
+        } catch (_) {}
     }
 });
 $(document).on('click','#menu_login',showLoginBox);
