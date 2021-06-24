@@ -307,11 +307,11 @@ api.cid.approve=async(assetId,cid)=>post('/api/cid/approve.json',{assetId,cid});
 api.cid.reject=async(assetId,cid)=>post('/api/cid/reject.json',{assetId,cid});
 
 /**
- * Generate an html page for a cid or if non text data redirects to IPFS browser
+ * Returns url to view the content
  * @param {string}  cid
- * @return {Promise<string>}
+ * @return {string}
  */
-api.cid.page=async(cid)=>get('/api/cid/'+cid+'.html');
+api.cid.page=(cid)=>'/api/cid/'+cid+'.html';
 
 /*
  █████╗ ███████╗███████╗███████╗████████╗██╗██████╗

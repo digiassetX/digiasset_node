@@ -1,6 +1,6 @@
 //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
 let getHeight=async()=>{
-    let height=await api.getHeight();
+    let height=await api.height();
     $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
 }
 setInterval(getHeight,60000);
@@ -50,19 +50,13 @@ setInterval(redraw,60000);
 let list="";
 let showView=async(cid)=>{
     try {
-        let data = await api.cid(cid);
-        if (data.type === "url") {
-            $("#window_data").attr('src', data.src);
-        } else {
-            $("#window_data").contents().find('html').html(data.html);
-        }
-
+        $("#window_data").attr('src', api.cid.page(cid));
         $("#window_approve").attr('cid', cid);
         $("#window_reject").attr('cid', cid);
         $("#window").show();
         $("#shadow").show();
     } catch (e) {
-        location.reload();
+        showError(e);
     }
 }
 $(document).on('click','.view',function(){
@@ -167,7 +161,7 @@ $(document).ready(async()=>{
     } else {
         //logged in or no login
         $("#menu_settings").removeAttr('disabled');
-        let userList=await api.user.list();
+        let userList=await api.config.user.list();
         if (userList.length>0) $("#menu_logout").show();    //actually logged in
         if (userList.length>1) {
             $("#menu_remove_user").show();
