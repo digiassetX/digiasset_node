@@ -22,6 +22,11 @@ table {
     height: 32px;
     padding: 4px;
 }
+.arbig {
+    width:  20%;
+    height: 32px;
+    padding: 4px;
+}
 .columnAssetId {
     max-width:  45%;
     overflow: hidden;

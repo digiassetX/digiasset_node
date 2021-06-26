@@ -34,12 +34,12 @@ let dataTableUnsorted = $('#unsorted').DataTable({
         {
             className: 'columnAssetId',
             data: 'assetId',
-            render: (data,type,row)=>drawControl(row,"assetid")+data
+            render: (data,type,row)=>`<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>`+data
         },
         {
             className: 'columnCid',
             data: 'cid',
-            render: (data,type,row)=>drawControl(row,"cid")+data
+            render: (data,type,row)=>`<button class="cell approve button btn btn-outline-success" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">✓</button><button class="cell reject button btn btn-outline-danger" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>`+data
         }
 
     ]
@@ -54,7 +54,7 @@ let dataTableApproved = $('#approved').DataTable({
         [1,"asc"]
     ],
     columns: [
-        {className: 'columnNarrowControls',orderable:false,data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" assetId="${row.assetId}" cid="${row.cid}" list="approved">View</button>`},
+        {className: 'columnNarrowControls',orderable:false,data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="approved">View</button>`},
         {className: 'columnAssetId',data: 'assetId'},
         {className: 'columnCid',data: 'cid'}
     ]
@@ -72,6 +72,7 @@ let showView=async(assetId,cid)=>{
         $("#window_data").attr('src', api.cid.page(cid));
         $("#window_approve").data('assetId',assetId).data('cid', cid);
         $("#window_reject").data('assetId',assetId).data('cid', cid);
+        $("#window_reject_all").data('assetId',assetId).data('cid', cid);
         $("#window").show();
         $("#shadow").show();
     } catch (e) {
@@ -86,7 +87,6 @@ $(document).on('click','.view',function(){
 });
 
 const processARclick=(type,assetId,cid,column)=>{
-    console.log({type,assetId,cid,column});
     api[column][type](assetId,cid).then(redraw);
 
     //see if there are more and open next value if there are
@@ -115,7 +115,7 @@ const processARclick=(type,assetId,cid,column)=>{
 //handle approve click event
 $(document).on('click','.approve',function(){
     //approve the meta data
-    let column=($(this).data('column')==="cid")?"cid":"assetId";
+    let column=$(this).data('column');
     let assetId=$(this).data('assetid');
     let cid=$(this).data('cid');
     processARclick("approve",assetId,cid,column);
