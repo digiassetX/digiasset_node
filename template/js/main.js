@@ -39,7 +39,7 @@ let redraw=()=> {
             dataTableApproved.row.add([
                 assetId,
                 cid,
-                `<button class="cell view button" assetId="${assetId}" cid="${cid}" list="approved">View</button>`
+                `<button class="cell view button btn btn-outline-dark" assetId="${assetId}" cid="${cid}" list="approved">View</button>`
             ]);
         }
         dataTableApproved.draw(false);

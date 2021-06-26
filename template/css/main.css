@@ -1,6 +1,5 @@
 .table {
-    display: table;
-    width: auto;
+    vertical-align: middle;
 }
 .row {
     display: table-row;
