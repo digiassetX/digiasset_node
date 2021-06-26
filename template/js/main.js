@@ -223,6 +223,24 @@ $(document).on('click','#remove_submit',async()=>{
 $(document).on('click','#menu_wallet',async()=>{
     (new bootstrap.Modal(document.getElementById('WalletModal'))).show();
 });
+$(document).on('click','#wallet_auto',async()=>{
+    let result=await api.config.wallet.auto();
+    if (result===true) {
+        //todo some kind of better success screen
+        location.reload();
+    } else if (result===false) {
+        showError("Could not find wallets config file");
+    } else {
+        let randomUser="";
+        let randomPassword="";
+        for (let i=0;i<10;i++) {
+            randomUser+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
+            randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
+            randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
+        }
+        showError(`Found a wallet config file at ${result} but it was not configured correctly.<br><br>Please add<br>rpcuser=${randomUser}<br>rpcpassword=${randomPassword}<br>rpcbind=127.0.0.1<br>rpcport=14022<br>whitelist=127.0.0.1<br>rpcallowip=127.0.0.1`);
+    }
+});
 $(document).on('click','#wallet_submit',async()=>{
     let user=$("#wallet_user").val().trim();
     let pass=$("#wallet_pass").val().trim();

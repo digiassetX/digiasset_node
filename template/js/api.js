@@ -119,8 +119,9 @@ api.config.wallet={};
 api.config.wallet.set=async(user,pass,host="127.0.0.1",port=14022)=>post('/api/config/wallet/set.json',{user,pass,host,port});
 
 /**
- * Tries to set core wallet credentials from hard drive data.  Returns true if successful.
- * @return {Promise<boolean>}
+ * Tries to set core wallet credentials from hard drive data.  Returns true if successful, false if no luck at all and
+ * a path if it thinks it found the file but it is not set up
+ * @return {Promise<boolean|string>}
  */
 api.config.wallet.auto=async()=>get('/api/config/wallet/autoSet.json');
 
