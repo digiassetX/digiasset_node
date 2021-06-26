@@ -13,39 +13,34 @@ const showError=(e)=>{
 
 //show the cid data
 let lists={unsorted:[],approved:[]};
-let dataTableUnsorted = $('#unsorted').DataTable();
-let dataTableApproved = $('#approved').DataTable();
+let dataTableUnsorted = $('#unsorted').DataTable({
+    responsive: true,
+    ajax: {
+        url: '/api/list/unsorted.json',
+        dataSrc: ''
+    },
+    columns: [
+        {className: 'columnAssetId',data: 'assetId'},
+        {className: 'columnCid',data: 'cid'},
+        {className: 'columnWideControls',orderable:false,data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" assetId="${row.assetId}" cid="${row.cid}" list="unsorted">View</button><button class="cell approve button btn btn-outline-success" assetId="${row.assetId}" cid="${row.cid}">Approve</button><button class="cell reject button btn btn-outline-danger" assetId="${row.assetId}" cid="${row.cid}">Reject</button>`}
+    ]
+});
+let dataTableApproved = $('#approved').DataTable({
+    responsive: true,
+    ajax: {
+        url: '/api/list/approved.json',
+        dataSrc: ''
+    },
+    columns: [
+        {className: 'columnAssetId',data: 'assetId'},
+        {className: 'columnCid',data: 'cid'},
+        {className: 'columnNarrowControls',orderable:false,data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" assetId="${row.assetId}" cid="${row.cid}" list="approved">View</button>`}
+    ]
+});
 let redraw=()=> {
-    api.list.unsorted().then((lines) => {
-        lists.unsorted=lines;
-        dataTableUnsorted.clear();
-        for (let {assetId,cid} of lines) {
-            // noinspection HtmlUnknownAttribute
-            dataTableUnsorted.row.add([
-                assetId,
-                cid,
-                `<button class="cell view button btn btn-outline-dark" assetId="${assetId}" cid="${cid}" list="unsorted">View</button>`,
-                `<button class="cell approve button btn btn-outline-success" assetId="${assetId}" cid="${cid}">Approve</button>`,
-                `<button class="cell reject button btn btn-outline-danger" assetId="${assetId}" cid="${cid}">Reject</button>`
-            ]);
-        }
-        dataTableUnsorted.draw(false);
-    });
-    api.list.approved().then((lines) => {
-        lists.approved=lines;
-        dataTableApproved.clear();
-        for (let {assetId,cid} of lines) {
-            // noinspection HtmlUnknownAttribute
-            dataTableApproved.row.add([
-                assetId,
-                cid,
-                `<button class="cell view button btn btn-outline-dark" assetId="${assetId}" cid="${cid}" list="approved">View</button>`
-            ]);
-        }
-        dataTableApproved.draw(false);
-    });
+    dataTableUnsorted.ajax.reload(null,false);
+    dataTableApproved.ajax.reload(null,false);
 }
-redraw();
 setInterval(redraw,60000);
 
 //handle view click event

@@ -1,6 +1,39 @@
 .table {
     vertical-align: middle;
 }
+.unsortedControl {
+    width:207px;
+}
+.view {
+    width:  57px;
+    height: 32px;
+    padding: 4px;
+}
+.approve {
+    width: 84px;
+    height: 32px;
+    padding: 4px;
+}
+.reject {
+    width:  66px;
+    height: 32px;
+    padding: 4px;
+}
+.columnAssetId {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.columnCid {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.columnWideControls {
+    min-width: 207px;
+}
 .row {
     display: table-row;
 }
