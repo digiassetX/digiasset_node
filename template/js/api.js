@@ -332,7 +332,7 @@ api.assetId={};
  *
  * Expected Errors: "assetId parameter not set","cid parameter not set"
  */
-api.assetId.approve=async(assetId,cid)=>get('/api/assetId/approve.json',{assetId,cid});
+api.assetId.approve=async(assetId,cid)=>post('/api/assetId/approve.json',{assetId,cid});
 
 /**
  * Rejects an assetId
@@ -342,7 +342,7 @@ api.assetId.approve=async(assetId,cid)=>get('/api/assetId/approve.json',{assetId
  *
  * Expected Errors: "assetId parameter not set","cid parameter not set"
  */
-api.assetId.reject=async(assetId,cid)=>get('/api/assetId/reject.json',{assetId,cid});
+api.assetId.reject=async(assetId,cid)=>post('/api/assetId/reject.json',{assetId,cid});
 
 /*
 ███████╗██╗   ██╗███╗   ██╗ ██████╗    ██╗  ██╗███████╗██╗ ██████╗ ██╗  ██╗████████╗

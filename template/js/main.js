@@ -13,16 +13,35 @@ const showError=(e)=>{
 
 //show the cid data
 let lists={unsorted:[],approved:[]};
+const drawControl=(row,column)=>{
+    return `<button class="cell approve button btn btn-outline-success" data-column="${column}" data-assetid="${row.assetId}" data-cid="${row.cid}">✓</button><button class="cell reject button btn btn-outline-danger" data-column="${column}" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>`;
+}
 let dataTableUnsorted = $('#unsorted').DataTable({
     responsive: true,
     ajax: {
         url: '/api/list/unsorted.json',
         dataSrc: ''
     },
+    order: [
+        [1,"asc"]
+    ],
     columns: [
-        {className: 'columnAssetId',data: 'assetId'},
-        {className: 'columnCid',data: 'cid'},
-        {className: 'columnWideControls',orderable:false,data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" assetId="${row.assetId}" cid="${row.cid}" list="unsorted">View</button><button class="cell approve button btn btn-outline-success" assetId="${row.assetId}" cid="${row.cid}">Approve</button><button class="cell reject button btn btn-outline-danger" assetId="${row.assetId}" cid="${row.cid}">Reject</button>`}
+        {
+            className: 'columnControls',
+            orderable:false,
+            data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="unsorted">View</button>`
+        },
+        {
+            className: 'columnAssetId',
+            data: 'assetId',
+            render: (data,type,row)=>drawControl(row,"assetid")+data
+        },
+        {
+            className: 'columnCid',
+            data: 'cid',
+            render: (data,type,row)=>drawControl(row,"cid")+data
+        }
+
     ]
 });
 let dataTableApproved = $('#approved').DataTable({
@@ -31,10 +50,13 @@ let dataTableApproved = $('#approved').DataTable({
         url: '/api/list/approved.json',
         dataSrc: ''
     },
+    order: [
+        [1,"asc"]
+    ],
     columns: [
+        {className: 'columnNarrowControls',orderable:false,data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" assetId="${row.assetId}" cid="${row.cid}" list="approved">View</button>`},
         {className: 'columnAssetId',data: 'assetId'},
-        {className: 'columnCid',data: 'cid'},
-        {className: 'columnNarrowControls',orderable:false,data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" assetId="${row.assetId}" cid="${row.cid}" list="approved">View</button>`}
+        {className: 'columnCid',data: 'cid'}
     ]
 });
 let redraw=()=> {
@@ -48,8 +70,8 @@ let list="";
 let showView=async(assetId,cid)=>{
     try {
         $("#window_data").attr('src', api.cid.page(cid));
-        $("#window_approve").attr('assetId',assetId).attr('cid', cid);
-        $("#window_reject").attr('assetId',assetId).attr('cid', cid);
+        $("#window_approve").data('assetId',assetId).data('cid', cid);
+        $("#window_reject").data('assetId',assetId).data('cid', cid);
         $("#window").show();
         $("#shadow").show();
     } catch (e) {
@@ -57,21 +79,23 @@ let showView=async(assetId,cid)=>{
     }
 }
 $(document).on('click','.view',function(){
-    let assetId=$(this).attr('assetId');
-    let cid=$(this).attr('cid');
-    list=$(this).attr('list');
+    let assetId=$(this).data('assetId');
+    let cid=$(this).data('cid');
+    list=$(this).data('list');
     showView(assetId,cid);
 });
 
-const processARclick=(type,assetId,cid)=>{
-    api.cid[type](assetId,cid).then(redraw);
+const processARclick=(type,assetId,cid,column)=>{
+    console.log({type,assetId,cid,column});
+    api[column][type](assetId,cid).then(redraw);
 
     //see if there are more and open next value if there are
+    let old=(column==="cid")?cid:assetId;
     let next="";
     if (list!=="") {
-        for (let {assetId,cid: nextCid} of lists[list]) {
-            if (nextCid!==cid) {
-                next={assetId,cid:nextCid};
+        for (let line of lists[list]) {
+            if (line[column]!==old) {
+                next=line;
                 break;
             }
         }
@@ -91,16 +115,18 @@ const processARclick=(type,assetId,cid)=>{
 //handle approve click event
 $(document).on('click','.approve',function(){
     //approve the meta data
-    let assetId=$(this).attr('assetId');
-    let cid=$(this).attr('cid');
-    processARclick("approve",assetId,cid);
+    let column=($(this).data('column')==="cid")?"cid":"assetId";
+    let assetId=$(this).data('assetid');
+    let cid=$(this).data('cid');
+    processARclick("approve",assetId,cid,column);
 });
 
 //handle reject click event
 $(document).on('click','.reject',function(){
-    let assetId=$(this).attr('assetId');
-    let cid=$(this).attr('cid');
-    processARclick("reject",assetId,cid);
+    let column=($(this).data('column')==="cid")?"cid":"assetId";
+    let assetId=$(this).data('assetid');
+    let cid=$(this).data('cid');
+    processARclick("reject",assetId,cid,column);
 });
 
 //handle close click event
