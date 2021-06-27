@@ -5,6 +5,7 @@ let getHeight=async()=>{
     $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
 }
 setInterval(getHeight,60000);
+// noinspection JSIgnoredPromiseFromCall
 getHeight();
 
 const showError=(e)=>{
@@ -208,6 +209,24 @@ $(document).on('click','.close',function(){
     $("#window").hide();
     $("#shadow").hide();
     $("#window_data").attr('src','/blank.html');
+});
+
+
+/*
+███████╗██╗   ██╗██████╗ ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+██╔════╝██║   ██║██╔══██╗██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+███████╗██║   ██║██████╔╝███████╗██║     ██████╔╝██║██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+╚════██║██║   ██║██╔══██╗╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║╚════██║
+███████║╚██████╔╝██████╔╝███████║╚██████╗██║  ██║██║██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
+╚══════╝ ╚═════╝ ╚═════╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+ */
+$(document).on('click','.subscription_add',function (){
+    //get inputs
+    let type=$(this).data("type");  //approved,rejected,both
+    let url=$('#subscription_new').val().trim();
+
+    //check its a valid url by trying to download lists
+    //todo
 });
 
 
