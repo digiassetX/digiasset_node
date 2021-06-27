@@ -1,4 +1,5 @@
 //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
+
 let getHeight=async()=>{
     let height=await api.height();
     $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
@@ -11,93 +12,169 @@ const showError=(e)=>{
     (new bootstrap.Modal(document.getElementById('ErrorModal'))).show();
 }
 
-//show the cid data
-let lists={unsorted:[],approved:[]};
-const drawControl=(row,column)=>{
-    return `<button class="cell approve button btn btn-outline-success" data-column="${column}" data-assetid="${row.assetId}" data-cid="${row.cid}">✓</button><button class="cell reject button btn btn-outline-danger" data-column="${column}" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>`;
-}
-let dataTableUnsorted = $('#unsorted').DataTable({
-    responsive: true,
-    ajax: {
-        url: '/api/list/unsorted.json',
-        dataSrc: ''
-    },
-    order: [
-        [1,"asc"]
-    ],
-    columns: [
-        {
-            className: 'columnControls',
-            orderable:false,
-            data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="unsorted">View</button>`
+/*
+███╗   ███╗███████╗████████╗ █████╗     ██████╗  █████╗ ████████╗ █████╗     ██╗     ██╗███████╗████████╗███████╗
+████╗ ████║██╔════╝╚══██╔══╝██╔══██╗    ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗    ██║     ██║██╔════╝╚══██╔══╝██╔════╝
+██╔████╔██║█████╗     ██║   ███████║    ██║  ██║███████║   ██║   ███████║    ██║     ██║███████╗   ██║   ███████╗
+██║╚██╔╝██║██╔══╝     ██║   ██╔══██║    ██║  ██║██╔══██║   ██║   ██╔══██║    ██║     ██║╚════██║   ██║   ╚════██║
+██║ ╚═╝ ██║███████╗   ██║   ██║  ██║    ██████╔╝██║  ██║   ██║   ██║  ██║    ███████╗██║███████║   ██║   ███████║
+╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝    ╚══════╝╚═╝╚══════╝   ╚═╝   ╚══════╝
+ */
+const dataTable= {
+    subscription: $('#subscription').DataTable({
+        responsive: true,
+        ajax: {
+            url: '/api/list/subscriptions.json',
+            dataSrc: ''
         },
-        {
-            className: 'columnAssetId',
-            data: 'assetId',
-            render: (data,type,row)=>`<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>`+data
+        order: [
+            [2, "asc"]
+        ],
+        columns: [
+            {
+                className: 'columnApproved',
+                data: 'approved',
+                render: (data, type, row) => (data===true)?"✓":""
+            },
+            {
+                className: 'columnRejected',
+                data: 'rejected',
+                render: (data, type, row) => (data===true)?"X":""
+            },
+            {
+                className: 'columnUrl',
+                data: 'url'
+            }
+        ]
+    }),
+    unsorted: $('#unsorted').DataTable({
+        responsive: true,
+        ajax: {
+            url: '/api/list/unsorted.json',
+            dataSrc: ''
         },
-        {
-            className: 'columnCid',
-            data: 'cid',
-            render: (data,type,row)=>`<button class="cell approve button btn btn-outline-success" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">✓</button><button class="cell reject button btn btn-outline-danger" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>`+data
-        }
-
-    ]
-});
-let dataTableApproved = $('#approved').DataTable({
-    responsive: true,
-    ajax: {
-        url: '/api/list/approved.json',
-        dataSrc: ''
-    },
-    order: [
-        [1,"asc"]
-    ],
-    columns: [
-        {className: 'columnNarrowControls',orderable:false,data: null, render: (data,type,row)=>`<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="approved">View</button>`},
-        {className: 'columnAssetId',data: 'assetId'},
-        {className: 'columnCid',data: 'cid'}
-    ]
-});
-let redraw=()=> {
-    dataTableUnsorted.ajax.reload(null,false);
-    dataTableApproved.ajax.reload(null,false);
+        order: [
+            [1, "asc"]
+        ],
+        columns: [
+            {
+                className: 'columnControls',
+                orderable: false,
+                data: null,
+                render: (data, type, row) => `<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="unsorted">View</button>`
+            },
+            {
+                className: 'columnAssetId',
+                data: 'assetId',
+                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>` + data
+            },
+            {
+                className: 'columnCid',
+                data: 'cid',
+                render: (data, type, row) => `<button class="cell approve button btn btn-outline-success" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">✓</button><button class="cell reject button btn btn-outline-danger" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>` + data
+            }
+        ]
+    }),
+    approved: $('#approved').DataTable({
+        responsive: true,
+        ajax: {
+            url: '/api/list/approved.json',
+            dataSrc: ''
+        },
+        order: [
+            [1, "asc"]
+        ],
+        columns: [
+            {
+                className: 'columnNarrowControls',
+                orderable: false,
+                data: null,
+                render: (data, type, row) => `<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="approved">View</button>`
+            },
+            {className: 'columnAssetId', data: 'assetId'},
+            {className: 'columnCid', data: 'cid'}
+        ]
+    })
+};
+let redraw=()=>{
+    for (let list in dataTable) dataTable[list].ajax.reload(null,false);
 }
 setInterval(redraw,60000);
 
-//handle view click event
-let list="";
-let showView=async(assetId,cid)=>{
+/*
+██╗   ██╗██╗███████╗██╗    ██╗███████╗██████╗
+██║   ██║██║██╔════╝██║    ██║██╔════╝██╔══██╗
+██║   ██║██║█████╗  ██║ █╗ ██║█████╗  ██████╔╝
+╚██╗ ██╔╝██║██╔══╝  ██║███╗██║██╔══╝  ██╔══██╗
+ ╚████╔╝ ██║███████╗╚███╔███╔╝███████╗██║  ██║
+  ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝
+ */
+
+/**
+ * Shows a CID page
+ * @param {{
+ *      assetid:string,
+ *      cid:string,
+ *      list: "unsorted"|"approved"
+ * }}    data
+ */
+const showView=(data)=>{
     try {
+        const {assetid, cid, list} = data;
         $("#window_data").attr('src', api.cid.page(cid));
-        $("#window_approve").data('assetId',assetId).data('cid', cid);
-        $("#window_reject").data('assetId',assetId).data('cid', cid);
-        $("#window_reject_all").data('assetId',assetId).data('cid', cid);
+        $("#window_approve").data({assetid, cid, list, column: "cid"});
+        $("#window_reject").data({assetid, cid, list, column: "cid"});
+        $("#window_reject_all").data({assetid, cid, list, column: "assetId"});
         $("#window").show();
         $("#shadow").show();
     } catch (e) {
         showError(e);
     }
 }
+
+//handle view click event
 $(document).on('click','.view',function(){
-    let assetId=$(this).data('assetId');
-    let cid=$(this).data('cid');
-    list=$(this).data('list');
-    showView(assetId,cid);
+    showView($(this).data());
 });
 
-const processARclick=(type,assetId,cid,column)=>{
-    api[column][type](assetId,cid).then(redraw);
+/*
+ █████╗ ██████╗ ██████╗ ██████╗  ██████╗ ██╗   ██╗███████╗    ██████╗ ███████╗     ██╗███████╗ ██████╗████████╗
+██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔═══██╗██║   ██║██╔════╝    ██╔══██╗██╔════╝     ██║██╔════╝██╔════╝╚══██╔══╝
+███████║██████╔╝██████╔╝██████╔╝██║   ██║██║   ██║█████╗      ██████╔╝█████╗       ██║█████╗  ██║        ██║
+██╔══██║██╔═══╝ ██╔═══╝ ██╔══██╗██║   ██║╚██╗ ██╔╝██╔══╝      ██╔══██╗██╔══╝  ██   ██║██╔══╝  ██║        ██║
+██║  ██║██║     ██║     ██║  ██║╚██████╔╝ ╚████╔╝ ███████╗    ██║  ██║███████╗╚█████╔╝███████╗╚██████╗   ██║
+╚═╝  ╚═╝╚═╝     ╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝  ╚═╝╚══════╝ ╚════╝ ╚══════╝ ╚═════╝   ╚═╝
+ */
+
+/**
+ *
+ * @param {"approve"|"reject"}  type
+ * @param {{
+ *      assetid:string,
+ *      cid:string,
+ *      column:"assetId"|"cid",
+ *      list: "unsorted"|"approved"
+ * }}    data
+ */
+const processARclick=(type,data)=>{
+    const {assetid,cid,column,list}=data;
+    api[column][type](assetid,cid).then(()=>dataTable[type].ajax.reload(null,false));
 
     //see if there are more and open next value if there are
-    let old=(column==="cid")?cid:assetId;
+    let old=(column==="cid")?cid:assetid;
     let next="";
     if (list!=="") {
-        for (let line of lists[list]) {
-            if (line[column]!==old) {
-                next=line;
-                break;
+        try {
+            for (let i=0;true;i++) {
+                let line = dataTable[list].row(i).data();
+                console.log(line);
+                if (line[column] !== old) {
+                    next = line;
+                    break;
+                }
             }
+        } catch (e) {
+
         }
     }
 
@@ -107,35 +184,41 @@ const processARclick=(type,assetId,cid,column)=>{
         $("#shadow").hide();
     } else {
         //open next if there are
-        showView(next.assetId,next.cid);
+        showView({
+            assetid:    next.assetId,
+            cid:        next.cid,
+            list
+        });
     }
 
 }
 
 //handle approve click event
 $(document).on('click','.approve',function(){
-    //approve the meta data
-    let column=$(this).data('column');
-    let assetId=$(this).data('assetid');
-    let cid=$(this).data('cid');
-    processARclick("approve",assetId,cid,column);
+    processARclick("approve",$(this).data());
 });
 
 //handle reject click event
 $(document).on('click','.reject',function(){
-    let column=($(this).data('column')==="cid")?"cid":"assetId";
-    let assetId=$(this).data('assetid');
-    let cid=$(this).data('cid');
-    processARclick("reject",assetId,cid,column);
+    processARclick("reject",$(this).data());
 });
 
 //handle close click event
 $(document).on('click','.close',function(){
-    list="";    //reset list value
     $("#window").hide();
     $("#shadow").hide();
     $("#window_data").attr('src','/blank.html');
 });
+
+
+/*
+██╗   ██╗██████╗  ██████╗ ██████╗  █████╗ ██████╗ ███████╗
+██║   ██║██╔══██╗██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██╔════╝
+██║   ██║██████╔╝██║  ███╗██████╔╝███████║██║  ██║█████╗
+██║   ██║██╔═══╝ ██║   ██║██╔══██╗██╔══██║██║  ██║██╔══╝
+╚██████╔╝██║     ╚██████╔╝██║  ██║██║  ██║██████╔╝███████╗
+ ╚═════╝ ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝
+ */
 
 //handle upgrade
 $(document).on('click','#updateBtn',async()=>{
@@ -143,7 +226,7 @@ $(document).on('click','#updateBtn',async()=>{
     if (state===true) {
         location.reload();
     } else {
-        //todo state.error will have a message
+        showError(state["error"]);
     }
 });
 
@@ -151,15 +234,25 @@ $(document).on('click','#updateBtn',async()=>{
 const isNewest=async()=>{
     let {compatible,newer,current}=await api.version.list();
     let newestAvailable=compatible.pop();
-    console.log(newestAvailable);
+    //todo we should do something with newer.  if newer!==undefined then there is new binaries they can download from git hub
     if (newestAvailable===current) {
         $("#updateBtn").hide();  //we have updated
     } else {
         $("#updateBtn").text(`Update Available (Version: ${newestAvailable})`).show();
     }
 }
+// noinspection JSIgnoredPromiseFromCall
 isNewest();//check at start
 setInterval(isNewest,86400000);//recheck daily
+
+/*
+██╗      ██████╗  ██████╗ ██╗███╗   ██╗
+██║     ██╔═══██╗██╔════╝ ██║████╗  ██║
+██║     ██║   ██║██║  ███╗██║██╔██╗ ██║
+██║     ██║   ██║██║   ██║██║██║╚██╗██║
+███████╗╚██████╔╝╚██████╔╝██║██║ ╚████║
+╚══════╝ ╚═════╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝
+ */
 
 //check if logged in
 const showLoginBox=()=>(new bootstrap.Modal(document.getElementById('LoginModal'))).show();
@@ -174,6 +267,17 @@ $(document).ready(async()=>{
         $("#menu_settings").removeAttr('disabled');     //enable settings
         let userList=await api.config.user.list();            //find out how many users there are
         if (userList.length>0) $("#menu_logout").show();      //actually logged in so show logout button
+        $('#config_values').html(generateRandomConfig());     //generate random config for instructions
+
+        //check if wallet configured
+        api.wallet.blockHeight().then(()=>{
+            $('#menu_wallet').append("✓");
+        },()=>{});
+
+        //check if stream configured
+        api.stream("height").then(()=>{
+            $('#menu_stream').append("✓");
+        },()=>{});
 
         //more then 1 user so enable the remove user option
         if (userList.length>1) {
@@ -204,13 +308,34 @@ $(document).on('click','#login_submit',async()=>{
     }
 });
 
+/*
+██╗      ██████╗  ██████╗  ██████╗ ██╗   ██╗████████╗
+██║     ██╔═══██╗██╔════╝ ██╔═══██╗██║   ██║╚══██╔══╝
+██║     ██║   ██║██║  ███╗██║   ██║██║   ██║   ██║
+██║     ██║   ██║██║   ██║██║   ██║██║   ██║   ██║
+███████╗╚██████╔╝╚██████╔╝╚██████╔╝╚██████╔╝   ██║
+╚══════╝ ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝    ╚═╝
+ */
 //handle logout request
 $(document).on('click','#menu_logout',async()=>{
     await api.user.logout();
     location.reload();
 });
 
-//handle adding user
+/*
+ ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗
+██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝
+██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+ */
+
+/*  _      _    _   _   _
+   /_\  __| |__| | | | | |___ ___ _ _
+  / _ \/ _` / _` | | |_| (_-</ -_) '_|
+ /_/ \_\__,_\__,_|  \___//__/\___|_|
+ */
 $(document).on('click','#menu_add_user',async()=>{
     (new bootstrap.Modal(document.getElementById('AddModal'))).show();
 });
@@ -226,7 +351,11 @@ $(document).on('click','#add_submit',async()=>{
     }
 });
 
-//handle remove user
+/*___                         _   _
+ | _ \___ _ __  _____ _____  | | | |___ ___ _ _
+ |   / -_) '  \/ _ \ V / -_) | |_| (_-</ -_) '_|
+ |_|_\___|_|_|_\___/\_/\___|  \___//__/\___|_|
+ */
 $(document).on('click','#remove_user',async()=>{
     (new bootstrap.Modal(document.getElementById('RemoveModal'))).show();
 });
@@ -240,10 +369,24 @@ $(document).on('click','#remove_submit',async()=>{
     }
 });
 
-//handle configure wallet
+/*_      __    _ _     _
+ \ \    / /_ _| | |___| |_
+  \ \/\/ / _` | | / -_)  _|
+   \_/\_/\__,_|_|_\___|\__|
+ */
 $(document).on('click','#menu_wallet',async()=>{
     (new bootstrap.Modal(document.getElementById('WalletModal'))).show();
 });
+const generateRandomConfig=()=>{
+    let randomUser="";
+    let randomPassword="";
+    for (let i=0;i<10;i++) {
+        randomUser+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
+        randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
+        randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
+    }
+    return `rpcuser=${randomUser}<br>rpcpassword=${randomPassword}<br>rpcbind=127.0.0.1<br>rpcport=14022<br>whitelist=127.0.0.1<br>rpcallowip=127.0.0.1`;
+}
 $(document).on('click','#wallet_auto',async()=>{
     let result=await api.config.wallet.auto();
     if (result===true) {
@@ -252,14 +395,7 @@ $(document).on('click','#wallet_auto',async()=>{
     } else if (result===false) {
         showError("Could not find wallets config file");
     } else {
-        let randomUser="";
-        let randomPassword="";
-        for (let i=0;i<10;i++) {
-            randomUser+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
-            randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
-            randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
-        }
-        showError(`Found a wallet config file at ${result} but it was not configured correctly.<br><br>Please add<br>rpcuser=${randomUser}<br>rpcpassword=${randomPassword}<br>rpcbind=127.0.0.1<br>rpcport=14022<br>whitelist=127.0.0.1<br>rpcallowip=127.0.0.1`);
+        showError('Found a wallet config file at ${result} but it was not configured correctly.<br><br>Please add<br>'+generateRandomConfig());
     }
 });
 $(document).on('click','#wallet_submit',async()=>{
@@ -276,7 +412,11 @@ $(document).on('click','#wallet_submit',async()=>{
     }
 });
 
-//handle configure stream
+/*___ _
+ / __| |_ _ _ ___ __ _ _ __
+ \__ \  _| '_/ -_) _` | '  \
+ |___/\__|_| \___\__,_|_|_|_|
+ */
 $(document).on('click','#menu_stream',async()=>{
     (new bootstrap.Modal(document.getElementById('StreamModal'))).show();
 });
@@ -292,7 +432,11 @@ $(document).on('click','#stream_submit',async()=>{
     }
 });
 
-//handle included media
+/*__  __        _ _
+ |  \/  |___ __| (_)__ _
+ | |\/| / -_) _` | / _` |
+ |_|  |_\___\__,_|_\__,_|
+ */
 $(document).on('click','#menu_included_media',async()=>{
     let currentData=await api.config.media.get();
     //current mime config format is awkward should make better.

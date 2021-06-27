@@ -58,7 +58,16 @@
         <div>
             <button id="updateBtn" class="btn btn-success" >Update Available</button>
         </div>
-        <h4>Meta Data:</h4>
+        <h4>Subscriptions:</h4>
+        <p>You can subscribe to other peoples approved/rejected lists</p>
+        <div class="table-responsive col-md-12">
+            <table class="table table-bordered table-striped" id="subscription">
+                <thead><tr><th>✓</th><th>X</th><th>Url</th></tr></thead>
+            </table>
+        </div>
+
+        <h4>Unsorted Meta Data:</h4>
+        <p>This is a list of asset contents that have not been sorted through.  If you approve any contents it will be moved to the approved list.  If you reject any contents it will be removed from your machine.</p>
         <hr class="col-md-8">
         <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
         <div class="table-responsive col-md-12">
@@ -204,7 +213,8 @@
                     <h5 class="modal-title" id="WMLabel">Wallet Setup</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <p>For DigiAsset Creator to function you must have core wallet setup and have RPC Username and Password set in media</p>
+                <p>For DigiAsset Creator to function you must have core wallet setup and in your digibyte.conf have the following lines.(values are randomly generated you can use if not already set)</p>
+                <p id="config_values" class="json"></p>
 
                 <div class="modal-body">
                     <div class="form-floating mb-3">
@@ -241,6 +251,54 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <p>Some features of DigiAsset Creator require access to DigiByte data stream.  Signing up for API Keys is free and Amazon only charges for bandwidth used with free levels covering most users.</p>
+                <ol type="1">
+                    <li>Create an account at https://aws.amazon.com/</li>
+                    <li>Services->IAM</li>
+                    <li>In left column: Policies</li>
+                    <li>Blue Create policy button</li>
+                    <li>JSON
+
+                <div class="json">
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObjectAcl",
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*/*",
+                "arn:aws:s3:::chaindata-digibyte"
+            ]
+        }
+    ]
+}</div></li>
+
+                    <li>Blue Review policy button</li>
+                    <li>name: digiassetX_data</li>
+                    <li>Blue Create policy</li>
+                    <li>In left Column: Groups</li>
+                    <li>Blue Create Group Button</li>
+                    <li>Group Name: digiassetX_data</li>
+                    <li>Type digi into search then select digiassetX_data</li>
+                    <li>Blue Next Step Button</li>
+                    <li>Blue Create Group Button</li>
+                    <li>On left panel select Users</li>
+                    <li>Blue add user button</li>
+                    <li>user name: digiassetX_data</li>
+                    <li>Select: Programmatic access</li>
+                    <li>Blue Next: Permissions button</li>
+                    <li>select: digiassetX_data</li>
+                    <li>Blue Next: Tags button</li>
+                    <li>Blue Next: Review button</li>
+                    <li>Blue Create user button</li>
+                    <li>Copy Access key ID and Secret access key into config/config.js</li>
+                    <li>click Close(make sure you have copied keys there will not be a second chance.</li>
+                </ol>
 
                 <div class="modal-body">
                     <div class="form-floating mb-3">

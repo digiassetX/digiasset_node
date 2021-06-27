@@ -277,6 +277,8 @@ api.list.unsorted=async()=>get('/api/list/unsorted.json');
  */
 api.list.rejected=async()=>get('/api/list/rejected.json');
 
+api.list.subscriptions=async()=>get('/api/list/subscriptions.json');
+
 /*
  ██████╗██╗██████╗
 ██╔════╝██║██╔══██╗
