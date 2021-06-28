@@ -19,13 +19,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Meta Data</a>
+              <a class="nav-link nav_page av_page active" aria-current="page" data-page="page_metadata" href="#">Meta Data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link needwallet" data-tooltip="Requires Wallet Setup" href="#" disabled>Address Verifier</a>
+              <a class="nav-link nav_page needwalletandstream" data-page="page_wallet" data-tooltip="Requires Wallet and Stream Setup" href="#" disabled>DigiAsset Wallet</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link needwallet" data-tooltip="Requires Wallet Setup" href="#" disabled>Asset Creator</a>
+              <a class="nav-link nav_page needwallet" data-page="page_kyc" data-tooltip="Requires Wallet Setup" href="#" disabled>Address Verifier</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link nav_page needwallet" data-page="page_assetcreator" data-tooltip="Requires Wallet Setup" href="#" disabled>Asset Creator</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
@@ -101,6 +104,13 @@
         <h1>Asset Creator</h1>
     </div>
     <!-- Page Meta Data end -->
+
+    <!-- Page Meta Data -->
+    <div class="page" id="page_kyc" style="padding:10px">
+        <h1>KYC</h1>
+    </div>
+    <!-- Page Meta Data end -->
+
 
     <!-- Modal Login -->
     <div class="modal fade" id="LoginModal" tabindex="-1" aria-labelledby="MLabel" aria-hidden="true">
