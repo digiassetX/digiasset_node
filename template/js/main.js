@@ -231,6 +231,82 @@ $(document).on('click','.subscription_add',function (){
 
 
 /*
+██╗    ██╗ █████╗ ██╗     ██╗     ███████╗████████╗
+██║    ██║██╔══██╗██║     ██║     ██╔════╝╚══██╔══╝
+██║ █╗ ██║███████║██║     ██║     █████╗     ██║
+██║███╗██║██╔══██║██║     ██║     ██╔══╝     ██║
+╚███╔███╔╝██║  ██║███████╗███████╗███████╗   ██║
+ ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝
+ */
+const walletTable= {
+    subscription: $('#wallet_balance').DataTable({
+        responsive: true,
+        ajax: {
+            url: '/api/wallet/assets.json',
+            dataSrc: ''
+        },
+        order: [
+            [0, "asc"]
+        ],
+        columns: [
+            {
+                className: 'columnWalletAssetId',
+                data: 'assetId'
+            },
+            {
+                className: 'columnWalletBalance',
+                data: 'balance'
+            },
+            {
+                className: 'columnSend',
+                data: null,
+                render: (data, type, row) => `<button class="cell button btn" data-assetid="${row.assetId}" data-balance="${row.balance}">Send</button>`
+            }
+        ]
+    }),
+    unsorted: $('#wallet_balance_by_label').DataTable({
+        responsive: true,
+        ajax: {
+            url: '/api/wallet/assetsbylabel.json',
+            dataSrc: ''
+        },
+        order: [
+            [0, "asc"]
+        ],
+        columns: [
+            {
+                className: 'columnWalletLabel',
+                data: 'label'
+            },
+            {
+                className: 'columnWalletAssetId',
+                data: 'assetId'
+            },
+            {
+                className: 'columnWalletBalance',
+                data: 'balance'
+            },
+            {
+                className: 'columnSend',
+                data: null,
+                render: (data, type, row) => `<button class="cell button btn" data-label="${row.label}" data-assetid="${row.assetId}" data-balance="${row.balance}">Send</button>`
+            }
+        ]
+    })
+};
+//todo add api calls table uses
+$(document).on('click','#wallet_split_by_label',()=>{
+    if ($("#wallet_split_by_label").is(':checked')) {
+        $("#wallet_balance_div").hide();
+        $("#wallet_balance_by_label_div").show();
+    } else {
+        $("#wallet_balance_div").show();
+        $("#wallet_balance_by_label_div").hide();
+    }
+})
+
+
+/*
 ██╗   ██╗██████╗  ██████╗ ██████╗  █████╗ ██████╗ ███████╗
 ██║   ██║██╔══██╗██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██╔════╝
 ██║   ██║██████╔╝██║  ███╗██████╔╝███████║██║  ██║█████╗
@@ -289,13 +365,21 @@ $(document).ready(async()=>{
         $('#config_values').html(generateRandomConfig());     //generate random config for instructions
 
         //check if wallet configured
+        let walletGood=false;
         api.wallet.blockHeight().then(()=>{
+            walletGood=true;
             $('#menu_wallet').append("✓");
+            $('.needwallet').removeAttr('disabled');
+            if (streamGood) $('.needwalletandstream').removeAttr('disabled');
         },()=>{});
 
         //check if stream configured
+        let streamGood=false;
         api.stream("height").then(()=>{
+            streamGood=true;
             $('#menu_stream').append("✓");
+            $('.needstream').removeAttr('disabled');
+            if (walletGood) $('.needwalletandstream').removeAttr('disabled');
         },()=>{});
 
         //more then 1 user so enable the remove user option
@@ -309,7 +393,7 @@ $(document).ready(async()=>{
         //if wallet set up enable kyc and create asset options
         try {
             await api.wallet.blockHeight();
-            $('.needwallet').removeAttr('disabled');
+
         } catch (_) {}
     }
 });
@@ -465,8 +549,7 @@ $(document).on('click','#stream_submit',async()=>{
         //todo make better success screen
         location.reload();
     } catch(e) {
-        showError(e);
-    }
+        showError(e);}
 });
 
 /*__  __        _ _
