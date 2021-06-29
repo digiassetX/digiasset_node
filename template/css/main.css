@@ -123,6 +123,6 @@ a[disabled] {
 #page_metadata {
     display: block;
 }
-#wallet_balance_by_label_div {
+.wallet {
     display: none;
 }

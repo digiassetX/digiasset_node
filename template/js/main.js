@@ -13,6 +13,20 @@ const showError=(e)=>{
     (new bootstrap.Modal(document.getElementById('ErrorModal'))).show();
 }
 
+/**
+ * Converts a sat int to string decimal
+ * @param {int} value
+ * @param {int} decimals
+ * @return {string}
+ */
+const satToDecimal=(value,decimals)=>{
+    let str=value.toString();
+    if (decimals===0) return str;
+    str=str.padStart(decimals+1,"0");
+    let periodPoint=str.length-decimals;
+    return str.substr(0,periodPoint)+'.'+str.substr(periodPoint);
+}
+
 /*
 ███╗   ███╗███████╗████████╗ █████╗     ██████╗  █████╗ ████████╗ █████╗     ██╗     ██╗███████╗████████╗███████╗
 ████╗ ████║██╔════╝╚══██╔══╝██╔══██╗    ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗    ██║     ██║██╔════╝╚══██╔══╝██╔════╝
@@ -21,7 +35,8 @@ const showError=(e)=>{
 ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║    ██████╔╝██║  ██║   ██║   ██║  ██║    ███████╗██║███████║   ██║   ███████║
 ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝    ╚══════╝╚═╝╚══════╝   ╚═╝   ╚══════╝
  */
-const dataTable= {
+let dataTable={};
+const startDataTable=()=>dataTable={
     subscription: $('#subscription').DataTable({
         responsive: true,
         ajax: {
@@ -238,70 +253,57 @@ $(document).on('click','.subscription_add',function (){
 ╚███╔███╔╝██║  ██║███████╗███████╗███████╗   ██║
  ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝
  */
-const walletTable= {
-    subscription: $('#wallet_balance').DataTable({
+let walletTable={};
+/**
+ *
+ * @param {"assets"|"assetsbylabel"}    type
+ */
+const startWallet=(type)=>{
+    $(".wallet").hide();
+    $("#wallet_div_"+type).show();
+    if (walletTable[type]!==undefined) return;
+    let columns=[
+        {
+            className: 'columnWalletAssetId',
+            data: null,
+            render: (data,type,row)=>{
+                if (row.cid===undefined) return row.assetId;
+                return row.assetId+':'+row.cid;
+            }
+        },
+        {
+            className: 'columnWalletBalance',
+            data: null,
+            render: (data,type,row)=>satToDecimal(row.value,row.decimals)
+        },
+        {
+            className: 'columnSend',
+            data: null,
+            render: (data, type, row) => `<button class="cell button btn" data-assetid="${row.assetId}" data-value="${row.value}" data-decimals="${row.decimals}">Send</button>`
+        }
+    ];
+    if (type==="assetsbylabel") columns.unshift({
+        className: 'columnWalletLabel',
+        data: 'label'
+    });
+    walletTable[type]=$('#wallet_list_'+type).DataTable({
         responsive: true,
         ajax: {
-            url: '/api/wallet/assets.json',
+            url: '/api/wallet/'+type+'.json',
             dataSrc: ''
         },
         order: [
             [0, "asc"]
         ],
-        columns: [
-            {
-                className: 'columnWalletAssetId',
-                data: 'assetId'
-            },
-            {
-                className: 'columnWalletBalance',
-                data: 'balance'
-            },
-            {
-                className: 'columnSend',
-                data: null,
-                render: (data, type, row) => `<button class="cell button btn" data-assetid="${row.assetId}" data-balance="${row.balance}">Send</button>`
-            }
-        ]
-    }),
-    unsorted: $('#wallet_balance_by_label').DataTable({
-        responsive: true,
-        ajax: {
-            url: '/api/wallet/assetsbylabel.json',
-            dataSrc: ''
-        },
-        order: [
-            [0, "asc"]
-        ],
-        columns: [
-            {
-                className: 'columnWalletLabel',
-                data: 'label'
-            },
-            {
-                className: 'columnWalletAssetId',
-                data: 'assetId'
-            },
-            {
-                className: 'columnWalletBalance',
-                data: 'balance'
-            },
-            {
-                className: 'columnSend',
-                data: null,
-                render: (data, type, row) => `<button class="cell button btn" data-label="${row.label}" data-assetid="${row.assetId}" data-balance="${row.balance}">Send</button>`
-            }
-        ]
-    })
-};
+        columns
+    });
+}
 //todo add api calls table uses
 $(document).on('click','#wallet_split_by_label',()=>{
     if ($("#wallet_split_by_label").is(':checked')) {
-        $("#wallet_balance_div").hide();
-        $("#wallet_balance_by_label_div").show();
+        startWallet("assetsbylabel");
     } else {
-        $("#wallet_balance_div").show();
-        $("#wallet_balance_by_label_div").hide();
+        startWallet("assets");
     }
 })
 
@@ -351,6 +353,18 @@ setInterval(isNewest,86400000);//recheck daily
 
 //check if logged in
 const showLoginBox=()=>(new bootstrap.Modal(document.getElementById('LoginModal'))).show();
+const walletConfigured=()=>{
+    $('#menu_wallet').append("✓");
+    $('.needwallet').removeAttr('disabled');
+}
+const streamConfigured=()=>{
+    $('#menu_stream').append("✓");
+    $('.needstream').removeAttr('disabled');
+}
+const bothConfigured=()=>{
+    $('.needwalletandstream').removeAttr('disabled');
+    startWallet("assets");
+}
 $(document).ready(async()=>{
     let isLogedIn=await api.user.state();
     if (!isLogedIn) {
@@ -363,23 +377,22 @@ $(document).ready(async()=>{
         let userList=await api.config.user.list();            //find out how many users there are
         if (userList.length>0) $("#menu_logout").show();      //actually logged in so show logout button
         $('#config_values').html(generateRandomConfig());     //generate random config for instructions
+        startDataTable();                                     //start cid list
 
         //check if wallet configured
         let walletGood=false;
         api.wallet.blockHeight().then(()=>{
             walletGood=true;
-            $('#menu_wallet').append("✓");
-            $('.needwallet').removeAttr('disabled');
-            if (streamGood) $('.needwalletandstream').removeAttr('disabled');
+            walletConfigured();
+            if (streamGood) bothConfigured();
         },()=>{});
 
         //check if stream configured
         let streamGood=false;
         api.stream("height").then(()=>{
             streamGood=true;
-            $('#menu_stream').append("✓");
-            $('.needstream').removeAttr('disabled');
-            if (walletGood) $('.needwalletandstream').removeAttr('disabled');
+            streamConfigured();
+            if (walletGood) bothConfigured();
         },()=>{});
 
         //more then 1 user so enable the remove user option
