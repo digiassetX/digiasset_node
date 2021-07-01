@@ -27,6 +27,12 @@ const satToDecimal=(value,decimals)=>{
     return str.substr(0,periodPoint)+'.'+str.substr(periodPoint);
 }
 
+jQuery.fn.dataTable.Api.register( 'processing()', function ( show ) {
+    return this.iterator( 'table', function ( ctx ) {
+        ctx.oApi._fnProcessingDisplay( ctx, show );
+    } );
+} );
+
 /*
 ███╗   ███╗███████╗████████╗ █████╗     ██████╗  █████╗ ████████╗ █████╗     ██╗     ██╗███████╗████████╗███████╗
 ████╗ ████║██╔════╝╚══██╔══╝██╔══██╗    ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗    ██║     ██║██╔════╝╚══██╔══╝██╔════╝
@@ -253,14 +259,15 @@ $(document).on('click','.subscription_add',function (){
 ╚███╔███╔╝██║  ██║███████╗███████╗███████╗   ██║
  ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝
  */
-let walletTable={};
+let walletTable={active:""};
 /**
- *
+ * Shows wallet data.  If not already started then initializes it
  * @param {"assets"|"assetsbylabel"}    type
  */
 const startWallet=(type)=>{
     $(".wallet").hide();
     $("#wallet_div_"+type).show();
+    walletTable.active=type;
     if (walletTable[type]!==undefined) return;
     let columns=[
         {
@@ -279,7 +286,14 @@ const startWallet=(type)=>{
         {
             className: 'columnSend',
             data: null,
-            render: (data, type, row) => `<button class="cell button btn" data-assetid="${row.assetId}" data-value="${row.value}" data-decimals="${row.decimals}">Send</button>`
+            render: (data, type, row) => {
+                let button='<button class="cell button btn send_asset"';
+                for (let index in row) {
+                    button+=` data-${index.toLowerCase()}="${row[index].toString()}"`;
+                }
+                button+=`>Send</button>`;
+                return button;
+            }
         }
     ];
     if (type==="assetsbylabel") columns.unshift({
@@ -287,7 +301,12 @@ const startWallet=(type)=>{
         data: 'label'
     });
     walletTable[type]=$('#wallet_list_'+type).DataTable({
+        processing: true,
         responsive: true,
+        language: {
+            loadingRecords: '&nbsp;',
+            processing: '<div class="spinner"></div>'
+        },
         ajax: {
             url: '/api/wallet/'+type+'.json',
             dataSrc: ''
@@ -298,7 +317,8 @@ const startWallet=(type)=>{
         columns
     });
 }
-//todo add api calls table uses
+
+//handles the split by label switch
 $(document).on('click','#wallet_split_by_label',()=>{
     if ($("#wallet_split_by_label").is(':checked')) {
         startWallet("assetsbylabel");
@@ -307,6 +327,155 @@ $(document).on('click','#wallet_split_by_label',()=>{
     }
 })
 
+//handles the wallet refresh button
+$(document).on('click','#wallet_refresh',()=>{
+    walletTable[walletTable.active].ajax.reload(null,false);
+});
+
+//sending cost data table
+let send_assets_cost=$("#send_assets_costs").DataTable({
+    responsive: true,
+    processing: true,
+    language: {
+        loadingRecords: '&nbsp;',
+        processing: '<div class="spinner"></div>'
+    },
+    columns: [
+        {
+            data: 'type',
+        },
+        {
+            data: 'amount'
+        }
+    ]
+});
+
+/**
+ * triggered by addresses table this function redraws the table costs and enables/disables send button
+ * @return {Promise<void>}
+ */
+let assetCostsWaiting=0;
+const redrawAssetCosts=async()=>{
+    try {
+        let rowCount=send_assets_addresses.data().count();
+        if (rowCount === 0) {
+            send_assets_cost.clear().draw();
+        } else {
+            $("#send_asset_send").attr('disabled',true);
+            send_assets_cost.processing(true);                      //show processing
+            let sending=send_assets_addresses.assetData;
+            let recipients=[];
+            for (let i=0;i<rowCount;i++) recipients.push(send_assets_addresses.row(i).data());
+            assetCostsWaiting++;
+            let {costs, hex} = await api.wallet.build.assetTx(sending,recipients);   //get updated cost
+            assetCostsWaiting--;
+            send_assets_cost.clear().rows.add(costs).draw();        //update table
+            $("#send_asset_send").data("tx",hex);                   //put unsigned tx in send buttons data
+            if (assetCostsWaiting===0) {
+                send_assets_cost.processing(false);                     //remove processing
+                $("#send_asset_send").removeAttr('disabled');     //reenable send button
+            }
+        }
+    } catch (e) {
+        //error always called on first execution so ignore
+        console.log(e);
+    }
+}
+
+//sending address data table
+let send_assets_addresses=$('#send_assets_addresses').DataTable({
+    responsive: true,
+    order: [
+        [1, "asc"]
+    ],
+    columns: [
+        {
+            className: "dt-center send_assets_addresses-delete",
+            data: null,
+            defaultContent: '<i class="fa fa-trash"/>', //todo not showing needs fixing
+            orderable: false
+        },
+        {
+            className: 'columnAddress',
+            data: null,
+            render: (data,type,row)=>(row.address!==undefined)?row.address:`${row.assetId}(${row.amount} per ${row.type} at height ${row.height})`
+        },
+        {
+            className: 'columnQuantity',
+            data: 'quantity'
+        }
+    ],
+    drawCallback: redrawAssetCosts
+});
+
+//opens pop up when send asset button is clicked
+$(document).on('click','.send_asset',function() {
+    /** @type {{label,assetid,cid,value,decimals}} */let data=$(this).data();
+    $("#SAMLabel").text("Send "+data.assetid+(data.cid==undefined?"":`:${data.cid}`));
+    send_assets_addresses.assetData=data;
+    send_assets_addresses.clear();
+    $('#send_assets_costs > tbody').html("");
+
+
+
+
+    (new bootstrap.Modal(document.getElementById('SendAssetsModal'))).show();
+});
+
+//show/hide send asset types
+$(document).on('keyup','#send_assets_new_address',()=>{
+    let type = $("#send_assets_new_address").val().trim().substr(0,1);
+    $(".send_asset_assetId")[(type==="L")||(type==="U")?"show":"hide"]();
+});
+
+//handle removing item from table
+$('#send_assets_addresses tbody').on( 'click', 'td.send_assets_addresses-delete', function (e) {
+    e.preventDefault();
+    send_assets_addresses.row( $(this).parents('tr') ).remove().draw();
+} );
+
+//add address to sending table
+$(document).on('click','#send_assets_new',async()=>{
+    try {
+        let decimals=send_assets_addresses.assetData.decimals;
+        let assetsPerHolder = $("#send_asset_assetId_type_holder").prop("checked");
+        let address = $("#send_assets_new_address").val().trim();
+        let quantity = Math.round(parseFloat($("#send_assets_new_quantity").val().trim())*Math.pow(10,decimals));
+        let data = {address, quantity: satToDecimal(quantity,decimals)};
+        if ((address[0] === "L") || (address[0] === "U")) {
+            //lookup height and asset
+            let height = api.stream("height");
+            let assetData = api.stream(address);
+            await Promise.all([height, assetData]);
+
+            //get total assets
+            let total=0;
+            let {holders}=await assetData;
+            for (let index in holders) {
+                total+=assetsPerHolder?quantity:parseInt(holders[index])*quantity;
+            }
+
+            //update data
+            data = {
+                assetId: address,                                   //value in address variable actually an assetId
+                type: assetsPerHolder ? "holder" : "asset",
+                height: await height,
+                amount: satToDecimal(quantity,decimals),                 //store the per holder value as amount
+                quantity: satToDecimal(total,decimals)                   //store total as quantity
+            };
+
+        }
+        send_assets_addresses.row.add(data).draw();
+
+        //recompute costs
+
+    } catch (e) {
+        console.log(e);
+        showError("Invalid AssetId");   //errors only thrown when assetId is invalid
+    }
+});
+
+//todo .sendTx will have data("tx") containing hex transaction.  should ask for wallet password then do apii.wallet.send
 
 /*
 ██╗   ██╗██████╗  ██████╗ ██████╗  █████╗ ██████╗ ███████╗

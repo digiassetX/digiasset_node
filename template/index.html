@@ -114,7 +114,7 @@
     <!-- Page Wallet -->
     <div class="page" id="page_wallet" style="padding:10px">
         <h1>Balance:</h1>
-        <input type="checkbox" id="wallet_split_by_label"><label for="wallet_split_by_label">Split By Label</label>
+        <input type="checkbox" id="wallet_split_by_label"><label for="wallet_split_by_label">Split By Label</label><button id="wallet_refresh" class="button btn btn-outline-dark">Refresh</button>
         <div class="table-responsive col-md-12 wallet" id="wallet_div_assets">
             <table class="table table-bordered table-striped" id="wallet_list_assets">
                 <thead><tr><th>assetId</th><th>Balance</th><th>Send</th></tr></thead>
@@ -126,7 +126,7 @@
             </table>
         </div>
         <h1>Receive:</h1>
-        <label for="wallet_new_label">Label(Optional)</label><input type="text" id="wallet_new_label"><button class="btn">Bech32 Address(All good wallets)</button><button class="btn">Legacy Address(Lazy programmers need to update)</button>
+        <label for="wallet_new_label">Label(Optional)</label><input type="text" id="wallet_new_label"><button class="button btn btn-outline-dark">Bech32 Address(All good wallets)</button><button class="button btn btn-outline-dark">Legacy Address(Lazy programmers need to update)</button>
     </div>
     <!-- Page Wallet end -->
 
@@ -348,6 +348,38 @@
     <!--modal Stream end-->
 
 
+
+    <!-- Modal Send Assets -->
+    <div class="modal fade" id="SendAssetsModal" tabindex="-1" aria-labelledby="SAMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="SAMLabel">Send Assets</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <h5>Addresses</h5>
+                <table class="table table-bordered table-striped" id="send_assets_addresses">
+                    <thead><tr><th></th><th>address/assetId</th><th>Quantity</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                <input type="text" id="send_assets_new_address"><input type="number" id="send_assets_new_quantity"><button id="send_assets_new">Add</button>
+                <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per holder" id="send_asset_assetId_type_holder" checked>Per Holder
+                <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per asset" id="send_asset_assetId_type_asset">Per Asset
+
+                <h5>Costs</h5>
+                <table class="table table-bordered table-striped" id="send_assets_costs">
+                    <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                </table>
+
+                <div class="modal-footer">
+                    <button type="button" id="send_asset_cancel" class="btn btn-primary">Cancel</button>
+                    <button type="button" id="send_asset_send" class="btn btn-primary sendTX">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Remove User end-->
 
 
 

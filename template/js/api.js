@@ -385,7 +385,7 @@ api.stream=async(key)=>get('/api/stream/'+key+'.json');
 ╚███╔███╔╝██║  ██║███████╗███████╗███████╗   ██║
  ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝
  */
-api.wallet={addresses:{}};
+api.wallet={addresses:{},fix:{},build:{}};
 
 /**
  * Gets the current wallet sync height
@@ -453,20 +453,32 @@ api.wallet.kyc=async(addresses,options,password=undefined)=>post('/api/wallet/ky
 api.wallet.utxos=async(addresses)=>post('/api/wallet/utxos.json',{addresses});
 
 /**
+ *
+ * @param sending
+ * @param recipients
+ * @return {Promise<{
+ *     costs:   {type: string,amount:string}[],
+ *     hex:     string
+ * }>}
+ */
+api.wallet.build.assetTx=async(sending,recipients)=>post('/api/wallet/build/assetTx.json', {sending,recipients});
+
+/**
  * Sends a transaction and returns the txid
- * @param {{
- *      "txid": string,
- *      "vout": int
- * }[]}                         from
- * @param {Object<string>[]}    to
+ * @param {string}              hex
  * @param {string?}             password
  * @return {Promise<string>}
  *
  * Expected Errors: "Wallet not set up","Wallet offline or config has changed",
  */
-api.wallet.send=async(from,to,password=undefined)=>post('/api/wallet/send.json',{from,to,password});
+api.wallet.send=async(hex,password=undefined)=>post('/api/wallet/send.json',{hex,password});
 
-
+/**
+ * Finds any addresses with funds and without labels and assigns it blank label
+ * Returns number of changed labels
+ * @return {Promise<int>}
+ */
+api.wallet.fix.labels=async()=>get('/api/wallet/fix/labels.json');
 
 
 
