@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DigiAsset Node</title>
+    <link href="/css/style-starter.css" rel="stylesheet" type="text/css">
     <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
     <link href="/css/main.css" rel="stylesheet" type="text/css">
@@ -107,7 +108,63 @@
 
     <!-- Page KYC -->
     <div class="page" id="page_kyc" style="padding:10px">
-        <h1>KYC</h1>
+        <div class="w3l-index1" style="margin:100px 0px -70px 0px">
+            <div class="container">
+                <div class="row align-items-center">
+                    <h3 class="col-md-12">DigiByte Address Verifier</h3>
+                    <p class="col-md-12">This tool proves you own an address and tags it as KYC verified. Will cost $4+$1/address</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="w3l-index1 kycStep" id="kycStep1">
+            <div class="content">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 content-left">
+                            <p class="mt-3 mb-lg-5 mb-4">Download and install Yoti. Create your identity profile with your drivers license and passport.</p>
+                            <a href="#" class="btn btn-outline-primary theme-button" id="kycDone1">Get Started</a>
+                        </div>
+                        <div class="col-lg-6 mt-lg-0 mt-5">
+                            <img src="images/kyc.png" class="img-fluid" alt="main image">
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w3l-index1 kycStep" id="kycStep2">
+            <div class="content">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <p style="font-size: 14px;font-weight: 600;margin-top: 15px">Verify Type (Select from Dropdown Below)</p>
+                        <select class="kyc_option" style="display: block;outline: none;padding: 15px 20px;-webkit-appearance: none;border-radius: 0;color: #000;font-weight: 400;width: 100%;font-size: 16px;line-height: 26px;margin-bottom: 15px;border-radius: var(--card-curve);border: 1px solid #eee;background: var(--light-bg-color);" id="kycType">
+                            <option value="public">Public(Name and country will be publicly viewable)</option>
+                            <option value="donate">Donate(Name and country will be publicly viewable-listed on donate.digiassetX.com)</option>
+                            <option value="secret">Secret(Country will be publicly viewable)</option>
+                        </select>
+
+                        <label style="font-size: 14px;font-weight: 600" for="kycPin" class="for_secret">Pin:</label>
+                        <input type="text" name="w3lName" placeholder="" class="contact-input for_secret kyc_option" id="kycPin" required="" />
+                        <label style="font-size: 14px;font-weight: 600" for="kycLabel" class="for_donate">Label:</label>
+                        <input type="text" name="w3lName" placeholder="" class="contact-input for_donate kyc_option" id="kycLabel"/>
+                        <label style="font-size: 14px;font-weight: 600" for="kycGoal" class="for_donate">Goal(0 for no goal):</label>
+                        <input type="number" name="w3lName" placeholder="" class="contact-input for_donate kyc_option" id="kycGoal" value="0"/>
+
+                        Addresses:  (check 1 or more addresses you want to prove you own):
+                        <table class="table table-bordered table-striped" id="kycAddresses">
+                            <thead><tr><th>Address</th><th>Label</th><th>Balance</th><th>KYC</th></tr></thead>
+                        </table>
+                    </div>
+                    <div class="clear"></div>
+                    <button id="kycDone2" disabled>Validate</button>
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
     <!-- Page KYC end -->
 
@@ -374,7 +431,7 @@
 
                 <div class="modal-footer">
                     <button type="button" id="send_asset_cancel" class="btn btn-primary">Cancel</button>
-                    <button type="button" id="send_asset_send" class="btn btn-primary sendTX">Send</button>
+                    <button type="button" id="send_asset_send" class="btn btn-primary sendTX" disabled>Send</button>
                 </div>
             </div>
         </div>
@@ -396,6 +453,47 @@
         </div>
     </div>
     <!--modal Wallet end-->
+
+
+
+    <!-- Modal Wallet Password -->
+    <div class="modal fade" id="WalletPasswordModal" tabindex="-1" aria-labelledby="WPMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="WPMLabel">Unlock Wallet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="walletpassword_close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="walletpassword_pass" placeholder="Password">
+                        <label for="walletpassword_pass">Password</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="walletpassword_submit" class="btn btn-primary">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Wallet Password end -->
+
+
+
+    <!-- Modal TXID -->
+    <div class="modal fade" id="txidModal" tabindex="-1" aria-labelledby="txidMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="txidMLabel">Transaction Successful</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <h5>TXID:</h5>
+                <div id="txid"></div>
+            </div>
+        </div>
+    </div>
+    <!--modal TXID end -->
 
     <script src="/js/jquery-3.5.1.js"></script>
     <script src="/js/api.js"></script>

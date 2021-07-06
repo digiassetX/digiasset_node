@@ -149,3 +149,14 @@ a[disabled] {
     border-top-color: #333;
     animation: spinner .6s linear infinite;
 }
+
+
+.kycStep {
+    display: none;
+}
+#kycStep1 {
+    display: block;
+}
+.kyc_option {
+    display: none;
+}

@@ -1,4 +1,5 @@
 //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
+// noinspection JSUnfilteredForInLoop
 
 let getHeight=async()=>{
     let height=await api.height();
@@ -360,14 +361,21 @@ const redrawAssetCosts=async()=>{
         let rowCount=send_assets_addresses.data().count();
         if (rowCount === 0) {
             send_assets_cost.clear().draw();
+            $("#send_asset_send").attr('disabled',true);
         } else {
             $("#send_asset_send").attr('disabled',true);
             send_assets_cost.processing(true);                      //show processing
-            let sending=send_assets_addresses.assetData;
-            let recipients=[];
-            for (let i=0;i<rowCount;i++) recipients.push(send_assets_addresses.row(i).data());
+            let {assetid,label}=send_assets_addresses.assetData;
+            let recipients={};
+            for (let i=0;i<rowCount;i++) {
+                let list=send_assets_addresses.row(i).data().recipients;
+                for (let {address,quantity} of list) {
+                    if (recipients[address]===undefined) recipients[address]=0;
+                    recipients[address]+=quantity;
+                }
+            }
             assetCostsWaiting++;
-            let {costs, hex} = await api.wallet.build.assetTx(sending,recipients);   //get updated cost
+            let {costs, hex} = await api.wallet.build.assetTx(recipients,assetid,label);   //get updated cost
             assetCostsWaiting--;
             send_assets_cost.clear().rows.add(costs).draw();        //update table
             $("#send_asset_send").data("tx",hex);                   //put unsigned tx in send buttons data
@@ -441,7 +449,7 @@ $(document).on('click','#send_assets_new',async()=>{
         let assetsPerHolder = $("#send_asset_assetId_type_holder").prop("checked");
         let address = $("#send_assets_new_address").val().trim();
         let quantity = Math.round(parseFloat($("#send_assets_new_quantity").val().trim())*Math.pow(10,decimals));
-        let data = {address, quantity: satToDecimal(quantity,decimals)};
+        let data = {address, quantity: satToDecimal(quantity,decimals),recipients:[{address,quantity}]};
         if ((address[0] === "L") || (address[0] === "U")) {
             //lookup height and asset
             let height = api.stream("height");
@@ -451,8 +459,11 @@ $(document).on('click','#send_assets_new',async()=>{
             //get total assets
             let total=0;
             let {holders}=await assetData;
-            for (let index in holders) {
-                total+=assetsPerHolder?quantity:parseInt(holders[index])*quantity;
+            let recipients=[];
+            for (let address in holders) {
+                let quantity=assetsPerHolder?quantity:parseInt(holders[address])*quantity;
+                total+=quantity;
+                recipients.push({address,quantity})
             }
 
             //update data
@@ -461,7 +472,8 @@ $(document).on('click','#send_assets_new',async()=>{
                 type: assetsPerHolder ? "holder" : "asset",
                 height: await height,
                 amount: satToDecimal(quantity,decimals),                 //store the per holder value as amount
-                quantity: satToDecimal(total,decimals)                   //store total as quantity
+                quantity: satToDecimal(total,decimals),                   //store total as quantity
+                recipients                                               //list of those that will receive it
             };
 
         }
@@ -475,7 +487,48 @@ $(document).on('click','#send_assets_new',async()=>{
     }
 });
 
-//todo .sendTx will have data("tx") containing hex transaction.  should ask for wallet password then do apii.wallet.send
+//handle sending transactions
+$(document).on('click','.sendTx',async function(){
+    let hex=$(this).data("tx");
+    let password=await getWalletPassword();
+    try {
+        let txid = await api.wallet.send(hex, password);
+        $("#txid").text(txid);
+        (new bootstrap.Modal(document.getElementById('WalletPasswordModal'))).show();
+    } catch (e) {
+        showError(e);
+    }
+});
+
+/**
+ * Request the wallet password from user
+ * @return {Promise<string>}
+ */
+const getWalletPassword=async()=>{
+    let finished=false;
+    let modal=new bootstrap.Modal(document.getElementById('WalletPasswordModal'));
+    modal.show();
+    try {
+        await new Promise((resolve, reject) => {
+            walletPasswordRR = [resolve, reject];
+
+        });
+        finished=true;
+    } catch (_) {}
+    modal.hide();
+    if (!finished) throw "Transaction Canceled";
+    return $("#walletpassword_pass").val().trim();
+}
+let walletPasswordRR=[()=>{},()=>{}];
+$(document).on('click','#walletpassword_submit',()=>{
+    walletPasswordRR[0]();
+});
+$(document).on('click','#walletpassword_close',()=>{
+    walletPasswordRR[1]();
+});
+
+
+
 
 /*
 ██╗   ██╗██████╗  ██████╗ ██████╗  █████╗ ██████╗ ███████╗
@@ -488,11 +541,11 @@ $(document).on('click','#send_assets_new',async()=>{
 
 //handle upgrade
 $(document).on('click','#updateBtn',async()=>{
-    let state=await api.version.update();
-    if (state===true) {
+    try {
+        await api.version.update();
         location.reload();
-    } else {
-        showError(state["error"]);
+    } catch (e) {
+        showError(e);
     }
 });
 
@@ -781,4 +834,117 @@ $(document).on('click','#included_media_submit',async()=>{
     } catch(e) {
         showError(e);
     }
+});
+
+/*
+██╗  ██╗██╗   ██╗ ██████╗
+██║ ██╔╝╚██╗ ██╔╝██╔════╝
+█████╔╝  ╚████╔╝ ██║
+██╔═██╗   ╚██╔╝  ██║
+██║  ██╗   ██║   ╚██████╗
+╚═╝  ╚═╝   ╚═╝    ╚═════╝
+ */
+
+let kycAddresses;
+const kycStart=()=>{
+    if (kycAddresses!==undefined) {
+        kycAddresses.ajax.reload(null,false);
+        return;
+    }
+    kycAddresses=$('#kycAddresses').DataTable({
+        responsive: true,
+        ajax: {
+            url: '/api/wallet/addresses/list.json',
+            dataSrc: ''
+        },
+        order: [
+            [1, "asc"]
+        ],
+        columns: [
+            {
+                data: 'address'
+            },
+            {
+                data: 'label'
+            },
+            {
+                data: 'balance',
+                defaultContent: 'Need Stream'
+            },
+            {
+                data: 'null',
+                render: (data, type, row) => (row.kyc===undefined)?"X":"✓"
+            }
+        ]
+    });
+    $('#kycAddresses tbody').on('click', 'tr', function () {
+        console.log("x");
+        $(this).toggleClass('selected');
+        validateKYCInputs();
+    });
+}
+
+
+//start button
+$(document).on('click','#kycDone1',()=>{
+    //show page
+    $(".kycStep").hide();
+    $("#kycStep2").show();
+
+    //update address list
+    kycStart();
+});
+
+const validateKYCInputs=async(submit)=>{
+    let addresses = [];
+    let options={type:$("#kycType").val()};
+    try {
+        //get address list
+        let rows = kycAddresses.rows('.selected').data().toArray();
+        if (rows.length===0) throw "No rows selected";
+        for (let {address} of rows) addresses.push(address);
+
+        //get options
+        switch (options.type) {
+            case "donate":   //donate
+                options.label=$("kycLabel").val().trim();
+                options.goal=parseInt($("kycGoal").val().trim());
+                if (options.label.length<2) throw "Invalid Label Length";
+                break;
+
+            case "secret":   //secret
+                options.pin=$("kycPin").val().trim();
+                if (options.pin.length<4) throw "Invalid Pin Length";
+        }
+
+        $("#kycDone2").removeAttr('disabled');
+    } catch (e) {
+        $("#kycDone2").attr('disabled',true);
+    }
+
+    //submit if selected
+    if (submit) {
+        try {
+            let password=await getWalletPassword();
+            let url=await api.wallet.kyc(addresses,options,password);
+            window.open(url);
+        } catch (e) {
+           showError(e)
+        }
+    }
+}
+
+//handle type selection
+$(document).on('change',"#kycType",()=>{
+    let type=$("#kycType").val();
+    $(".for_donate")[type==="donate"?"show":"hide"]();
+    $(".for_secret")[type==="secret"?"show":"hide"]();
+});
+
+//handle options change
+$(document).on('keyup','.kyc_option',validateKYCInputs);
+
+//handle validate click
+$(document).on('click','#kycDone2',()=>{
+    validateKYCInputs(true);
 });

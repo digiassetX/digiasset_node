@@ -429,7 +429,7 @@ api.wallet.addresses.new=async(label="")=>post('/api/wallet/addresses/new.json',
  * type: secret - pin is required
  * type: donate - label is required, goal is optional value in sats
  *
- * @param {string}  addresses
+ * @param {string[]}  addresses
  * @param {{
  *     type:    "public"|"donate"|"secret",
  *     pin:     string?,
@@ -453,15 +453,16 @@ api.wallet.kyc=async(addresses,options,password=undefined)=>post('/api/wallet/ky
 api.wallet.utxos=async(addresses)=>post('/api/wallet/utxos.json',{addresses});
 
 /**
- *
- * @param sending
- * @param recipients
+ * Create an asset transaction and get costs
+ * @param {Object<int>} recipients
+ * @param {string}      assetId
+ * @param {string?}     label
  * @return {Promise<{
- *     costs:   {type: string,amount:string}[],
+ *     costs:   Object<int>,
  *     hex:     string
  * }>}
  */
-api.wallet.build.assetTx=async(sending,recipients)=>post('/api/wallet/build/assetTx.json', {sending,recipients});
+api.wallet.build.assetTx=async(recipients,assetId,label)=>post('/api/wallet/build/assetTx.json', {recipients,assetId,label});
 
 /**
  * Sends a transaction and returns the txid
