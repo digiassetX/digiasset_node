@@ -412,7 +412,7 @@ let vote_assets_cost=$("#vote_assets_costs").DataTable({
 let assetCostsWaiting=0;
 async function redrawAssetCosts() {
     let caller=this.api();
-    const {expense,assetid,label}=caller.tables().nodes().to$().data();
+    const {expense,assetid,label,vote}=caller.tables().nodes().to$().data();
     let expenseTable=$("#"+expense).DataTable();
     try {
         let domAssetSend=$(".asset_send");
@@ -432,7 +432,7 @@ async function redrawAssetCosts() {
                 }
             }
             assetCostsWaiting++;
-            let {costs, hex} = await api.wallet.build.assetTx(recipients,assetid,label);   //get updated cost
+            let {costs, hex} = await api.wallet.build.assetTx(recipients,assetid,label,vote);   //get updated cost
             assetCostsWaiting--;
             expenseTable.clear().rows.add(costs).draw();        //update table
             domAssetSend.data("tx",hex);                   //put unsigned tx in send buttons data
@@ -547,6 +547,7 @@ $(document).on('click','.vote_asset',function() {
     //add necessary data to table
     /** @type {{label,assetid,cid,value,decimals,receiver,options}} */let data=$(this).data();
     data.expense="vote_assets_costs";
+    data.vote=true;
     $("#vote_assets_options").data(data);
 
     //initialize table data
@@ -569,7 +570,8 @@ $(document).on('click','.vote_asset',function() {
 $(document).on('click','.send_asset',function() {
     //add necessary data to table
     /** @type {{label,assetid,cid,value,decimals,receiver}} */let data=$(this).data();
-    data.expense="vote_assets_costs";
+    data.expense="send_assets_costs";
+    data.vote=false;
     $("#send_assets_addresses").data(data);
 
     //gather recipient info

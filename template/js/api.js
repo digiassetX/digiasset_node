@@ -457,12 +457,13 @@ api.wallet.utxos=async(addresses)=>post('/api/wallet/utxos.json',{addresses});
  * @param {Object<int>} recipients
  * @param {string}      assetId
  * @param {string?}     label
+ * @param {boolean?}    vote
  * @return {Promise<{
  *     costs:   Object<int>,
  *     hex:     string
  * }>}
  */
-api.wallet.build.assetTx=async(recipients,assetId,label)=>post('/api/wallet/build/assetTx.json', {recipients,assetId,label});
+api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/wallet/build/assetTx.json', {recipients,assetId,label,vote});
 
 /**
  * Sends a transaction and returns the txid
