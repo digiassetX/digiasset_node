@@ -57,12 +57,12 @@ const startDataTable=()=>dataTable={
             {
                 className: 'columnApproved',
                 data: 'approved',
-                render: (data, type, row) => (data===true)?"✓":""
+                render: (data) => (data===true)?"✓":""
             },
             {
                 className: 'columnRejected',
                 data: 'rejected',
-                render: (data, type, row) => (data===true)?"X":""
+                render: (data) => (data===true)?"X":""
             },
             {
                 className: 'columnUrl',
@@ -261,6 +261,41 @@ $(document).on('click','.subscription_add',function (){
  ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝
  */
 let walletTable={active:""};
+
+/**
+ * Creates a button for sending assets
+ * @param {{
+ *      label:  string,
+ *      assetId:  string,
+ *      value:  string,
+ *      decimals: int,
+ *      cid: string,
+ *      cache: {
+ *          rules:  AssetRules?
+ *          kyc:    KycState?,
+ *          issuer: string,
+ *          divisibility: int,
+ *          metadata: {
+ *              txid:    string,
+ *              cid:     string
+ *          }[]
+ *      }
+ * }} row
+ * @param {string}  label
+ * @param {"vote_asset"|"send_asset"}  triggerClass
+ */
+const createAssetSendButton=(row,label,triggerClass)=>{
+    let html=`<button class="cell button btn ${triggerClass}"`;
+    for (let index in row) {
+        if (index==="cache") continue;  //skip cache
+        html+=` data-${index.toLowerCase()}="${row[index].toString()}"`;
+    }
+    if (triggerClass==="vote_asset") html+=` data-options='${JSON.stringify(row.cache.rules.vote.options)}'`;
+    html+=`>${label}</button>`;
+    return html;
+}
+
+
 /**
  * Shows wallet data.  If not already started then initializes it
  * @param {"assets"|"assetsbylabel"}    type
@@ -288,12 +323,13 @@ const startWallet=(type)=>{
             className: 'columnSend',
             data: null,
             render: (data, type, row) => {
-                let button='<button class="cell button btn send_asset"';
-                for (let index in row) {
-                    button+=` data-${index.toLowerCase()}="${row[index].toString()}"`;
+                let html='';
+                if ((row.cache.rules!==undefined)&&(row.cache.rules.vote!==undefined)) {
+                    html+=createAssetSendButton(row,'Vote','vote_asset');
+                    if (!row.cache.rules.vote.movable) return html;  //don't allow move option if not movable
                 }
-                button+=`>Send</button>`;
-                return button;
+                html+=createAssetSendButton(row,'Send','send_asset');
+                return html;
             }
         }
     ];
@@ -351,6 +387,24 @@ let send_assets_cost=$("#send_assets_costs").DataTable({
     ]
 });
 
+//vote cost data table
+let vote_assets_cost=$("#vote_assets_costs").DataTable({
+    responsive: true,
+    processing: true,
+    language: {
+        loadingRecords: '&nbsp;',
+        processing: '<div class="spinner"></div>'
+    },
+    columns: [
+        {
+            data: 'type',
+        },
+        {
+            data: 'amount'
+        }
+    ]
+});
+
 /**
  * triggered by addresses table this function redraws the table costs and enables/disables send button
  * @return {Promise<void>}
@@ -358,17 +412,19 @@ let send_assets_cost=$("#send_assets_costs").DataTable({
 let assetCostsWaiting=0;
 const redrawAssetCosts=async()=>{
     try {
-        let rowCount=send_assets_addresses.data().count();
+        let caller=this.api;
+        let domAssetSend=$(".asset_send");
+        let rowCount=caller.data().count();
         if (rowCount === 0) {
             send_assets_cost.clear().draw();
-            $("#send_asset_send").attr('disabled',true);
+            domAssetSend.attr('disabled',true);
         } else {
-            $("#send_asset_send").attr('disabled',true);
+            domAssetSend.attr('disabled',true);
             send_assets_cost.processing(true);                      //show processing
             let {assetid,label}=send_assets_addresses.assetData;
             let recipients={};
             for (let i=0;i<rowCount;i++) {
-                let list=send_assets_addresses.row(i).data().recipients;
+                let list=caller.row(i).data().recipients;
                 for (let {address,quantity} of list) {
                     if (recipients[address]===undefined) recipients[address]=0;
                     recipients[address]+=quantity;
@@ -377,11 +433,11 @@ const redrawAssetCosts=async()=>{
             assetCostsWaiting++;
             let {costs, hex} = await api.wallet.build.assetTx(recipients,assetid,label);   //get updated cost
             assetCostsWaiting--;
-            send_assets_cost.clear().rows.add(costs).draw();        //update table
-            $("#send_asset_send").data("tx",hex);                   //put unsigned tx in send buttons data
+            caller.expenseTable.clear().rows.add(costs).draw();        //update table
+            domAssetSend.data("tx",hex);                   //put unsigned tx in send buttons data
             if (assetCostsWaiting===0) {
-                send_assets_cost.processing(false);                     //remove processing
-                $("#send_asset_send").removeAttr('disabled');     //reenable send button
+                caller.expenseTable.processing(false);                     //remove processing
+                if (hex!=="") $("._asset_send").removeAttr('disabled');     //reenable send button if no error
             }
         }
     } catch (e) {
@@ -415,17 +471,99 @@ let send_assets_addresses=$('#send_assets_addresses').DataTable({
     ],
     drawCallback: redrawAssetCosts
 });
+send_assets_addresses.expenseTable=send_assets_cost;
+
+//sending address data table
+let vote_assets_options=$('#vote_assets_options').DataTable({
+    responsive: true,
+    ordering: false,
+    columns: [
+        {
+            data:   'label',
+            orderable: false
+        },
+        {
+            data: null,
+            render: (data,type,row)=>{
+                if (row.left===true) {
+                    console.log("return votes left: "+vote_assets_options.votesLeft)
+                    return vote_assets_options.votesLeft;
+                }
+                return `<button class="vote_assets_neg"${row.count>0?"":" disabled"}>-</button>${row.count}<button class="vote_assets_pos"${vote_assets_options.votesLeft>0?"":" disabled"}>+</button>`
+            },
+            orderable: false
+        }
+    ],
+    drawCallback: redrawAssetCosts
+});
+vote_assets_options.expenseTable=vote_assets_cost;
+
+//handle adding removing votes
+$(document).on('click','.vote_assets_neg',function(e) {
+    e.preventDefault();
+    vote_assets_options.votesLeft++;
+
+    //update rows
+    let current=vote_assets_options.row( $(this).parents('tr') );
+    let data=current.data();
+    data.count--;
+    current.data(data);
+
+    //handle change
+    let lastIndex=vote_assets_options.rows().count()-1;
+    let last=vote_assets_options.row(lastIndex);
+    last.data({left:true,label:"Remaining",count:vote_assets_options.votesLeft});
+
+    //enable + if any left
+    if (vote_assets_options.votesLeft===1) $(".vote_assets_pos").removeAttr('disabled')
+
+    //redraw table
+    vote_assets_options.draw(false);
+});
+$(document).on('click','.vote_assets_pos',function(e) {
+    e.preventDefault();
+    vote_assets_options.votesLeft--;
+
+    //update row
+    let current=vote_assets_options.row( $(this).parents('tr') );
+    let data=current.data();
+    data.count++;
+    current.data(data);
+
+    //handle change
+    let lastIndex=vote_assets_options.rows().count()-1;
+    let last=vote_assets_options.row(lastIndex);
+    last.data({left:true,label:"Remaining",count:vote_assets_options.votesLeft});
+
+    //disable + if none left
+    if (vote_assets_options.votesLeft===0) $(".vote_assets_pos").attr('disabled',true);
+
+    //redraw table
+    vote_assets_options.draw(false);
+});
+
+//draw vote pop up
+$(document).on('click','.vote_asset',function() {
+    /** @type {{label,assetid,cid,value,decimals,receiver,options}} */let data=$(this).data();
+    vote_assets_options.votesLeft=parseInt(data.value);
+    for (let option of data.options) option.count=0;
+    data.options.push({left:true,label:"Remaining",count:vote_assets_options.votesLeft});
+    console.log(data.options);
+    vote_assets_options.clear().rows.add(data.options).draw();
+    $('#vote_assets_costs > tbody').html("");
+
+    (new bootstrap.Modal(document.getElementById('VoteAssetsModal'))).show();
+});
 
 //opens pop up when send asset button is clicked
 $(document).on('click','.send_asset',function() {
-    /** @type {{label,assetid,cid,value,decimals}} */let data=$(this).data();
-    $("#SAMLabel").text("Send "+data.assetid+(data.cid==undefined?"":`:${data.cid}`));
-    send_assets_addresses.assetData=data;
+    /** @type {{label,assetid,cid,value,decimals,receiver,cache}} */let data=$(this).data();
+
+    //gather recipient info
+    $("#SAMLabel").text("Send " + data.assetid + (data.cid == undefined ? "" : `:${data.cid}`));
+    send_assets_addresses.assetData = data;
     send_assets_addresses.clear();
     $('#send_assets_costs > tbody').html("");
-
-
-
 
     (new bootstrap.Modal(document.getElementById('SendAssetsModal'))).show();
 });

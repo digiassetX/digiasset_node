@@ -440,6 +440,37 @@
 
 
 
+    <!-- Modal Vote Assets -->
+    <div class="modal fade" id="VoteAssetsModal" tabindex="-1" aria-labelledby="VAMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="VAMLabel">Vote Assets</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <h5>Votes:</h5>
+                <table class="table table-bordered table-striped" id="vote_assets_options">
+                    <thead><tr><th>Label</th><th>Count</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+
+                <h5>Costs:</h5>
+                <table class="table table-bordered table-striped" id="vote_assets_costs">
+                    <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                </table>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button type="button" id="vote_asset_send" class="btn btn-primary sendTX" disabled>Vote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Vote User end-->
+
+
+
     <!-- Modal Error -->
     <div class="modal fade" id="ErrorModal" tabindex="-1" aria-labelledby="EMLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -452,7 +483,7 @@
             </div>
         </div>
     </div>
-    <!--modal Wallet end-->
+    <!--modal Error end-->
 
 
 
