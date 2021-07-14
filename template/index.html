@@ -100,11 +100,211 @@
     </div>
     <!-- Page Meta Data end -->
 
+
+
+
     <!-- Page Asset Creator -->
     <div class="page" id="page_assetcreator" style="padding:10px">
         <h1>Asset Creator</h1>
+        <section class="w3l-index2 py-5">
+            <div class="container py-md-3">
+                <div class="step">
+                    <h1>Asset Creator:</h1>
+                    <label for="asset_creator_assetIssuer">Your Name</label>
+                    <input id="asset_creator_assetIssuer" type="text" class="form-control col-md-12" style="display: inline-block;">
+
+                    <h1>Issuing Address:</h1>
+                    <input type="checkbox" id="asset_creator_useKyc">Create Verified Asset
+                    <div class="table-responsive col-md-12">
+                        <table class="table table-bordered table-striped" id="asset_creator_addresses">
+                            <thead><tr><th></th><th>Address</th></tr></thead><tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div class="step">
+                    <h3 style="margin-top:20px">Data:</h3>
+                    <table class="table table-responsive">
+                        <tr>
+                            <td><label for="asset_creator_assetName">Asset Name </label></td>
+                            <td><input id="asset_creator_assetName" type="text" class="form-control col-md-12" style="display: inline-block;"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="asset_creator_description">Description </label></td>
+                            <td><input id="asset_creator_description" type="text" class="form-control col-md-12" style="display: inline-block;"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="asset_creator_aggregation">Aggregation </label>
+                            <td><select id="asset_creator_aggregation" class="form-control col-md-12" style="display: inline-block;">
+                                <option value="aggregatable">Aggregatable(Normal)</option>
+                                <option value="hybrid">Hybrid</option>
+                                <option value="dispersed">Dispersed(Individual)</option>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <td><label for="asset_creator_divisibility">Divisibility: </label></td>
+                            <td><select id="asset_creator_divisibility" class="form-control col-md-12" style="display: inline-block;">
+                                <option value="0">1</option>
+                                <option value="1">0.1</option>
+                                <option value="2">0.01</option>
+                                <option value="3">0.001</option>
+                                <option value="4">0.0001</option>
+                                <option value="5">0.00001</option>
+                                <option value="6">0.000001</option>
+                                <option value="7">0.0000001</option>
+                                <option value="8">0.00000001</option>
+                            </select></td>
+                        </tr>
+                    </table>
+
+                    <div id="asset_creator_dispersedFormulaBox">
+                        <label for="asset_creator_dispersedFormula">Disperse Variable Formula: </label>
+                        <input type="text" id="asset_creator_dispersedFormula" value="return {di:i+1}"><br>
+                        You can enter any valid javascript function where i is the output number starting with 0.<br>
+                        The function should return an object where each key can then be used in the asset name and description by placing {{key}}<br>
+                        If you leave as default then {{di}} will be the serial number starting at 1.
+                    </div>
+                </div>
+
+
+                <div class="step">
+                    <h3 style="margin-top:20px">Files:</h3>
+                    At least 1 image file must have the name "icon"<br>
+                    <input type="file" id="asset_creator_files" multiple><br>
+                    <div id="asset_creator_uploadedFiles">
+
+                    </div>
+                </div>
+
+
+                <div class="step">
+                    <h3 style="margin-top:20px">Rules:</h3>
+                    <label for="asset_creator_rulesEnabled">Enable Rules: </label><input type="checkbox" id="asset_creator_rulesEnabled"><br>
+                    <div id="asset_creator_rulesSettingBox" class="table">
+                        <table class="table table-responsive">
+                            <tr>
+                                <td><label for="asset_creator_rewritable">Make rules rewritable </label></td>
+                                <td><input type="checkbox" id="asset_creator_rewritable"><br></td>
+                            </tr>
+                            <tr>
+                                <td><label for="asset_creator_kyc">KYC Required </label></td>
+                                <td>
+                                    <select id="asset_creator_kyc" class="form-control col-md-12" style="display: inline-block;">
+                                        <option value="false">Not Required</option>
+                                        <option value="true">Required</option>
+                                        <option value="allow">Only following countries</option>
+                                        <option value="ban">Ban following countries</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr id="asset_creator_kycList_div">
+                                <td>Select</td>
+                                <td><select id="asset_creator_kycList" multiple class="form-control col-md-12" style="display: inline-block;"></select></td>
+                            </tr>
+                            <tr>
+                                <td><label for="asset_creator_royaltiesAdd">Royalties: </label></td>
+                                <td><input type="button" id="asset_creator_royaltiesAdd" data-toggle="modal" data-target="#royaltiesModal" value="Add" class="btn btn-secondary" style="display: inline-block;"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td id="asset_creator_royalties"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="asset_creator_voteAdd">Vote: </label></td>
+                                <td><input type="button" id="asset_creator_voteAdd" value="Add" class="btn btn-secondary"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><div id="asset_creator_voteOptions"></div></td>
+                            </tr>
+                            <tr>
+                                <td><label for="asset_creator_expiry">Expiry: </label></td>
+                                <td><input type="number" id="asset_creator_expiry" value="0" class="form-control">*0=Never</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- Royalties Popup -->
+                <div class="modal fade" id="asset_creator_royaltiesModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelRoyalties" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="asset_creator_modalLabelRoyalties">Add Royalty</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span id="asset_creator_modalLabelRoyaltiesClose" aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <label for="asset_creator_royaltiesAddAddress">DigiByte Address</label>
+                                    <input id="asset_creator_royaltiesAddAddress" type="text" class="form-control addressCheck" data-addresscheck="royaltiesAddSave" name="rDAddress" placeholder="DGB Address">
+                                    <br>
+                                    <label for="asset_creator_royaltiesAddAmount">Required Amount</label>
+                                    <input id="asset_creator_royaltiesAddAmount" type="text" class="form-control" name="rNDgb" placeholder="Required Amount">
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="asset_creator_royaltiesAddSave" type="button" class="btn btn-secondary">Save Royalties</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="step">
+                    <h3 style="margin-top:20px">Outputs:</h3>
+                    <div id="asset_creator_outputs"></div>
+                    <input type="button" id="asset_creator_outputAdd" class="btn btn-secondary" data-toggle="modal" data-target="#outputModal" value="Add">
+                </div>
+                <!-- Output Popup -->
+                <div class="modal fade" id="asset_creator_outputModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelOutput" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="asset_creator_modalLabelOutput">Add Output</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span id="asset_creator_modalLabelOutputClose" aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <label for="asset_creator_outputAddAddress">DigiByte Address or AssetId</label>
+                                    <input id="asset_creator_outputAddAddress" type="text" class="form-control outputField" name="oDAddress" placeholder="DGB Address/AssetId">
+                                    <br>
+                                    <label for="asset_creator_outputAddAmount">No. of Assets</label>
+                                    <div class="row" style="margin-right:0px;margin-left:0px;">
+                                        <input id="asset_creator_outputAddAmount" type="text" class="form-control outputField col-md-12" name="oNDgb" placeholder="Number of Assets">
+                                        <select id="asset_creator_outputAddType" class="form-control col-md-5">
+                                            <option value="/Asset">Per Asset</option>
+                                            <option value="/Address">Per Address</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="asset_creator_outputAddSave" type="button" class="btn btn-secondary">Save Output</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="step">
+                    <h3 style="margin-top:20px">Costs:</h3>
+                    <table class="table table-bordered table-striped" id="asset_creator_costs">
+                        <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                    </table>
+                </div>
+                <div class="step">
+                    <button id="asset_creator_create" class="btn btn-secondary">Create Asset</button>
+                </div>
+            </div>
+        </section>
     </div>
     <!-- Page Asset Creator end -->
+
+
 
     <!-- Page KYC -->
     <div class="page" id="page_kyc" style="padding:10px">
@@ -168,6 +368,8 @@
     </div>
     <!-- Page KYC end -->
 
+
+
     <!-- Page Wallet -->
     <div class="page" id="page_wallet" style="padding:10px">
         <h1>Balance:</h1>
@@ -186,6 +388,8 @@
         <label for="wallet_new_label">Label(Optional)</label><input type="text" id="wallet_new_label"><button class="button btn btn-outline-dark">Bech32 Address(All good wallets)</button><button class="button btn btn-outline-dark">Legacy Address(Lazy programmers need to update)</button>
     </div>
     <!-- Page Wallet end -->
+
+
 
     <!-- Modal Login -->
     <div class="modal fade" id="LoginModal" tabindex="-1" aria-labelledby="MLabel" aria-hidden="true">
@@ -213,6 +417,8 @@
     </div>
     <!--modal Login end-->
 
+
+
     <!-- Modal Add User -->
     <div class="modal fade" id="AddModal" tabindex="-1" aria-labelledby="AMLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -239,6 +445,8 @@
     </div>
     <!--modal Add User end-->
 
+
+
     <!-- Modal Remove User -->
     <div class="modal fade" id="RemoveModal" tabindex="-1" aria-labelledby="RMLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -259,6 +467,8 @@
         </div>
     </div>
     <!--modal Remove User end-->
+
+
 
     <!-- Modal Included Media -->
     <div class="modal fade" id="IncludedMediaModal" tabindex="-1" aria-labelledby="IMMLabel" aria-hidden="true">
@@ -290,6 +500,8 @@
         </div>
     </div>
     <!--modal Included Media end-->
+
+
 
     <!-- Modal Wallet -->
     <div class="modal fade" id="WalletModal" tabindex="-1" aria-labelledby="WMLabel" aria-hidden="true">
@@ -327,6 +539,8 @@
         </div>
     </div>
     <!--modal Wallet end-->
+
+
 
     <!-- Modal Stream -->
     <div class="modal fade" id="StreamModal" tabindex="-1" aria-labelledby="SMLabel" aria-hidden="true">
