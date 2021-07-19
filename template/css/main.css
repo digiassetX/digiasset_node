@@ -160,3 +160,71 @@ a[disabled] {
 .kyc_option {
     display: none;
 }
+
+.asset_creator_step {
+    display: none;
+}
+#asset_creator_step1 {
+    display: block;
+}
+#asset_creator_dispersedFormulaBox {
+    display: none;
+}
+#asset_creator_rulesSettingBox {
+    display: none;
+}
+
+.asset_creator_fileEntry {
+    border:         black;
+    border-style:   solid;
+    border-width:   thick;
+    position:       relative;
+    float:          left;
+    width:          150px;
+}
+
+.asset_creator_fileName {
+    font-size: small;
+}
+.asset_creator_fileName::before {
+    font-size: small;
+    font-weight:    bold;
+    font-style:     italic;
+    content:        "Name: ";
+    width:          50px;
+}
+
+.asset_creator_fileType {
+    font-size: small;
+}
+.asset_creator_fileType::before {
+    font-size: small;
+    font-weight:    bold;
+    font-style:     italic;
+    content:        "Type: ";
+    width:          50px;
+}
+
+.asset_creator_fileSize {
+    font-size: small;
+}
+.asset_creator_fileSize::before {
+    font-size: small;
+    font-weight:    bold;
+    font-style:     italic;
+    content:        "Size: ";
+    width:          50px;
+}
+
+.asset_creator_filePreview {
+    width:          150px;
+    height:         100px;
+}
+
+.asset_creator_fileCost {
+    clear:          both;
+}
+
+input:invalid {
+    background-color: #ffdddd;
+}

@@ -16,12 +16,46 @@ const post=async(url,data)=>{
     });
 }
 
-const get=async(url)=>{
-    let response=await $.getJSON(url);
+const get=async(url,data)=>{
+    let response=await $.getJSON(url,data);
     if (response.error!==undefined) throw response.error;
     return response;
 }
 
+const stream=async(url,data,mimeType)=>{
+    return new Promise((resolve,reject)=>{
+        let oReq = new XMLHttpRequest();
+        oReq.open("POST", url, true);
+        oReq.responseType = "arraybuffer";
+        oReq.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+        oReq.onload = function() {
+            let arrayBuffer = oReq.response;
+            resolve(new Blob([arrayBuffer], {type: mimeType}));
+        }
+        oReq.onerror = function (e) {
+            reject(e);
+        }
+
+        oReq.send(JSON.stringify(data));
+    });
+}
+
+/*
+ ██████╗ ██████╗ ██████╗ ███████╗
+██╔════╝██╔═══██╗██╔══██╗██╔════╝
+██║     ██║   ██║██████╔╝███████╗
+██║     ██║   ██║██╔══██╗╚════██║
+╚██████╗╚██████╔╝██║  ██║███████║
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+ */
+/**
+ * Gets binary data from web
+ * @param {string}  url
+ * @param {string}  mimeType
+ * @return {Promise<Blob>}
+ */
+api.cors=async(url,mimeType)=>stream('/api/cors',{url},mimeType);
 
 /*
 ██╗   ██╗███████╗███████╗██████╗
@@ -316,6 +350,14 @@ api.cid.reject=async(assetId,cid)=>post('/api/cid/reject.json',{assetId,cid});
  */
 api.cid.page=(cid)=>'/api/cid/'+cid+'.html';
 
+/**
+ * Gets binary data from IPFS
+ * @param {string}  cid
+ * @param {string}  mimeType
+ * @return {Promise<Blob>}
+ */
+api.cid.stream=(cid,mimeType)=>stream('/api/cid/stream',{cid},mimeType);
+
 /*
  █████╗ ███████╗███████╗███████╗████████╗██╗██████╗
 ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝██║██╔══██╗
@@ -385,7 +427,7 @@ api.stream=async(key)=>get('/api/stream/'+key+'.json');
 ╚███╔███╔╝██║  ██║███████╗███████╗███████╗   ██║
  ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝
  */
-api.wallet={addresses:{},fix:{},build:{}};
+api.wallet={asset:{},addresses:{},fix:{},build:{}};
 
 /**
  * Gets the current wallet sync height
@@ -410,6 +452,56 @@ api.wallet.blockHeight=async()=>get('/api/wallet/height.json');
  * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
  */
 api.wallet.addresses.list=async(label)=>post('/api/wallet/addresses/list.json',{label});
+
+/**
+ * Gets a list of assets
+ * @param {boolean?} byLabel - undefined for all labels
+ * @return {Promise<{
+ *      label:      string,
+ *      assetId:    string,
+ *      value:      string,
+ *      decimals:   int,
+ *      cid:        string?,
+ *      cache: {
+ *          rules:  AssetRules?
+ *          kyc:    KycState?,
+ *          issuer: string,
+ *          divisibility: int,
+ *          metadata: {
+ *              txid:    string,
+ *              cid:     string
+ *          }[]
+ *      }
+ * }[]>}
+ */
+api.wallet.asset.list=async(byLabel)=>get('/api/wallet/asset/list.json',{byLabel});
+
+/**
+ * Gets an assets data
+ * @param assetId
+ * @return {{
+ *     rules:   AssetRules?,
+ *     kyc:     KycState?,
+ *     issuer:  string,
+ *     locked:      boolean,
+ *     aggregation: "aggregatable"|"hybrid"|"dispersed",
+ *     divisibility: int,
+ *     metadata:    {
+ *         txid:    string,
+ *         cid:     string,
+ *         data:    Object
+ *     }
+ * }}
+ */
+api.wallet.asset.json=async(assetId)=>get(`/api/wallet/asset/${assetId}.json`);
+
+/**
+ * Gets a list of addresses that can be used to issue an asset
+ * @param {boolean} kyc
+ * @param {string?} label - undefined for all labels
+ * @return {Promise<unknown>}   todo
+ */
+api.wallet.asset.issuable=async(kyc=true,label)=>get('/api/wallet/asset/issuable.json',{kyc,label});
 
 /**
  * Returns a new bech32 address

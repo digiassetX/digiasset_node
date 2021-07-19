@@ -8,6 +8,8 @@
     <link href="/css/style-starter.css" rel="stylesheet" type="text/css">
     <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/flags.css" rel="stylesheet" type="text/css">
     <link href="/css/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -29,7 +31,7 @@
               <a class="nav-link nav_page needwallet" data-page="page_kyc" data-tooltip="Requires Wallet Setup" href="#" disabled>Address Verifier</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav_page needwallet" data-page="page_assetcreator" data-tooltip="Requires Wallet Setup" href="#" disabled>Asset Creator</a>
+              <a class="nav-link nav_page needwallet asset_creator_reset" data-page="page_assetcreator" data-tooltip="Requires Wallet Setup" href="#" disabled>Asset Creator</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
@@ -108,43 +110,52 @@
         <h1>Asset Creator</h1>
         <section class="w3l-index2 py-5">
             <div class="container py-md-3">
-                <div class="step">
-                    <h1>Asset Creator:</h1>
-                    <label for="asset_creator_assetIssuer">Your Name</label>
-                    <input id="asset_creator_assetIssuer" type="text" class="form-control col-md-12" style="display: inline-block;">
 
+                <div class="asset_creator_step" id="asset_creator_step1">
                     <h1>Issuing Address:</h1>
-                    <input type="checkbox" id="asset_creator_useKyc">Create Verified Asset
+                    <input type="checkbox" id="asset_creator_useKyc" checked>Create Verified Asset
                     <div class="table-responsive col-md-12">
                         <table class="table table-bordered table-striped" id="asset_creator_addresses">
                             <thead><tr><th></th><th>Address</th></tr></thead><tbody>
                         </table>
                     </div>
-
                 </div>
 
-                <div class="step">
+                <div class="asset_creator_step" id="asset_creator_step2">
+                    <h1>Asset Creator:</h1>
+                    <label for="asset_creator_assetIssuer">Your Name</label>
+                    <input id="asset_creator_assetIssuer" type="text" class="form-control col-md-12" style="display: inline-block;">
+
+                    <h3 style="margin-top:20px">Files:</h3>
+                    At least 1 image file must have the name "icon"<br>
+                    <input type="file" id="asset_creator_files" multiple><br>
+                    <div id="asset_creator_uploadedFiles">
+
+                    </div>
+
+                    <br>
+
                     <h3 style="margin-top:20px">Data:</h3>
                     <table class="table table-responsive">
                         <tr>
                             <td><label for="asset_creator_assetName">Asset Name </label></td>
-                            <td><input id="asset_creator_assetName" type="text" class="form-control col-md-12" style="display: inline-block;"></td>
+                            <td><input id="asset_creator_assetName" type="text" class="form-control col-md-12"></td>
                         </tr>
                         <tr>
                             <td><label for="asset_creator_description">Description </label></td>
-                            <td><input id="asset_creator_description" type="text" class="form-control col-md-12" style="display: inline-block;"></td>
+                            <td><input id="asset_creator_description" type="text" class="form-control col-md-12"></td>
                         </tr>
                         <tr>
                             <td><label for="asset_creator_aggregation">Aggregation </label>
-                            <td><select id="asset_creator_aggregation" class="form-control col-md-12" style="display: inline-block;">
+                            <td><select id="asset_creator_aggregation" class="form-control col-md-12">
                                 <option value="aggregatable">Aggregatable(Normal)</option>
                                 <option value="hybrid">Hybrid</option>
-                                <option value="dispersed">Dispersed(Individual)</option>
+                                <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(Individual)</option>
                             </select></td>
                         </tr>
                         <tr>
                             <td><label for="asset_creator_divisibility">Divisibility: </label></td>
-                            <td><select id="asset_creator_divisibility" class="form-control col-md-12" style="display: inline-block;">
+                            <td><select id="asset_creator_divisibility" class="form-control col-md-12">
                                 <option value="0">1</option>
                                 <option value="1">0.1</option>
                                 <option value="2">0.01</option>
@@ -158,35 +169,16 @@
                         </tr>
                     </table>
 
-                    <div id="asset_creator_dispersedFormulaBox">
-                        <label for="asset_creator_dispersedFormula">Disperse Variable Formula: </label>
-                        <input type="text" id="asset_creator_dispersedFormula" value="return {di:i+1}"><br>
-                        You can enter any valid javascript function where i is the output number starting with 0.<br>
-                        The function should return an object where each key can then be used in the asset name and description by placing {{key}}<br>
-                        If you leave as default then {{di}} will be the serial number starting at 1.
-                    </div>
-                </div>
-
-
-                <div class="step">
-                    <h3 style="margin-top:20px">Files:</h3>
-                    At least 1 image file must have the name "icon"<br>
-                    <input type="file" id="asset_creator_files" multiple><br>
-                    <div id="asset_creator_uploadedFiles">
-
-                    </div>
-                </div>
-
-
-                <div class="step">
                     <h3 style="margin-top:20px">Rules:</h3>
                     <label for="asset_creator_rulesEnabled">Enable Rules: </label><input type="checkbox" id="asset_creator_rulesEnabled"><br>
                     <div id="asset_creator_rulesSettingBox" class="table">
-                        <table class="table table-responsive">
-                            <tr>
+                        <table class="table table-responsive"><!-- todo this really should not be a table -->
+
+                            <tr class="asset_creator_unlockedOnly">
                                 <td><label for="asset_creator_rewritable">Make rules rewritable </label></td>
                                 <td><input type="checkbox" id="asset_creator_rewritable"><br></td>
                             </tr>
+
                             <tr>
                                 <td><label for="asset_creator_kyc">KYC Required </label></td>
                                 <td>
@@ -196,64 +188,82 @@
                                         <option value="allow">Only following countries</option>
                                         <option value="ban">Ban following countries</option>
                                     </select>
+                                    <div id="asset_creator_kycList_div">
+                                        <table class="table table-bordered table-striped" id="asset_creator_kycList">
+                                            <thead><tr><th>Country</th></tr></thead><tbody>
+                                        </table>
+                                    </div>
                                 </td>
                             </tr>
-                            <tr id="asset_creator_kycList_div">
-                                <td>Select</td>
-                                <td><select id="asset_creator_kycList" multiple class="form-control col-md-12" style="display: inline-block;"></select></td>
-                            </tr>
+
                             <tr>
-                                <td><label for="asset_creator_royaltiesAdd">Royalties: </label></td>
-                                <td><input type="button" id="asset_creator_royaltiesAdd" data-toggle="modal" data-target="#royaltiesModal" value="Add" class="btn btn-secondary" style="display: inline-block;"></td>
+                                <td>Royalties:</td>
+                                <td>
+                                    <table class="table table-bordered table-striped" id="asset_creator_royalties">
+                                        <thead><tr><th></th><th>Address</th><th>Amount</th></tr></thead><tbody>
+                                    </table>
+                                    <label for="asset_creator_currency">Royalty Base Currency</label><select id="asset_creator_currency">
+                                        <optgroup label="Crypto">
+                                            <option value="DGB" selected>DigiByte</option>
+                                            <option value="BTC">Bitcoin</option>
+                                            <option value="ETH">Ethereum</option>
+                                            <option value="LTC">Litecoin</option>
+                                            <option value="DCR">Decred</option>
+                                            <option value="ZIL">Zilliqa</option>
+                                            <option value="RVN">Ravencoin</option>
+                                            <option value="XVG">Verge</option>
+                                            <option value="RDD">ReddCoin</option>
+                                            <option value="NXS">Nexus</option>
+                                            <option value="POT">PotCoin</option>
+                                        </optgroup>
+                                        <optgroup label="Fiat">
+                                            <option value="CAD">Canadian Dollars</option>
+                                            <option value="USD">United States Dollars</option>
+                                            <option value="EUR">Euro</option>
+                                            <option value="GBP">Pound</option>
+                                            <option value="AUD">Australian Dollars</option>
+                                            <option value="JPY">Japanese Yen</option>
+                                            <option value="CNY">Chinese Yuan</option>
+                                            <option value="TRY">Turkish Lira</option>
+                                            <option value="BRL">Brazilian Real</option>
+                                            <option value="CHF">Swiss Franc</option>
+                                        </optgroup>
+                                    </select>
+                                </td>
                             </tr>
+
                             <tr>
-                                <td></td>
-                                <td id="asset_creator_royalties"></td>
+                                <td><label for="asset_creator_deflate">Deflation:</label></td>
+                                <td>
+                                    <input type="number" id="asset_creator_deflate" value="0" class="form-control">
+                                    Should usually be zero.  If not 0 that many assets must be burned every time someone sends the asset to someone
+                                </td>
                             </tr>
+
                             <tr>
-                                <td><label for="asset_creator_voteAdd">Vote: </label></td>
-                                <td><input type="button" id="asset_creator_voteAdd" value="Add" class="btn btn-secondary"></td>
+                                <td>Vote: </td>
+                                <td>
+                                    <table class="table table-bordered table-striped" id="asset_creator_voteOptions">
+                                        <thead><tr><th></th><th>Option</th></tr></thead><tbody>
+                                    </table>
+                                    <label for="asset_creator_voteMovable">Votes Movable</label><input type="checkbox" id="asset_creator_voteMovable">
+                                </td>
                             </tr>
-                            <tr>
-                                <td></td>
-                                <td><div id="asset_creator_voteOptions"></div></td>
-                            </tr>
+
                             <tr>
                                 <td><label for="asset_creator_expiry">Expiry: </label></td>
                                 <td><input type="number" id="asset_creator_expiry" value="0" class="form-control">*0=Never</td>
                             </tr>
+
                         </table>
                     </div>
-                </div>
-                <!-- Royalties Popup -->
-                <div class="modal fade" id="asset_creator_royaltiesModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelRoyalties" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="asset_creator_modalLabelRoyalties">Add Royalty</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span id="asset_creator_modalLabelRoyaltiesClose" aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <label for="asset_creator_royaltiesAddAddress">DigiByte Address</label>
-                                    <input id="asset_creator_royaltiesAddAddress" type="text" class="form-control addressCheck" data-addresscheck="royaltiesAddSave" name="rDAddress" placeholder="DGB Address">
-                                    <br>
-                                    <label for="asset_creator_royaltiesAddAmount">Required Amount</label>
-                                    <input id="asset_creator_royaltiesAddAmount" type="text" class="form-control" name="rNDgb" placeholder="Required Amount">
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button id="asset_creator_royaltiesAddSave" type="button" class="btn btn-secondary">Save Royalties</button>
-                            </div>
-                        </div>
-                    </div>
+
+                    <button id="asset_creator_goToOutputs">Get Recipients</button>
                 </div>
 
 
-                <div class="step">
-                    <h3 style="margin-top:20px">Outputs:</h3>
+                <div class="asset_creator_step" id="asset_creator_step3">
+                    <h3 style="margin-top:20px">Recipients:</h3>
                     <div id="asset_creator_outputs"></div>
                     <input type="button" id="asset_creator_outputAdd" class="btn btn-secondary" data-toggle="modal" data-target="#outputModal" value="Add">
                 </div>
@@ -290,13 +300,12 @@
                 </div>
 
 
-                <div class="step">
+                <div class="asset_creator_step" id="asset_creator_step4">
                     <h3 style="margin-top:20px">Costs:</h3>
                     <table class="table table-bordered table-striped" id="asset_creator_costs">
                         <thead><tr><th>Type</th><th>Amount</th></tr></thead>
                     </table>
-                </div>
-                <div class="step">
+
                     <button id="asset_creator_create" class="btn btn-secondary">Create Asset</button>
                 </div>
             </div>
@@ -741,9 +750,11 @@
     <!--modal TXID end -->
 
     <script src="/js/jquery-3.5.1.js"></script>
+    <script src="/js/flags.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/jquery.dataTables.min.js"></script>
+    <script src="/js/dataTables.buttons.min.js"></script>
     <script src="/js/main.js"></script>
 </body>
 </html>

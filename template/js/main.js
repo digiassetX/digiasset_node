@@ -1,6 +1,8 @@
 //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
 // noinspection JSUnfilteredForInLoop
 
+const fileCostPerByte=10000;
+
 let getHeight=async()=>{
     let height=await api.height();
     $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
@@ -345,8 +347,9 @@ const startWallet=(type)=>{
             processing: '<div class="spinner"></div>'
         },
         ajax: {
-            url: '/api/wallet/'+type+'.json',
-            dataSrc: ''
+            url: '/api/wallet/asset/list.json',
+            dataSrc:'',
+            data: {byLabel:(type==="assetsbylabel")}
         },
         order: [
             [0, "asc"]
@@ -1108,3 +1111,565 @@ $(document).on('keyup','.kyc_option',validateKYCInputs);
 $(document).on('click','#kycDone2',()=>{
     validateKYCInputs(true);
 });
+
+
+/*
+ ██████╗██████╗ ███████╗ █████╗ ████████╗ ██████╗ ██████╗
+██╔════╝██╔══██╗██╔════╝██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+██║     ██████╔╝█████╗  ███████║   ██║   ██║   ██║██████╔╝
+██║     ██╔══██╗██╔══╝  ██╔══██║   ██║   ██║   ██║██╔══██╗
+╚██████╗██║  ██║███████╗██║  ██║   ██║   ╚██████╔╝██║  ██║
+ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+ */
+
+/*___ _            _
+ / __| |_ ___ _ __/ |
+ \__ \  _/ -_) '_ \ |
+ |___/\__\___| .__/_|
+             |_|
+Pick issuing address, lock/unlock state and if reissuing
+ */
+//reset buttons
+$(document).on('click','.asset_creator_reset',()=>{
+    assetCreatorAddresses.ajax.reload();
+    $(".asset_creator_step").hide();
+    $("#asset_creator_step1").show();
+});
+
+//create address table
+let assetCreatorAddresses=$("#asset_creator_addresses").DataTable({
+    processing: true,
+    responsive: true,
+    language: {
+        loadingRecords: '&nbsp;',
+        processing: '<div class="spinner"></div>'
+    },
+    ajax: {
+        url: '/api/wallet/asset/issuable.json',
+        data: function(d) {
+            d.kyc = ($("#asset_creator_useKyc").is(':checked'));
+        },
+        dataSrc: ''
+    },
+    order: [
+        [1, "asc"]
+    ],
+    columns: [
+        {
+            data: 'null',
+            render: (data, type, row) => {
+                let html=`<button class="asset_creator_issue" data-type="locked" data-address="${row.address}">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}">Unlocked</button>`;
+                for (let assetId of row.issuance) {
+                    if (assetId.substr(0,1)==="L") continue;
+                    html+=`<button class="asset_creator_issue" data-type="reissue" data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
+                }
+                return html;
+            },
+            orderable: false
+        },
+        {
+            data: 'address'
+        }
+    ]
+});
+
+//handle Verified check button click
+$(document).on('click','#asset_creator_useKyc',()=>assetCreatorAddresses.ajax.reload());
+
+//handle reissue click
+$(document).on('click','.asset_creator_issue',async function(){
+    //get data
+    const {type,address,assetid}=$(this).data();
+    /*
+    type: "locked"|"unlocked","reissue"
+    address: string
+    assetid:string but only if type is "reissue"
+     */
+
+    //show/hide features not available to type
+    let locked=(type==="locked");
+    $(".asset_creator_unlockedOnly")[locked?"hide":"show"]();
+
+    //save lock status and issuer
+    $("#asset_creator_create").data("locked",locked).data("issuing",address);
+
+    //set fields to default(skip asset creator since likely always the same)
+    $("#asset_creator_divisibility option").removeAttr('disabled');
+    $("#asset_creator_aggregation option").removeAttr('disabled');
+    $("#asset_creator_assetName").val("");
+    $("#asset_creator_description").val("");
+    $("#asset_creator_rulesEnabled").prop('checked',false);
+    $("#asset_creator_rulesSettingBox").hide();
+    $("#asset_creator_rewritable").prop('checked',false);
+    $("#asset_creator_kyc option[value=false]").prop('selected', true);
+    $("#asset_creator_kycList_div").hide();
+    assetCreatorKYC.clear().rows.add(flags.countries()).draw();
+    assetCreatorRoyalties.clear().draw();
+    $("#asset_creator_deflate").val(0);
+    $("#asset_creator_currency option[value=DGB]").prop('selected', true);
+    $("#asset_creator_voteMovable").prop('checked',false);
+    assetCreatorVoteOptions.clear().buttons().enable().draw();
+    $(".asset_creator_voteInputs").removeAttr('disabled');
+    $("#asset_creator_expiry").val(0).removeAttr('disabled');
+    assetCreator_fileTable=[];
+
+    //handle if reissuing
+    if (type==="reissue") {
+        //todo add spinner
+
+        //get most recent data
+        let {aggregation,divisibility,metadata,rules}=await api.wallet.asset.json(assetid);
+
+        //set divisibility
+        $("#asset_creator_divisibility option[value=" + divisibility + "]").removeAttr('disabled').prop('selected', true)
+            .siblings().attr('disabled',true);
+
+        //set aggregation
+        $("#asset_creator_aggregation option[value=" + aggregation + "]").removeAttr('disabled').prop('selected', true)
+            .siblings().attr('disabled',true);
+
+        //handle metadata
+        let voteProcessed=false;
+        if (metadata.data!==undefined) {
+            const {data,votes}=metadata.data;
+            if (data!==undefined) {
+                const {assetName,issuer,description,urls}=data;
+                if (assetName!==undefined) $("#asset_creator_assetName").val(assetName);
+                if (issuer!==undefined) $("#asset_creator_assetIssuer").val(issuer);
+                if (description!==undefined) $("#asset_creator_description").val(description);
+                if (urls!==undefined) {
+                    for (let {name,url,mimeType} of urls) {
+                        let fileData;
+                        if (url.substr(0,7)==="ipfs://") {
+                            fileData=await createCidBlob(url.substr(7),name,mimeType);
+                        } else {
+                            let file=api.cors(url,mimeType);
+                            fileData=await createFileBlob(file,name,mimeType);
+                        }
+                        assetCreator_fileTable.push(fileData);
+                    }
+                    redrawFileTable();
+                }
+            }
+            if (votes!==undefined) {
+                assetCreatorVoteOptions.rows.add(votes).buttons().disable().draw();
+                voteProcessed=true;
+            }
+        }
+
+        //set rules
+        if (rules!==undefined) {
+            const {rewritable,signers,royalties,vote,kyc,currency,expires,deflate}=rules;
+            $("#asset_creator_rulesEnabled").prop('checked',true);
+            $("#asset_creator_rulesSettingBox").show();
+            $("#asset_creator_rewritable").prop('checked',rewritable);
+
+            if (signers!==undefined) {
+                throw "requires PSBT"; //todo later requires core V8 for people to use so no real hurry
+            }
+
+            if (royalties!==undefined) {
+                assetCreatorRoyalties.clear();
+                for (let address in royalties) {
+                    assetCreatorRoyalties.rows.add([{address,amount:royalties[address]}])
+                }
+                assetCreatorRoyalties.draw();
+            }
+            if (currency!==undefined) {
+                $("#asset_creator_currency option[value="+currency.name+"]").prop('selected', true);
+            }
+
+            if (kyc!==undefined) {
+                if (kyc===true) {
+                    $("#asset_creator_kyc option[value=true]").prop('selected', true);
+                } else {
+                    //show if allow or ban
+                    let allow=(kyc.allow!==undefined);
+                    $("#asset_creator_kyc option[value="+(allow?"allow":"ban")+"]").prop('selected', true);
+                    $("#asset_creator_kycList_div").show();
+
+                    //select any countries that where selected
+                    let list=kyc[allow?"allow":"ban"];
+                    assetCreatorKYC.rows().every(function () {
+                        let data = this.data();
+                        let row = $(this.node());
+                        if (list.indexOf(data.code)!==-1) row.toggleClass('selected');
+                    });
+                }
+            }
+
+            if (deflate!==undefined) {
+                $("#asset_creator_deflate").val(deflate);
+            }
+
+            if (vote!==undefined) {
+                if (!voteProcessed) throw "Could not recover vote options";
+                if (vote.cutoff!==undefined) $("#asset_creator_expiry").val(vote.cutoff);
+                if (vote.movable!==undefined)$("#asset_creator_voteMovable").prop('checked',true);
+                $(".asset_creator_voteInputs").attr('disabled',true);
+            }
+
+            if (expires!==undefined) {
+                $("#asset_creator_expiry").val(expires).attr('disabled',true);
+            }
+        }
+
+        //todo remove spinner
+    }
+
+
+    //show next step
+    $(".asset_creator_step").hide();
+    $("#asset_creator_step2").show();
+});
+
+/*___ _              ___
+ / __| |_ ___ _ __  |_  )
+ \__ \  _/ -_) '_ \  / /
+ |___/\__\___| .__/ /___|
+             |_|
+ */
+
+let assetCreatorVoteOptions=$("#asset_creator_voteOptions").DataTable({
+    responsive: true,
+    dom: 'Bfrtip',
+    buttons: [
+        {
+            text: 'Add',
+            action: function ( e, dt, node, config ) {
+                let lastIndex=assetCreatorVoteOptions.rows().count();
+                assetCreatorVoteOptions.row.add({
+                    label: "Vote Option"
+                }).rows().every(function ( rowIdx, tableLoop, rowLoop ) {
+                    let d = this.data();
+                    d.first=(rowIdx===0);
+                    d.last=(rowIdx===lastIndex);
+                    this.invalidate();
+                }).draw();
+            }
+        }
+    ],
+    createdRow: function( row, data, dataIndex ) {
+        $('.cellEditable', row).prop('contenteditable',true );
+    },
+    columns: [
+        {
+            data: 'null',
+            render: (data, type, row) => {
+                if (row.address!==undefined) return "";    //no controls if reissuance as they can't be changed
+                return `<button class="asset_creator_delete">Delete</button><button class="asset_creator_up"${row.first?' disabled':''}>Up</button><button class="asset_creator_down"${row.last?' disabled':''}>Down</button>`;
+            },
+            orderable: false
+        },
+        {
+            className: 'cellEditable cellEditableString cellEditableCol-label',
+            data: 'label',
+            orderable: false
+        }
+    ]
+});
+
+let assetCreatorRoyalties=$("#asset_creator_royalties").DataTable({
+    responsive: true,
+    dom: 'Bfrtip',
+    select: {
+        style:    'os',
+        selector: 'td:first-child'
+    },
+    buttons: [
+        {
+            text: 'Add',
+            action: function ( e, dt, node, config ) {
+                let lastIndex=assetCreatorRoyalties.rows().count();
+                assetCreatorRoyalties.row.add({
+                    address: "Enter Royalty Payout Address",
+                    amount: 0
+                }).rows().every(function ( rowIdx, tableLoop, rowLoop ) {
+                    let d = this.data();
+                    d.first=(rowIdx===0);
+                    d.last=(rowIdx===lastIndex);
+                    this.invalidate();
+                }).draw();
+            }
+        }
+    ],
+    createdRow: function( row, data, dataIndex ) {
+        $('.cellEditable', row).prop('contenteditable',true );
+    },
+    columns: [
+        {
+            data: 'null',
+            //todo replace below buttons with symbols
+            render: (data, type, row) => `<button class="asset_creator_delete">Delete</button><button class="asset_creator_up"${row.first?' disabled':''}>Up</button><button class="asset_creator_down"${row.last?' disabled':''}>Down</button>`,
+            orderable: false
+        },
+        {
+            className: 'cellEditable cellEditableString cellEditableCol-address',
+            data: 'address'
+        },
+        {
+            className: 'cellEditable cellEditableNumber cellEditableCol-amount',
+            data: 'amount'
+        }
+    ]
+});
+
+let assetCreatorKYC=$("#asset_creator_kycList").DataTable({
+    responsive: true,
+    columns: [
+        {
+            data: 'null',
+            render: (data, type, row) =>row.name+flags.html(row.code)
+        }
+    ]
+});
+
+
+
+//handle aggregation selection
+$(document).on('change','#asset_creator_aggregation',()=>{
+    let selected=$('#asset_creator_aggregation').val();
+    if (selected==="dispersed") {
+        $("#asset_creator_divisibility option[value=0]").removeAttr('disabled').prop('selected', true)
+            .siblings().attr('disabled', true);
+    } else {
+        $("#asset_creator_divisibility option").removeAttr('disabled');
+    }
+});
+
+//handle enable rules check box
+$(document).on('change','#asset_creator_rulesEnabled',()=>{
+    const checked=$('#asset_creator_rulesEnabled').is(':checked');
+    $("#asset_creator_rulesSettingBox")[checked?"show":"hide"]();
+});
+
+//handle selecting kyc country
+$(document).on('click','#asset_creator_kyc',()=>{
+    let selected=$('#asset_creator_kyc').val();
+    $("#asset_creator_kycList_div")[((selected==="true")||(selected==="false"))?"hide":"show"]();
+});
+$(document).ready(function() {
+    $("#asset_creator_kycList tbody").on('click','tr',function() {
+        $(this).toggleClass('selected');
+    });
+});
+
+//handle rule table edits
+const getTableRowAndColumn=(dom)=>{
+    //get row element
+    let parent=dom.closest('tr');
+    let table=dom.closest('table').DataTable();
+    let row=table.row( parent );
+
+    //get column
+    let column;
+    let classList = dom.attr('class').split(/\s+/);
+    for (let className of classList) {
+        let parts=className.split("-");
+        if (parts[0]==="cellEditableCol") {
+            column=parts[1];
+            break;
+        }
+    }
+
+    return {table,row,column};
+}
+$(document).ready(function() {
+    $(document).on('blur',".cellEditableString",function() {
+        let {row,column}=getTableRowAndColumn($(this));
+        if (column===undefined) return;
+
+        //modify data
+        let newValue=$(this).html();
+        let data=row.data();
+        data[column]=newValue;
+        row.data(data);
+    });
+    $(document).on('blur',".cellEditableNumber",function() {
+        let {row,column}=getTableRowAndColumn($(this));
+        if (column===undefined) return;
+
+        //modify data
+        let newValue=$(this).html();
+        let data=row.data();
+        let parsed=parseFloat(newValue);
+        if (parsed.toString()==newValue) data[column]=parsed;
+        row.data(data).draw('null');
+    });
+    $(document).on('click','.asset_creator_delete',function() {
+        let {table,row}=getTableRowAndColumn($(this));
+        row.remove().draw();
+    });
+    $(document).on('click','.asset_creator_up',function() {
+        let {table,row}=getTableRowAndColumn($(this));
+        //todo
+    });
+    $(document).on('click','.asset_creator_down',function() {
+        let {table,row}=getTableRowAndColumn($(this));
+        //todo
+    });
+});
+
+//handle clicks to Get Recipients Button
+$(document).on('click','#asset_creator_goToOutputs',()=>{
+    //todo add some sanity checks
+    //must have asset name
+    //must have icon
+    if ($("#asset_creator_assetName").val().length===0) return showError("Asset name must be filled");
+    if ($("#asset_creator_description").val().length===0) return showError("Description must be filled");
+    let foundIcon=false;
+    let names={};
+    for (let {name} of assetCreator_fileTable) {
+        if (names[name]) return showError("Duplicate file name found");
+        if (name==="icon") foundIcon=true;
+        names[name]=true;
+    }
+    if (!foundIcon) return showError("Must contain one file named icon");
+
+    $(".asset_creator_step").hide();
+    $("#asset_creator_step3").show();
+});
+
+/*___ _              ___         ___ _ _       _    _    _
+ / __| |_ ___ _ __  |_  )  ___  | __(_) |___  | |  (_)__| |_
+ \__ \  _/ -_) '_ \  / /  |___| | _|| | / -_) | |__| (_-<  _|
+ |___/\__\___| .__/ /___|       |_| |_|_\___| |____|_/__/\__|
+             |_|
+ */
+/**
+ * Takes a HTML5 file input and converts to a Blob
+ * @param {File}    file
+ * @param {string?} name
+ * @param {string?} type
+ * @return {Promise<{
+ *     name:    string,
+ *     type:    string,
+ *     size:    int,
+ *     data:    Blob
+ * }>}
+ */
+const createFileBlob=(file,name,type)=>{
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let blob = new Blob([new Uint8Array(e.target.result)], {type: file.type});
+            resolve({
+                name: name||file.name,
+                type: type||file.type,
+                size: file.size,
+                data: blob
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+/**
+ * Uses a file already on IPFS
+ * @param {string}  cid
+ * @param {string} name
+ * @param {string} type
+ * @return {Promise<{
+ *     name:    string,
+ *     type:    string,
+ *     size:    int,
+ *     data:    Blob,
+ *     cid:     string
+ * }>}
+ */
+const createCidBlob=(cid,name,type)=>{
+    return new Promise(async(resolve, reject) => {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let blob = new Blob([new Uint8Array(e.target.result)], {type});
+            resolve({
+                name, type,
+                size: blob.size,
+                data: blob
+            });
+        };
+        reader.readAsArrayBuffer(await api.cid.stream(cid));
+    });
+}
+
+//handle file names
+$(document).on('keyup','.asset_creator_fileName',function(){
+    let index=parseInt($(this).data('index'));
+    assetCreator_fileTable[index].name=$(this).text();
+});
+
+//handle files
+const assetCreator_uploadedFiles = document.getElementById('asset_creator_uploadedFiles');
+const assetCreator_fileInput = document.querySelector('input[type=file]');
+let assetCreator_fileTable=[];
+const assetCreator_thumbSize=[150,100];
+const drawPreviewImage=(index,data)=>{
+    let canvas=document.getElementById(`preview-${index}`);
+    let ctx = canvas.getContext('2d');
+    canvas.width=assetCreator_thumbSize[0];
+    canvas.height=assetCreator_thumbSize[1];
+    let img = new Image();
+    img.onload = function(){
+        let newWidth=assetCreator_thumbSize[0];
+        let newHeight=assetCreator_thumbSize[1];
+        let startWidth=0;
+        let startHeight=0;
+        let ratio=img.width/img.height;
+        if (ratio>newWidth/newHeight) {
+            newHeight=newWidth/ratio;
+            startHeight=(assetCreator_thumbSize[1]-newHeight)/2;
+        } else {
+            newWidth=newHeight*ratio;
+            startWidth=(assetCreator_thumbSize[0]-newWidth)/2;
+        }
+        ctx.drawImage(img, startWidth, startHeight,newWidth,newHeight);
+    }
+    img.src = URL.createObjectURL(data);
+}
+const redrawFileTable=()=>{
+    //build html
+    let html=''
+    let totalSize=0;
+    for (let index in assetCreator_fileTable) {
+        let {name,type,size,data}=assetCreator_fileTable[index];
+        totalSize+=size;
+        let prefix=["EB","PB","TB","GB","MB","kB","B"];
+        while ((size>2000)&&(prefix.length>0)) {
+            size/=1000;
+            prefix.pop();
+        }
+        let sizeText=(Math.round(size*100)/100).toString()+prefix.pop();
+        html+=`<div class="asset_creator_fileEntry"><div class="asset_creator_fileName" contenteditable="true" data-index="${index}">${name}</div><div class="asset_creator_fileType">${type}</div><div class="asset_creator_fileSize">${sizeText}</div><canvas class="asset_creator_filePreview" id="preview-${index}"></canvas></div>`;
+    }
+    cost=(totalSize*fileCostPerByte+10)/100000000;
+    html+='<div class="asset_creator_fileCost">Publishing Cost: '+cost.toFixed(8)+' DGB</div>';
+    assetCreator_uploadedFiles.innerHTML=html;
+    for (let index in assetCreator_fileTable) {
+        let {name,type,size,data}=assetCreator_fileTable[index];
+        if (type.startsWith('image/')) {
+            drawPreviewImage(index, data);
+        } else {
+
+        }
+    }
+}
+let timerFileUploader;
+assetCreator_fileInput.addEventListener('change', ()=>{
+    for (let file of assetCreator_fileInput.files) {
+        createFileBlob(file).then(fileData => {
+            //record the file
+            assetCreator_fileTable.push(fileData);
+
+            //rebuild after slight delay so we don't do to many time
+            clearTimeout(timerFileUploader);
+            timerFileUploader=setTimeout(redrawFileTable,500);
+        });
+    }
+});
+
+/*___ _              ____
+ / __| |_ ___ _ __  |__ /
+ \__ \  _/ -_) '_ \  |_ \
+ |___/\__\___| .__/ |___/
+             |_|
+ */
