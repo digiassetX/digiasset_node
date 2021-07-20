@@ -115,7 +115,7 @@
                     <h1>Issuing Address:</h1>
                     <input type="checkbox" id="asset_creator_useKyc" checked>Create Verified Asset
                     <div class="table-responsive col-md-12">
-                        <table class="table table-bordered table-striped" id="asset_creator_addresses">
+                        <table class="table table-bordered table-striped" id="asset_creator_addressOptions">
                             <thead><tr><th></th><th>Address</th></tr></thead><tbody>
                         </table>
                     </div>
@@ -166,6 +166,10 @@
                                 <option value="7">0.0000001</option>
                                 <option value="8">0.00000001</option>
                             </select></td>
+                        </tr>
+                        <tr>
+                            <td><label for="asset_creator_site">Web Site: </label></td>
+                            <td><input id="asset_creator_site" type="url" class="form-control col-md-12"></td>
                         </tr>
                     </table>
 
@@ -258,49 +262,23 @@
                         </table>
                     </div>
 
-                    <button id="asset_creator_goToOutputs">Get Recipients</button>
+                    <button id="asset_creator_goToOutputs">Save Files to IPFS and collect recipients</button>
                 </div>
 
 
                 <div class="asset_creator_step" id="asset_creator_step3">
                     <h3 style="margin-top:20px">Recipients:</h3>
-                    <div id="asset_creator_outputs"></div>
-                    <input type="button" id="asset_creator_outputAdd" class="btn btn-secondary" data-toggle="modal" data-target="#outputModal" value="Add">
-                </div>
-                <!-- Output Popup -->
-                <div class="modal fade" id="asset_creator_outputModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelOutput" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="asset_creator_modalLabelOutput">Add Output</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span id="asset_creator_modalLabelOutputClose" aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <label for="asset_creator_outputAddAddress">DigiByte Address or AssetId</label>
-                                    <input id="asset_creator_outputAddAddress" type="text" class="form-control outputField" name="oDAddress" placeholder="DGB Address/AssetId">
-                                    <br>
-                                    <label for="asset_creator_outputAddAmount">No. of Assets</label>
-                                    <div class="row" style="margin-right:0px;margin-left:0px;">
-                                        <input id="asset_creator_outputAddAmount" type="text" class="form-control outputField col-md-12" name="oNDgb" placeholder="Number of Assets">
-                                        <select id="asset_creator_outputAddType" class="form-control col-md-5">
-                                            <option value="/Asset">Per Asset</option>
-                                            <option value="/Address">Per Address</option>
-                                        </select>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button id="asset_creator_outputAddSave" type="button" class="btn btn-secondary">Save Output</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <h5>Addresses</h5>
+                    <table class="table table-bordered table-striped" id="asset_creator_addresses">
+                        <thead><tr><th></th><th>address/assetId</th><th>Quantity</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <!-- todo make nicer  try putting D or U in first box to test -->
+                    <input type="text" id="asset_creator_new_address"><input type="number" id="asset_creator_new_quantity"><button id="asset_creator_new">Add</button>
+                    <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
+                    <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
+                    <!-- todo end -->
 
-
-                <div class="asset_creator_step" id="asset_creator_step4">
                     <h3 style="margin-top:20px">Costs:</h3>
                     <table class="table table-bordered table-striped" id="asset_creator_costs">
                         <thead><tr><th>Type</th><th>Amount</th></tr></thead>
@@ -643,9 +621,11 @@
                     <thead><tr><th></th><th>address/assetId</th><th>Quantity</th></tr></thead>
                     <tbody></tbody>
                 </table>
+                <!-- todo make nicer  try putting D or U in first box to test -->
                 <input type="text" id="send_assets_new_address"><input type="number" id="send_assets_new_quantity"><button id="send_assets_new">Add</button>
                 <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per holder" id="send_asset_assetId_type_holder" checked>Per Holder
                 <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per asset" id="send_asset_assetId_type_asset">Per Asset
+                <!-- todo end -->
 
                 <h5>Costs</h5>
                 <table class="table table-bordered table-striped" id="send_assets_costs">

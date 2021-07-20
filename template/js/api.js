@@ -356,7 +356,15 @@ api.cid.page=(cid)=>'/api/cid/'+cid+'.html';
  * @param {string}  mimeType
  * @return {Promise<Blob>}
  */
-api.cid.stream=(cid,mimeType)=>stream('/api/cid/stream',{cid},mimeType);
+api.cid.stream=async(cid,mimeType)=>stream('/api/cid/stream',{cid},mimeType);
+
+/**
+ * Writes a Blob to IPFS and returns the cid
+ * @param {Blob}  data
+ * @param {string}mimeType
+ * @return {Promise<string>}
+ */
+api.cid.write=async(data,mimeType)=>post('/api/cid/write',{data,mimeType});
 
 /*
  █████╗ ███████╗███████╗███████╗████████╗██╗██████╗
@@ -556,6 +564,40 @@ api.wallet.utxos=async(addresses)=>post('/api/wallet/utxos.json',{addresses});
  * }>}
  */
 api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/wallet/build/assetTx.json', {recipients,assetId,label,vote});
+
+/**
+ * Create an asset transaction and get costs
+ * @param {Object<int>} recipients
+ * @param {string}      address
+ * @param {{
+ *         divisibility:    int=0,
+ *         locked:          boolean=true,
+ *         aggregation:     "aggregatable|hybrid|dispersed"="aggregatable",
+ *         changeAddress:   string,
+ *         nodes:           {Number},
+ *         rules:           AssetRules|boolean=false
+ *     }}   options
+ * @param {{
+ *         assetName:   string,
+ *         issuer:      string,
+ *         description: string,
+ *         urls:        Url[]
+ *         userData:    {
+ *             meta:    Meta[]
+ *         },
+ *         site:        {
+ *             url:     string,
+ *             type:    "web"|"restricted"
+ *         },
+ *         encryptions: Encryption[]?,
+ *         verifications: Object?
+ *     }}    metadata
+ * @return {Promise<{
+ *     costs:   Object<int>,
+ *     hex:     string
+ * }>}
+ */
+api.wallet.build.assetIssuance=async(recipients,address,options,metadata)=>post('/api/wallet/build/assetIssuance.json', {recipients,address,options,metadata});
 
 /**
  * Sends a transaction and returns the txid

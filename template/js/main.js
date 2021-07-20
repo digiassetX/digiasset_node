@@ -441,7 +441,7 @@ async function redrawAssetCosts() {
             domAssetSend.data("tx",hex);                   //put unsigned tx in send buttons data
             if (assetCostsWaiting===0) {
                 expenseTable.processing(false);                     //remove processing
-                if (hex!=="") $("._asset_send").removeAttr('disabled');     //reenable send button if no error
+                if (hex!=="") domAssetSend.removeAttr('disabled');     //reenable send button if no error
             }
         }
     } catch (e) {
@@ -862,7 +862,7 @@ $(document).on('click','#add_submit',async()=>{
     let user=$("#add_user").val().trim();
     let pass=$("#add_pass").val().trim();
     try {
-        await api.user.add(user,pass);
+        await api.config.user.add(user,pass);
         //todo make better success screen
         location.reload();
     } catch(e) {
@@ -1137,7 +1137,7 @@ $(document).on('click','.asset_creator_reset',()=>{
 });
 
 //create address table
-let assetCreatorAddresses=$("#asset_creator_addresses").DataTable({
+let assetCreatorAddresses=$("#asset_creator_addressOptions").DataTable({
     processing: true,
     responsive: true,
     language: {
@@ -1344,6 +1344,7 @@ let assetCreatorVoteOptions=$("#asset_creator_voteOptions").DataTable({
                     let d = this.data();
                     d.first=(rowIdx===0);
                     d.last=(rowIdx===lastIndex);
+                    // noinspection JSUnresolvedFunction
                     this.invalidate();
                 }).draw();
             }
@@ -1388,6 +1389,7 @@ let assetCreatorRoyalties=$("#asset_creator_royalties").DataTable({
                     let d = this.data();
                     d.first=(rowIdx===0);
                     d.last=(rowIdx===lastIndex);
+                    // noinspection JSUnresolvedFunction
                     this.invalidate();
                 }).draw();
             }
@@ -1511,10 +1513,8 @@ $(document).ready(function() {
 });
 
 //handle clicks to Get Recipients Button
-$(document).on('click','#asset_creator_goToOutputs',()=>{
-    //todo add some sanity checks
-    //must have asset name
-    //must have icon
+$(document).on('click','#asset_creator_goToOutputs',async()=>{
+    //sanity checks
     if ($("#asset_creator_assetName").val().length===0) return showError("Asset name must be filled");
     if ($("#asset_creator_description").val().length===0) return showError("Description must be filled");
     let foundIcon=false;
@@ -1525,6 +1525,17 @@ $(document).on('click','#asset_creator_goToOutputs',()=>{
         names[name]=true;
     }
     if (!foundIcon) return showError("Must contain one file named icon");
+
+    //store data on ipfs
+    for (let index in assetCreator_fileTable) {
+        let {data,type}=assetCreator_fileTable[index];
+        //assetCreator_fileTable[index].cid=await api.cid.write(data,type);
+    }
+
+    //store data in address table todo
+    //for (let index in assetCreator_fileTable) {
+    //    let {name,type,size,data,cid}=assetCreator_fileTable[index];
+    //$('#asset_creator_addresses').data({address,options,metadata});
 
     $(".asset_creator_step").hide();
     $("#asset_creator_step3").show();
@@ -1631,7 +1642,7 @@ const redrawFileTable=()=>{
     let html=''
     let totalSize=0;
     for (let index in assetCreator_fileTable) {
-        let {name,type,size,data}=assetCreator_fileTable[index];
+        let {name,type,size}=assetCreator_fileTable[index];
         totalSize+=size;
         let prefix=["EB","PB","TB","GB","MB","kB","B"];
         while ((size>2000)&&(prefix.length>0)) {
@@ -1673,3 +1684,126 @@ assetCreator_fileInput.addEventListener('change', ()=>{
  |___/\__\___| .__/ |___/
              |_|
  */
+
+//sending address data table
+let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
+    responsive: true,
+    order: [
+        [1, "asc"]
+    ],
+    columns: [
+        {
+            className: "dt-center asset_creator_addresses-delete",
+            data: null,
+            defaultContent: '<i class="fa fa-trash"/>', //todo not showing needs fixing
+            orderable: false
+        },
+        {
+            className: 'columnAddress',
+            data: null,
+            render: (data,type,row)=>(row.address!==undefined)?row.address:`${row.assetId}(${row.amount} per ${row.type} at height ${row.height})`
+        },
+        {
+            className: 'columnQuantity',
+            data: 'quantity'
+        }
+    ],
+    drawCallback: async function() {
+        let caller=this.api();
+        const {address,options,metadata}=caller.tables().nodes().to$().data();
+        let expenseTable=$("#send_assets_costs").DataTable();
+        try {
+            let domAssetSend=$(".asset_send");
+            let rowCount=caller.data().count();
+            if (rowCount === 0) {
+                expenseTable.clear().draw();
+                domAssetSend.attr('disabled',true);
+            } else {
+                domAssetSend.attr('disabled',true);
+                expenseTable.processing(true);                      //show processing
+                let recipients={};
+                for (let i=0;i<rowCount;i++) {
+                    let list=caller.row(i).data().recipients;
+                    for (let {address,quantity} of list) {
+                        if (recipients[address]===undefined) recipients[address]=0;
+                        recipients[address]+=quantity;
+                    }
+                }
+                assetCostsWaiting++;
+                let {costs, hex} = await api.wallet.build.assetIssuance(recipients,address,options,metadata);   //get updated cost
+                assetCostsWaiting--;
+                expenseTable.clear().rows.add(costs).draw();        //update table
+                domAssetSend.data("tx",hex);                   //put unsigned tx in send buttons data
+                if (assetCostsWaiting===0) {
+                    expenseTable.processing(false);                     //remove processing
+                    if (hex!=="") domAssetSend.removeAttr('disabled');     //reenable send button if no error
+                }
+            }
+        } catch (e) {
+            //error always called on first execution so ignore
+            console.log(e);
+        }
+    }
+});
+
+//show/hide send asset types
+$(document).on('keyup','#asset_creator_new_address',()=>{
+    let type = $("#asset_creator_new_address").val().trim().substr(0,1);
+    $(".asset_creator_assetId")[(type==="L")||(type==="U")?"show":"hide"]();
+});
+
+//handle removing item from table
+$('#asset_creator_addresses tbody').on( 'click', 'td.asset_creator_addresses-delete', function (e) {
+    e.preventDefault();
+    asset_creator_addresses.row( $(this).parents('tr') ).remove().draw();
+} );
+
+//add address to sending table
+$(document).on('click','#send_assets_new',async()=>{
+    try {
+        let decimals=$("#asset_creator_addresses").data("decimals");
+        let assetsPerHolder = $("#asset_creator_assetId_type_holder").prop("checked");
+        let address = $("#asset_creator_new_address").val().trim();
+        let quantityStr=$("#asset_creator_new_quantity").val().trim();
+        let quantity = Math.round(parseFloat(quantityStr)*Math.pow(10,decimals));
+        if ((quantity<=0)||(quantityStr==="")) {
+            showError("Invalid Quantity");
+            return;
+        }
+        let data = {address, quantity: satToDecimal(quantity,decimals),recipients:[{address,quantity}]};
+        if ((address[0] === "L") || (address[0] === "U")) {
+            //lookup height and asset
+            let height = api.stream("height");
+            let assetData = api.stream(address);
+            await Promise.all([height, assetData]);
+
+            //get total assets
+            let total=0;
+            let {holders}=await assetData;
+            let recipients=[];
+            for (let address in holders) {
+                let quantity=assetsPerHolder?quantity:parseInt(holders[address])*quantity;
+                total+=quantity;
+                recipients.push({address,quantity})
+            }
+
+            //update data
+            data = {
+                assetId: address,                                   //value in address variable actually an assetId
+                type: assetsPerHolder ? "holder" : "asset",
+                height: await height,
+                amount: satToDecimal(quantity,decimals),                 //store the per holder value as amount
+                quantity: satToDecimal(total,decimals),                   //store total as quantity
+                recipients                                               //list of those that will receive it
+            };
+
+        }
+        asset_creator_addresses.row.add(data).draw();
+
+        //recompute costs
+
+    } catch (e) {
+        console.log(e);
+        showError("Invalid AssetId");   //errors only thrown when assetId is invalid
+    }
+});
