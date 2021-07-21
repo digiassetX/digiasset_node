@@ -1,7 +1,7 @@
 //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
 // noinspection JSUnfilteredForInLoop,JSJQueryEfficiency
 
-const fileCostPerByte=10000;
+const fileCostPerByte=0.0000012;    //$1.20/MB
 
 let getHeight=async()=>{
     let height=await api.height();
@@ -1723,6 +1723,13 @@ $(document).on('keyup','.asset_creator_fileName',function(){
     assetCreator_fileTable[index].name=$(this).text().trim();
 });
 
+//handle deleting file
+$(document).on('click','.asset_creator_fileDelete',function(){
+    let index=parseInt($(this).data('index'));
+    assetCreator_fileTable.splice(index,1);
+    redrawFileTable();
+});
+
 //handle files
 const assetCreator_uploadedFiles = document.getElementById('asset_creator_uploadedFiles');
 const assetCreator_fileInput = document.querySelector('input[type=file]');
@@ -1751,6 +1758,49 @@ const drawPreviewImage=(index,data)=>{
     }
     img.src = URL.createObjectURL(data);
 }
+const drawFileLogo=(index)=>{
+    let canvas=document.getElementById(`preview-${index}`);
+    let ctx = canvas.getContext('2d');
+    canvas.width=assetCreator_thumbSize[0];
+    canvas.height=assetCreator_thumbSize[1];
+
+    let w=canvas.width;
+    let h=canvas.height;
+    let m=Math.min(canvas.width,canvas.height);
+    let l=(w-m)/2;
+    let t=(h-m)/2;
+
+    //draw circle
+    ctx.fillStyle = "#FDCC77";
+    ctx.arc(w*0.5, h*0.5, m*0.5, 0,2 * Math.PI);
+    ctx.fill();
+
+    //draw white file section
+    ctx.beginPath();
+    ctx.fillStyle = "#FFFFFF";
+    ctx.moveTo(l+m*0.245,t+m*0.152);
+    ctx.lineTo(l+m*0.616,t+m*0.152);
+    ctx.lineTo(l+m*0.767,t+m*0.306);
+    ctx.lineTo(l+m*0.767,t+m*0.609);
+    ctx.lineTo(l+m*0.245,t+m*0.609);
+    ctx.closePath();
+    ctx.fill();
+
+    //draw shaded file section
+    ctx.fillStyle = "#E6E6E6";
+    ctx.fillRect(l+m*0.500, t+m*0.152, m*0.116, m*0.154);
+    ctx.fillRect(l+m*0.500, t+m*0.306, m*0.267, m*0.303);
+
+    //draw black bottom of file
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(l+m*0.245, t+m*0.609, m*0.522, m*0.241);
+
+    //draw mime type
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "9px Georgia";
+    ctx.fillText("No Preview", w*0.500, t+m*0.770);
+}
 const redrawFileTable=()=>{
     //build html
     let html=''
@@ -1764,17 +1814,18 @@ const redrawFileTable=()=>{
             prefix.pop();
         }
         let sizeText=(Math.round(size*100)/100).toString()+prefix.pop();
-        html+=`<div class="asset_creator_fileEntry"><div class="asset_creator_fileName" contenteditable="true" data-index="${index}">${name}</div><div class="asset_creator_fileType">${type}</div><div class="asset_creator_fileSize">${sizeText}</div><canvas class="asset_creator_filePreview" id="preview-${index}"></canvas></div>`;
+        //todo asset_creator_fileDelete should be changed to X in corner or something.
+        html+=`<div class="asset_creator_fileEntry"><div class="asset_creator_fileName" contenteditable="true" data-index="${index}">${name}</div><div class="asset_creator_fileType">${type}</div><div class="asset_creator_fileSize">${sizeText}</div><canvas class="asset_creator_filePreview" id="preview-${index}"></canvas><div class="asset_creator_fileDelete" data-index="${index}">Delete</div></div>`;
     }
-    cost=(totalSize*fileCostPerByte+10)/100000000;
-    html+='<div class="asset_creator_fileCost">Publishing Cost: '+cost.toFixed(8)+' DGB</div>';
+    let cost=totalSize*fileCostPerByte;
+    html+='<div class="asset_creator_fileCost">Publishing Cost: $'+cost.toFixed(3)+' USD</div>';
     assetCreator_uploadedFiles.innerHTML=html;
     for (let index in assetCreator_fileTable) {
         let {name,type,size,data}=assetCreator_fileTable[index];
         if (type.startsWith('image/')) {
             drawPreviewImage(index, data);
         } else {
-
+            drawFileLogo(index);
         }
     }
 }
