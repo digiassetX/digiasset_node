@@ -228,3 +228,7 @@ a[disabled] {
 input:invalid {
     background-color: #ffdddd;
 }
+
+.asset_creator_assetId {
+    display: none;
+}

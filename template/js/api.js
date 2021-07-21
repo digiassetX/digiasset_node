@@ -41,6 +41,25 @@ const stream=async(url,data,mimeType)=>{
     });
 }
 
+const postFile=async(url,file)=>{
+    return new Promise((resolve,reject)=>{
+        var formdata = new FormData();
+        formdata.append("file", file);
+        $.ajax({
+            url,
+            data: formdata,
+            type: "POST",
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (response)=>{
+                if (response.error!==undefined) return reject(response.error);
+                resolve(response);
+            }
+        });
+    });
+}
+
 /*
  ██████╗ ██████╗ ██████╗ ███████╗
 ██╔════╝██╔═══██╗██╔══██╗██╔════╝
@@ -361,10 +380,9 @@ api.cid.stream=async(cid,mimeType)=>stream('/api/cid/stream',{cid},mimeType);
 /**
  * Writes a Blob to IPFS and returns the cid
  * @param {Blob}  data
- * @param {string}mimeType
  * @return {Promise<string>}
  */
-api.cid.write=async(data,mimeType)=>post('/api/cid/write',{data,mimeType});
+api.cid.write=async(data)=>postFile('/api/cid/write',data);
 
 /*
  █████╗ ███████╗███████╗███████╗████████╗██╗██████╗

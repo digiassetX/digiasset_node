@@ -1,5 +1,5 @@
 //update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
-// noinspection JSUnfilteredForInLoop
+// noinspection JSUnfilteredForInLoop,JSJQueryEfficiency
 
 const fileCostPerByte=10000;
 
@@ -335,10 +335,13 @@ const startWallet=(type)=>{
             }
         }
     ];
-    if (type==="assetsbylabel") columns.unshift({
-        className: 'columnWalletLabel',
-        data: 'label'
-    });
+    if (type==="assetsbylabel") {
+        // noinspection JSCheckFunctionSignatures
+        columns.unshift({
+                className: 'columnWalletLabel',
+                data: 'label'
+            });
+    }
     walletTable[type]=$('#wallet_list_'+type).DataTable({
         processing: true,
         responsive: true,
@@ -373,7 +376,7 @@ $(document).on('click','#wallet_refresh',()=>{
 });
 
 //sending cost data table
-let send_assets_cost=$("#send_assets_costs").DataTable({
+$("#send_assets_costs").DataTable({
     responsive: true,
     processing: true,
     language: {
@@ -391,7 +394,7 @@ let send_assets_cost=$("#send_assets_costs").DataTable({
 });
 
 //vote cost data table
-let vote_assets_cost=$("#vote_assets_costs").DataTable({
+$("#vote_assets_costs").DataTable({
     responsive: true,
     processing: true,
     language: {
@@ -489,6 +492,7 @@ let vote_assets_options=$('#vote_assets_options').DataTable({
             data: null,
             render: (data,type,row)=>{
                 if (row.left===true) return vote_assets_options.votesLeft;
+                //todo would be nice if - was left aligned and + right aligned with text centered
                 return `<button class="vote_assets_neg"${row.count>0?"":" disabled"}>-</button>${row.count}<button class="vote_assets_pos"${vote_assets_options.votesLeft>0?"":" disabled"}>+</button>`
             },
             orderable: false
@@ -548,7 +552,7 @@ $(document).on('click','.vote_assets_pos',function(e) {
 //draw vote pop up
 $(document).on('click','.vote_asset',function() {
     //add necessary data to table
-    /** @type {{label,assetid,cid,value,decimals,receiver,options}} */let data=$(this).data();
+    /** @type {{label,assetid,cid,value,decimals,receiver,options,expense,vote}} */let data=$(this).data();
     data.expense="vote_assets_costs";
     data.vote=true;
     $("#vote_assets_options").data(data);
@@ -740,14 +744,14 @@ setInterval(isNewest,86400000);//recheck daily
 const showLoginBox=()=>(new bootstrap.Modal(document.getElementById('LoginModal'))).show();
 const walletConfigured=()=>{
     $('#menu_wallet').append("✓");
-    $('.needwallet').removeAttr('disabled');
+    $('.needWallet').removeAttr('disabled');
 }
 const streamConfigured=()=>{
     $('#menu_stream').append("✓");
-    $('.needstream').removeAttr('disabled');
+    $('.needStream').removeAttr('disabled');
 }
 const bothConfigured=()=>{
-    $('.needwalletandstream').removeAttr('disabled');
+    $('.needWalletAndStream').removeAttr('disabled');
     startWallet("assets");
 }
 $(document).ready(async()=>{
@@ -1043,6 +1047,7 @@ const kycStart=()=>{
     $('#kycAddresses tbody').on('click', 'tr', function () {
         console.log("x");
         $(this).toggleClass('selected');
+        // noinspection JSIgnoredPromiseFromCall
         validateKYCInputs();
     });
 }
@@ -1109,6 +1114,7 @@ $(document).on('keyup','.kyc_option',validateKYCInputs);
 
 //handle validate click
 $(document).on('click','#kycDone2',()=>{
+    // noinspection JSIgnoredPromiseFromCall
     validateKYCInputs(true);
 });
 
@@ -1191,7 +1197,7 @@ $(document).on('click','.asset_creator_issue',async function(){
     $(".asset_creator_unlockedOnly")[locked?"hide":"show"]();
 
     //save lock status and issuer
-    $("#asset_creator_create").data("locked",locked).data("issuing",address);
+    $("#asset_creator_addresses").data({locked, address});
 
     //set fields to default(skip asset creator since likely always the same)
     $("#asset_creator_divisibility option").removeAttr('disabled');
@@ -1243,7 +1249,7 @@ $(document).on('click','.asset_creator_issue',async function(){
                         if (url.substr(0,7)==="ipfs://") {
                             fileData=await createCidBlob(url.substr(7),name,mimeType);
                         } else {
-                            let file=api.cors(url,mimeType);
+                            let file=await api.cors(url,mimeType);
                             fileData=await createFileBlob(file,name,mimeType);
                         }
                         assetCreator_fileTable.push(fileData);
@@ -1381,16 +1387,9 @@ let assetCreatorRoyalties=$("#asset_creator_royalties").DataTable({
         {
             text: 'Add',
             action: function ( e, dt, node, config ) {
-                let lastIndex=assetCreatorRoyalties.rows().count();
                 assetCreatorRoyalties.row.add({
                     address: "Enter Royalty Payout Address",
                     amount: 0
-                }).rows().every(function ( rowIdx, tableLoop, rowLoop ) {
-                    let d = this.data();
-                    d.first=(rowIdx===0);
-                    d.last=(rowIdx===lastIndex);
-                    // noinspection JSUnresolvedFunction
-                    this.invalidate();
                 }).draw();
             }
         }
@@ -1400,9 +1399,9 @@ let assetCreatorRoyalties=$("#asset_creator_royalties").DataTable({
     },
     columns: [
         {
-            data: 'null',
-            //todo replace below buttons with symbols
-            render: (data, type, row) => `<button class="asset_creator_delete">Delete</button><button class="asset_creator_up"${row.first?' disabled':''}>Up</button><button class="asset_creator_down"${row.last?' disabled':''}>Down</button>`,
+            className: "dt-center asset_creator_delete",
+            data: null,
+            defaultContent: '<i class="fa fa-trash"/>', //todo not showing needs fixing
             orderable: false
         },
         {
@@ -1482,7 +1481,7 @@ $(document).ready(function() {
         if (column===undefined) return;
 
         //modify data
-        let newValue=$(this).html();
+        let newValue=$(this).text().trim();
         let data=row.data();
         data[column]=newValue;
         row.data(data);
@@ -1492,10 +1491,10 @@ $(document).ready(function() {
         if (column===undefined) return;
 
         //modify data
-        let newValue=$(this).html();
+        let newValue=$(this).text().trim();
         let data=row.data();
         let parsed=parseFloat(newValue);
-        if (parsed.toString()==newValue) data[column]=parsed;
+        if (parsed.toString()===newValue) data[column]=parsed;
         row.data(data).draw('null');
     });
     $(document).on('click','.asset_creator_delete',function() {
@@ -1504,19 +1503,42 @@ $(document).ready(function() {
     });
     $(document).on('click','.asset_creator_up',function() {
         let {table,row}=getTableRowAndColumn($(this));
-        //todo
+        let row2=table.row(row.index()-1);
+        let temp=row.data();
+        row.data(row2.data());
+        row2.data(temp);
+        table.draw();
     });
     $(document).on('click','.asset_creator_down',function() {
         let {table,row}=getTableRowAndColumn($(this));
-        //todo
+        let row2=table.row(row.index()+1);
+        let temp=row.data();
+        row.data(row2.data());
+        row2.data(temp);
+        table.draw();
     });
 });
+
+/**
+ * Returns list of selected country codes
+ * @return {string[]}
+ */
+const kycList=()=>{
+    let rows=assetCreatorKYC.rows({selected:true}).data().toArray();
+    let list=[];
+    for (let {code} of rows) {
+        list.push(code);
+    }
+    return list;
+}
+
 
 //handle clicks to Get Recipients Button
 $(document).on('click','#asset_creator_goToOutputs',async()=>{
     //sanity checks
-    if ($("#asset_creator_assetName").val().length===0) return showError("Asset name must be filled");
-    if ($("#asset_creator_description").val().length===0) return showError("Description must be filled");
+    if ($("#asset_creator_assetIssuer").val().trim().length===0) return showError("Asset creator must be filled");
+    if ($("#asset_creator_assetName").val().trim().length===0) return showError("Asset name must be filled");
+    if ($("#asset_creator_description").val().trim().length===0) return showError("Description must be filled");
     let foundIcon=false;
     let names={};
     for (let {name} of assetCreator_fileTable) {
@@ -1528,14 +1550,106 @@ $(document).on('click','#asset_creator_goToOutputs',async()=>{
 
     //store data on ipfs
     for (let index in assetCreator_fileTable) {
-        let {data,type}=assetCreator_fileTable[index];
-        //assetCreator_fileTable[index].cid=await api.cid.write(data,type);
+        let {data}=assetCreator_fileTable[index];
+        assetCreator_fileTable[index].cid=await api.cid.write(data);
     }
 
-    //store data in address table todo
-    //for (let index in assetCreator_fileTable) {
-    //    let {name,type,size,data,cid}=assetCreator_fileTable[index];
-    //$('#asset_creator_addresses').data({address,options,metadata});
+    //get original values
+    let {locked, address}=$('#asset_creator_addresses').data();
+
+    //compute rules
+    let rules=false;
+    if ($("#asset_creator_rulesEnabled").is(':checked')) {
+
+        //mark if rewritable
+        rules= {
+            rewritable: $("#asset_creator_rewritable").is(':checked')
+        };
+
+        //handle kyc rule
+        switch ($("#asset_creator_kyc").val()) {
+            case "true":
+                rules.kyc=true;
+                break;
+
+            case "allow":
+                rules.kyc={
+                    allow:  kycList()
+                };
+                break
+
+            case "ban":
+                rules.kyc={
+                    ban:  kycList()
+                };
+        }
+
+        //handle royalties rule
+        let royaltyRows=assetCreatorRoyalties.rows().data().toArray();
+        if (royaltyRows.length>0) {
+            rules.royalties={};
+            for (let {address, amount} of royaltyRows) {
+                rules.royalties[address]=Math.round(amount*100000000);
+            }
+        }
+
+        //handle currency
+        let currency=$("#asset_creator_currency").val();
+        if (currency!=="DGB") rules.currency=currency;
+
+        //handle vote
+        let expiry=parseInt($("#asset_creator_expiry").val());
+        let voteOptions=assetCreatorVoteOptions.rows().data().toArray();
+        if (voteOptions.length>0) {
+            rules.vote={
+                movable:    $("#asset_creator_voteMovable").is(':checked'),
+                options:    []
+            }
+            if (expiry!==0) rules.vote.cutoff=expiry;
+            for (let {label} of voteOptions) rules.vote.options.push(label);
+        } else if (expiry!==0) {
+            rules.expires=expiry;
+        }
+
+        //handle deflation
+        let deflate=parseInt($("#asset_creator_deflate").val());
+        if (deflate!==0) rules.deflate=deflate;
+
+    }
+
+    //create options
+    let options={
+        locked,rules,
+        divisibility:   parseInt($("#asset_creator_divisibility").val()),
+        aggregation:    $("#asset_creator_aggregation").val()
+    };
+
+    //build meta data
+    let metadata={
+        assetName:      $("#asset_creator_assetName").val().trim(),
+        issuer:         $("#asset_creator_assetIssuer").val().trim(),
+        description:    $("#asset_creator_description").val().trim(),
+        urls:           []
+    };
+    for (let index in assetCreator_fileTable) {
+        let {name, type, cid} = assetCreator_fileTable[index];
+        metadata.urls.push({
+            name,
+            url:    "ipfs://"+cid,
+            mimeType:type
+        });
+    }
+    let siteUrl=$("#asset_creator_site").val().trim();
+    if (siteUrl!=="") {
+        metadata.site={
+            url:    siteUrl,
+            type:   "web"
+        }
+        if (siteUrl.endsWith("/restricted.json")) metadata.site.type="restricted";
+    }
+
+    //store everything in address table
+    $('#asset_creator_addresses').data({locked,address,options,metadata});
 
     $(".asset_creator_step").hide();
     $("#asset_creator_step3").show();
@@ -1606,7 +1720,7 @@ const createCidBlob=(cid,name,type)=>{
 //handle file names
 $(document).on('keyup','.asset_creator_fileName',function(){
     let index=parseInt($(this).data('index'));
-    assetCreator_fileTable[index].name=$(this).text();
+    assetCreator_fileTable[index].name=$(this).text().trim();
 });
 
 //handle files
@@ -1759,9 +1873,9 @@ $('#asset_creator_addresses tbody').on( 'click', 'td.asset_creator_addresses-del
 } );
 
 //add address to sending table
-$(document).on('click','#send_assets_new',async()=>{
+$(document).on('click','#asset_creator_new',async()=>{
     try {
-        let decimals=$("#asset_creator_addresses").data("decimals");
+        let decimals=$("#asset_creator_addresses").data().options.divisibility;
         let assetsPerHolder = $("#asset_creator_assetId_type_holder").prop("checked");
         let address = $("#asset_creator_new_address").val().trim();
         let quantityStr=$("#asset_creator_new_quantity").val().trim();
@@ -1799,9 +1913,6 @@ $(document).on('click','#send_assets_new',async()=>{
 
         }
         asset_creator_addresses.row.add(data).draw();
-
-        //recompute costs
-
     } catch (e) {
         console.log(e);
         showError("Invalid AssetId");   //errors only thrown when assetId is invalid

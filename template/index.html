@@ -25,13 +25,13 @@
               <a class="nav-link nav_page av_page active" aria-current="page" data-page="page_metadata" href="#">Meta Data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav_page needwalletandstream" data-page="page_wallet" data-tooltip="Requires Wallet and Stream Setup" href="#" disabled>DigiAsset Wallet</a>
+              <a class="nav-link nav_page needWalletAndStream" data-page="page_wallet" data-tooltip="Requires Wallet and Stream Setup" href="#" disabled>DigiAsset Wallet</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav_page needwallet" data-page="page_kyc" data-tooltip="Requires Wallet Setup" href="#" disabled>Address Verifier</a>
+              <a class="nav-link nav_page needWallet" data-page="page_kyc" data-tooltip="Requires Wallet Setup" href="#" disabled>Address Verifier</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav_page needwallet asset_creator_reset" data-page="page_assetcreator" data-tooltip="Requires Wallet Setup" href="#" disabled>Asset Creator</a>
+              <a class="nav-link nav_page needWalletAndStream asset_creator_reset" data-page="page_assetcreator" data-tooltip="Requires Wallet Setup" href="#" disabled>Asset Creator</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
@@ -141,7 +141,7 @@
                             <td><label for="asset_creator_assetName">Asset Name </label></td>
                             <td><input id="asset_creator_assetName" type="text" class="form-control col-md-12"></td>
                         </tr>
-                        <tr>
+                        <tr>    <!--todo change to multi line input -->
                             <td><label for="asset_creator_description">Description </label></td>
                             <td><input id="asset_creator_description" type="text" class="form-control col-md-12"></td>
                         </tr>
@@ -150,7 +150,7 @@
                             <td><select id="asset_creator_aggregation" class="form-control col-md-12">
                                 <option value="aggregatable">Aggregatable(Normal)</option>
                                 <option value="hybrid">Hybrid</option>
-                                <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(Individual)</option>
+                                <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(NFT)</option>
                             </select></td>
                         </tr>
                         <tr>
