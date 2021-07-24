@@ -15,41 +15,41 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #002252 !important;">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="color:white">DigiAsset Node:</a>
+        <a class="navbar-brand clickable" style="color:white">DigiAsset Node:</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link nav_page av_page active" aria-current="page" data-page="page_metadata" href="#">Meta Data</a>
+              <a class="nav-link nav_page av_page active clickable" aria-current="page" data-page="page_metadata">Meta Data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav_page needWalletAndStream" data-page="page_wallet" data-tooltip="Requires Wallet and Stream Setup" href="#" disabled>DigiAsset Wallet</a>
+              <a class="nav-link nav_page needWalletAndStream clickable" data-page="page_wallet" data-tooltip="Requires Wallet and Stream Setup" disabled>DigiAsset Wallet</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav_page needWallet" data-page="page_kyc" data-tooltip="Requires Wallet Setup" href="#" disabled>Address Verifier</a>
+              <a class="nav-link nav_page needWallet clickable" data-page="page_kyc" data-tooltip="Requires Wallet Setup" disabled>Address Verifier</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav_page needWalletAndStream asset_creator_reset" data-page="page_assetcreator" data-tooltip="Requires Wallet Setup" href="#" disabled>Asset Creator</a>
+              <a class="nav-link nav_page needWalletAndStream asset_creator_reset clickable" data-page="page_assetcreator" data-tooltip="Requires Wallet Setup" disabled>Asset Creator</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
+              <a class="nav-link dropdown-toggle clickable" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
                 Settings
               </a>
               <ul class="dropdown-menu" aria-labelledby="menu_settings">
-                <li><a class="dropdown-item" href="#" id="menu_add_user">Add User</a></li>
-                <li><a class="dropdown-item" href="#" id="menu_remove_user" style="display: none">Remove User</a></li>
-                <li><a class="dropdown-item" href="#" id="menu_included_media">Set Media Limits</a></li>
-                <li><a class="dropdown-item" href="#" id="menu_wallet">Wallet</a></li>
-                <li><a class="dropdown-item" href="#" id="menu_stream">Stream</a></li>
+                <li><a class="dropdown-item clickable" id="menu_add_user">Add User</a></li>
+                <li><a class="dropdown-item clickable" id="menu_remove_user" style="display: none">Remove User</a></li>
+                <li><a class="dropdown-item clickable" id="menu_included_media">Set Media Limits</a></li>
+                <li><a class="dropdown-item clickable" id="menu_wallet">Wallet</a></li>
+                <li><a class="dropdown-item clickable" id="menu_stream">Stream</a></li>
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link" style="display: none;" id="menu_login" href="#">Login</a>
+              <a class="nav-link clickable" style="display: none;" id="menu_login">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" style="display: none;" id="menu_logout" href="#">Logout</a>
+              <a class="nav-link clickable" style="display: none;" id="menu_logout">Logout</a>
             </li>
           </ul>
         </div>
@@ -65,7 +65,7 @@
             <button id="updateBtn" class="btn btn-success" >Update Available</button>
         </div>
         <h4>Subscriptions:</h4>
-        <p>You can subscribe to other peoples approved/rejected lists</p>
+        <p>You can subscribe to other peoples approved/rejected lists.  ✓ means subscribed to approve list.  X means subscribed to reject list.  Click to change.</p>
         <div class="table-responsive col-md-12">
             <table class="table table-bordered table-striped" id="subscription">
                 <thead><tr><th>✓</th><th>X</th><th>Url</th></tr></thead>
@@ -132,6 +132,7 @@
                     <div id="asset_creator_uploadedFiles">
 
                     </div>
+                    <div>Publishing Cost: $<span id="asset_creator_fileCost">0.000</span> USD</div>
 
                     <br>
 
@@ -262,7 +263,10 @@
                         </table>
                     </div>
 
-                    <button id="asset_creator_goToOutputs">Save Files to IPFS and collect recipients</button>
+                    <h3 style="margin-top:20px">Legal:</h3>
+                    <input type="checkbox" id="asset_creator_rights"><label for="asset_creator_rights">All content is legal in Canada and I have the rights to publish it</label>
+
+                    <button id="asset_creator_goToOutputs" disabled>Save Files to IPFS and collect recipients</button>
                 </div>
 
 
@@ -310,7 +314,7 @@
                     <div class="row align-items-center">
                         <div class="col-lg-6 content-left">
                             <p class="mt-3 mb-lg-5 mb-4">Download and install Yoti. Create your identity profile with your drivers license and passport.</p>
-                            <a href="#" class="btn btn-outline-primary theme-button" id="kycDone1">Get Started</a>
+                            <a class="btn btn-outline-primary theme-button clickable" id="kycDone1">Get Started</a>
                         </div>
                         <div class="col-lg-6 mt-lg-0 mt-5">
                             <img src="images/kyc.png" class="img-fluid" alt="main image">

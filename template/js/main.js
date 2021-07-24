@@ -57,12 +57,12 @@ const startDataTable=()=>dataTable={
         ],
         columns: [
             {
-                className: 'columnApproved',
+                className: 'columnApproved clickable',
                 data: 'approved',
                 render: (data) => (data===true)?"✓":""
             },
             {
-                className: 'columnRejected',
+                className: 'columnRejected clickable',
                 data: 'rejected',
                 render: (data) => (data===true)?"X":""
             },
@@ -183,7 +183,7 @@ $(document).on('click','.view',function(){
  */
 const processARclick=(type,data)=>{
     const {assetid,cid,column,list}=data;
-    api[column][type](assetid,cid).then(()=>dataTable[type].ajax.reload(null,false));
+    api[column][type](assetid,cid).then(()=>dataTable[list].ajax.reload(null, false));
 
     //see if there are more and open next value if there are
     let old=(column==="cid")?cid:assetid;
@@ -244,15 +244,34 @@ $(document).on('click','.close',function(){
 ███████║╚██████╔╝██████╔╝███████║╚██████╗██║  ██║██║██║        ██║   ██║╚██████╔╝██║ ╚████║███████║
 ╚══════╝ ╚═════╝ ╚═════╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
  */
-$(document).on('click','.subscription_add',function (){
+$(document).on('click','.subscription_add',async function (){
     //get inputs
     let type=$(this).data("type");  //approved,rejected,both
     let url=$('#subscription_new').val().trim();
 
     //check its a valid url by trying to download lists
-    //todo
+    try {
+        await api.config.subscription.add(url, (type !== "rejected"), (type !== "approved"));
+        dataTable.subscription.ajax.reload();
+    } catch (e) {
+        showError(e);
+    }
 });
 
+$(document).on('click',".columnApproved",function() {
+    let row=dataTable.subscription.row( $(this).parents('tr') );
+    let data=row.data();
+    data.approved=!data.approved;
+    api.config.subscription.approved(data.url,data.approved);
+    row.data(data).draw();
+});
+$(document).on('click',".columnRejected",function() {
+    let row=dataTable.subscription.row( $(this).parents('tr') );
+    let data=row.data();
+    data.rejected=!data.rejected;
+    api.config.subscription.rejected(data.url,data.rejected);
+    row.data(data).draw();
+});
 
 /*
 ██╗    ██╗ █████╗ ██╗     ██╗     ███████╗████████╗
@@ -1655,6 +1674,14 @@ $(document).on('click','#asset_creator_goToOutputs',async()=>{
     $("#asset_creator_step3").show();
 });
 
+$(document).on('change',"#asset_creator_rights",()=>{
+    if ($("#asset_creator_rights").prop("checked")) {
+        $("#asset_creator_goToOutputs").removeAttr('disabled');
+    } else {
+        $("#asset_creator_goToOutputs").attr('disabled',true);
+    }
+});
+
 /*___ _              ___         ___ _ _       _    _    _
  / __| |_ ___ _ __  |_  )  ___  | __(_) |___  | |  (_)__| |_
  \__ \  _/ -_) '_ \  / /  |___| | _|| | / -_) | |__| (_-<  _|
@@ -1817,9 +1844,9 @@ const redrawFileTable=()=>{
         //todo asset_creator_fileDelete should be changed to X in corner or something.
         html+=`<div class="asset_creator_fileEntry"><div class="asset_creator_fileName" contenteditable="true" data-index="${index}">${name}</div><div class="asset_creator_fileType">${type}</div><div class="asset_creator_fileSize">${sizeText}</div><canvas class="asset_creator_filePreview" id="preview-${index}"></canvas><div class="asset_creator_fileDelete" data-index="${index}">Delete</div></div>`;
     }
-    let cost=totalSize*fileCostPerByte;
-    html+='<div class="asset_creator_fileCost">Publishing Cost: $'+cost.toFixed(3)+' USD</div>';
-    assetCreator_uploadedFiles.innerHTML=html;
+    assetCreator_uploadedFiles.innerHTML=html+'<div class="clear"></div>';
+
+    //draw previews
     for (let index in assetCreator_fileTable) {
         let {name,type,size,data}=assetCreator_fileTable[index];
         if (type.startsWith('image/')) {
@@ -1828,6 +1855,10 @@ const redrawFileTable=()=>{
             drawFileLogo(index);
         }
     }
+
+    //show publishing cost
+    let cost=totalSize*fileCostPerByte;
+    $("#asset_creator_fileCost").html(cost.toFixed(3));
 }
 let timerFileUploader;
 assetCreator_fileInput.addEventListener('change', ()=>{

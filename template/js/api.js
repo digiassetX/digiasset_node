@@ -251,6 +251,17 @@ api.config.publishing={};
 api.config.publishing.set=async(port=false)=>post('/api/config/publishing.json',{port});
 api.config.publishing.get=async()=>get('/api/config/publishing.json');
 
+/*___      _               _      _   _
+ / __|_  _| |__ ___ __ _ _(_)_ __| |_(_)___ _ _
+ \__ \ || | '_ (_-</ _| '_| | '_ \  _| / _ \ ' \
+ |___/\_,_|_.__/__/\__|_| |_| .__/\__|_\___/_||_|
+                            |_|
+ */
+api.config.subscription={};
+api.config.subscription.add=(url,approved=false,rejected=false)=>post('/api/config/subscription/add.json',{url,approved,rejected});
+api.config.subscription.approved=(url,enabled)=>post('/api/config/subscription/approved.json',{url,enabled});
+api.config.subscription.rejected=(url,enabled)=>post('/api/config/subscription/rejected.json',{url,enabled});
+
 /*
 ██╗   ██╗███████╗██████╗ ███████╗██╗ ██████╗ ███╗   ██╗
 ██║   ██║██╔════╝██╔══██╗██╔════╝██║██╔═══██╗████╗  ██║
@@ -634,7 +645,26 @@ api.wallet.send=async(hex,password=undefined)=>post('/api/wallet/send.json',{hex
  */
 api.wallet.fix.labels=async()=>get('/api/wallet/fix/labels.json');
 
+/*
+██████╗ ██╗ ██████╗ ██╗ █████╗ ███████╗███████╗███████╗████████╗██╗  ██╗
+██╔══██╗██║██╔════╝ ██║██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝╚██╗██╔╝
+██║  ██║██║██║  ███╗██║███████║███████╗███████╗█████╗     ██║    ╚███╔╝
+██║  ██║██║██║   ██║██║██╔══██║╚════██║╚════██║██╔══╝     ██║    ██╔██╗
+██████╔╝██║╚██████╔╝██║██║  ██║███████║███████║███████╗   ██║   ██╔╝ ██╗
+╚═════╝ ╚═╝ ╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝
+ */
+api.digiassetX={asset:{}};
 
+/**
+ * If getting digiassetX to permanently store your asset metadata this function should be called periodically until you get status 2.
+ * Please do not call more then once per minute and stop calling once you get 2 as it will not change after that
+ * 0    -   not yet discovered
+ * 1    -   discovered
+ * 2    -   downloaded and sharing
+ * @param {string}  metadata - hex
+ * @return {Promise<int>}
+ */
+api.digiassetX.asset.permanent=async(metadata)=>post('https://ipfs.digiassetX.com/checkNew.json',{metadata});
 
 
 
