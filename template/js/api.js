@@ -452,17 +452,18 @@ api.stream={};
 /**
  * Gets a digiassetX DigiAsset Data Stream
  * @param {string}  key
+ * @param {boolean} useCache
  * @return {Promise<*>}
  *
  * Expected Errors: "Stream not configured","Invalid key"
  */
-api.stream.get=async(key)=>get('/api/stream/'+key+'.json');
+api.stream.get=async(Key,useCache=true)=>post('/api/stream/get.json',{Key,useCache});
 
 /**
  * Clears the local cache
  * @return {Promise<void>}
  */
-api.stream.clearCache=async()=>get('/api/stream/clearCache.json');
+api.stream.clearCache=async()=>get('/api/stream/clear.json');
 
 /*
 ██╗    ██╗ █████╗ ██╗     ██╗     ███████╗████████╗

@@ -601,7 +601,7 @@ $(document).on('click','.send_asset',function() {
 
     //gather recipient info
     $("#SAMLabel").text("Send " + data.assetid + (data.cid == undefined ? "" : `:${data.cid}`));
-    send_assets_addresses.clear();
+    send_assets_addresses.clear().draw();
 
     //clear costs
     $('#send_assets_costs > tbody').html("");
@@ -637,8 +637,8 @@ $(document).on('click','#send_assets_new',async()=>{
         let data = {address, quantity: satToDecimal(quantity,decimals),recipients:[{address,quantity}]};
         if ((address[0] === "L") || (address[0] === "U")) {
             //lookup height and asset
-            let height = api.stream.get("height");
-            let assetData = api.stream.get(address);
+            let height = api.stream.get("height",false);
+            let assetData = api.stream.get(address,false);
             await Promise.all([height, assetData]);
 
             //get total assets
@@ -646,9 +646,9 @@ $(document).on('click','#send_assets_new',async()=>{
             let {holders}=await assetData;
             let recipients=[];
             for (let address in holders) {
-                let quantity=assetsPerHolder?quantity:parseInt(holders[address])*quantity;
-                total+=quantity;
-                recipients.push({address,quantity})
+                let quantityToAdd=assetsPerHolder?quantity:parseInt(holders[address])*quantity;
+                total+=quantityToAdd;
+                recipients.push({address,quantity:quantityToAdd})
             }
 
             //update data
@@ -673,7 +673,7 @@ $(document).on('click','#send_assets_new',async()=>{
 });
 
 //handle sending transactions
-$(document).on('click','.sendTx',async function(){
+$(document).on('click','.sendTX',async function(){
     let hex=$(this).data("tx");
     let password=await getWalletPassword();
     try {
