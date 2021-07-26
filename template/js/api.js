@@ -447,6 +447,8 @@ api.height=async()=>get('/api/last_block.json');
 ███████║   ██║   ██║  ██║███████╗██║  ██║██║ ╚═╝ ██║
 ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
  */
+api.stream={};
+
 /**
  * Gets a digiassetX DigiAsset Data Stream
  * @param {string}  key
@@ -454,7 +456,13 @@ api.height=async()=>get('/api/last_block.json');
  *
  * Expected Errors: "Stream not configured","Invalid key"
  */
-api.stream=async(key)=>get('/api/stream/'+key+'.json');
+api.stream.get=async(key)=>get('/api/stream/'+key+'.json');
+
+/**
+ * Clears the local cache
+ * @return {Promise<void>}
+ */
+api.stream.clearCache=async()=>get('/api/stream/clearCache.json');
 
 /*
 ██╗    ██╗ █████╗ ██╗     ██╗     ███████╗████████╗

@@ -1,4 +1,3 @@
-//update every minute the last block scanned.  Value returned is multiple of 1000 blocks not individual block
 // noinspection JSUnfilteredForInLoop,JSJQueryEfficiency
 
 const fileCostPerByte=0.0000012;    //$1.20/MB
@@ -434,41 +433,48 @@ $("#vote_assets_costs").DataTable({
  * triggered by addresses table this function redraws the table costs and enables/disables send button
  * @return {Promise<void>}
  */
-let assetCostsWaiting=0;
+let assetCostsWaiting={};   //0=none running, 1=1 running no need to run again,2= run again on end
 async function redrawAssetCosts() {
     let caller=this.api();
-    const {expense,assetid,label,vote}=caller.tables().nodes().to$().data();
+    const {expense,send,assetid,label,vote}=caller.tables().nodes().to$().data();
+
+    if (assetCostsWaiting[expense]===undefined) assetCostsWaiting[expense]=0;
+    if (assetCostsWaiting[expense]===2) return; //already 1 pending
+    assetCostsWaiting[expense]++;
+    if (assetCostsWaiting[expense]===2) return; //will run on complet
+
     let expenseTable=$("#"+expense).DataTable();
-    try {
-        let domAssetSend=$(".asset_send");
-        let rowCount=caller.data().count();
-        if (rowCount === 0) {
-            expenseTable.clear().draw();
-            domAssetSend.attr('disabled',true);
-        } else {
-            domAssetSend.attr('disabled',true);
-            expenseTable.processing(true);                      //show processing
-            let recipients={};
-            for (let i=0;i<rowCount;i++) {
-                let list=caller.row(i).data().recipients;
-                for (let {address,quantity} of list) {
-                    if (recipients[address]===undefined) recipients[address]=0;
-                    recipients[address]+=quantity;
+    let domAssetSend = $("#"+send);
+    domAssetSend.attr('disabled', true);
+    let assetTx;
+    while (assetCostsWaiting[expense]>0) {
+        assetTx={hex:"",costs:[]};
+        try {
+            let rowCount = caller.data().count();
+            if (rowCount >0) {
+                expenseTable.processing(true);                      //show processing
+                let recipients = {};
+                for (let i = 0; i < rowCount; i++) {
+                    let list = caller.row(i).data().recipients;
+                    for (let {address, quantity} of list) {
+                        if (recipients[address] === undefined) recipients[address] = 0;
+                        recipients[address] += quantity;
+                    }
                 }
+                assetTx = await api.wallet.build.assetTx(recipients, assetid, label, vote);   //get updated cost
             }
-            assetCostsWaiting++;
-            let {costs, hex} = await api.wallet.build.assetTx(recipients,assetid,label,vote);   //get updated cost
-            assetCostsWaiting--;
-            expenseTable.clear().rows.add(costs).draw();        //update table
-            domAssetSend.data("tx",hex);                   //put unsigned tx in send buttons data
-            if (assetCostsWaiting===0) {
-                expenseTable.processing(false);                     //remove processing
-                if (hex!=="") domAssetSend.removeAttr('disabled');     //reenable send button if no error
-            }
+        } catch (e) {
+            //error always called on first execution so ignore
         }
-    } catch (e) {
-        //error always called on first execution so ignore
-        console.log(e);
+        expenseTable.clear().rows.add(assetTx.costs).draw();
+        assetCostsWaiting[expense]--;
+    }
+    expenseTable.processing(false);                     //remove processing
+    domAssetSend.data("tx", assetTx.hex);                   //put unsigned tx in send buttons data
+    if (assetTx.hex === "") {
+        domAssetSend.attr('disabled', true);
+    } else {
+        domAssetSend.removeAttr('disabled');
     }
 }
 
@@ -520,59 +526,51 @@ let vote_assets_options=$('#vote_assets_options').DataTable({
     drawCallback: redrawAssetCosts
 });
 
+
+const changeVoteValue=(direction,me)=>{
+    vote_assets_options.votesLeft-=direction;
+
+    //update rows
+    let row=vote_assets_options.row( me.parents('tr') );
+    let data=row.data();
+    data.count+=direction;
+    if ((data.count>0)&&(data.recipients.length===0)) data.recipients=[{address: data.address}];
+    data.recipients[0].quantity=data.count;
+    if (data.count===0) data.recipients=[];
+    row.data(data);
+
+    //handle change
+    let lastIndex=vote_assets_options.rows().count()-1;
+    let last=vote_assets_options.row(lastIndex);
+    last.data({left:true,label:"Remaining",count:vote_assets_options.votesLeft,recipients:[]});
+
+    //enable/disable + if any left
+    if (vote_assets_options.votesLeft===0) {
+        $(".vote_assets_pos").attr('disabled',true);
+    } else {
+        $(".vote_assets_pos").removeAttr('disabled');
+    }
+
+    //redraw table
+    vote_assets_options.draw(false);
+}
+
 //handle adding removing votes
 $(document).on('click','.vote_assets_neg',function(e) {
     e.preventDefault();
-    vote_assets_options.votesLeft++;
-
-    //update rows
-    let current=vote_assets_options.row( $(this).parents('tr') );
-    let data=current.data();
-    data.count--;
-    data.recipients[0].quantity=data.count;
-    if (data.count===0) data.recipients=[];
-    current.data(data);
-
-    //handle change
-    let lastIndex=vote_assets_options.rows().count()-1;
-    let last=vote_assets_options.row(lastIndex);
-    last.data({left:true,label:"Remaining",count:vote_assets_options.votesLeft,recipients:[]});
-
-    //enable + if any left
-    if (vote_assets_options.votesLeft===1) $(".vote_assets_pos").removeAttr('disabled')
-
-    //redraw table
-    vote_assets_options.draw(false);
+    changeVoteValue(-1,$(this));
 });
 $(document).on('click','.vote_assets_pos',function(e) {
     e.preventDefault();
-    vote_assets_options.votesLeft--;
-
-    //update row
-    let current=vote_assets_options.row( $(this).parents('tr') );
-    let data=current.data();
-    data.count++;
-    if (data.recipients.length===0) data.recipients=[{address: data.address}];
-    data.recipients[0].quantity=data.count;
-    current.data(data);
-
-    //handle change
-    let lastIndex=vote_assets_options.rows().count()-1;
-    let last=vote_assets_options.row(lastIndex);
-    last.data({left:true,label:"Remaining",count:vote_assets_options.votesLeft,recipients:[]});
-
-    //disable + if none left
-    if (vote_assets_options.votesLeft===0) $(".vote_assets_pos").attr('disabled',true);
-
-    //redraw table
-    vote_assets_options.draw(false);
+    changeVoteValue(1,$(this));
 });
 
 //draw vote pop up
 $(document).on('click','.vote_asset',function() {
     //add necessary data to table
-    /** @type {{label,assetid,cid,value,decimals,receiver,options,expense,vote}} */let data=$(this).data();
+    /** @type {{label,assetid,cid,value,decimals,receiver,options,expense,send,vote}} */let data=$(this).data();
     data.expense="vote_assets_costs";
+    data.send="vote_asset_send";
     data.vote=true;
     $("#vote_assets_options").data(data);
 
@@ -597,6 +595,7 @@ $(document).on('click','.send_asset',function() {
     //add necessary data to table
     /** @type {{label,assetid,cid,value,decimals,receiver}} */let data=$(this).data();
     data.expense="send_assets_costs";
+    data.send="send_asset_send";
     data.vote=false;
     $("#send_assets_addresses").data(data);
 
@@ -638,8 +637,8 @@ $(document).on('click','#send_assets_new',async()=>{
         let data = {address, quantity: satToDecimal(quantity,decimals),recipients:[{address,quantity}]};
         if ((address[0] === "L") || (address[0] === "U")) {
             //lookup height and asset
-            let height = api.stream("height");
-            let assetData = api.stream(address);
+            let height = api.stream.get("height");
+            let assetData = api.stream.get(address);
             await Promise.all([height, assetData]);
 
             //get total assets
@@ -797,7 +796,7 @@ $(document).ready(async()=>{
 
         //check if stream configured
         let streamGood=false;
-        api.stream("height").then(()=>{
+        api.stream.get("height").then(()=>{
             streamGood=true;
             streamConfigured();
             if (walletGood) bothConfigured();
@@ -972,6 +971,7 @@ $(document).on('click','#stream_submit',async()=>{
     } catch(e) {
         showError(e);}
 });
+$(document).on('click','#clearCache',api.stream.clearCache);
 
 /*__  __        _ _
  |  \/  |___ __| (_)__ _
@@ -1054,7 +1054,9 @@ const kycStart=()=>{
                 data: 'label'
             },
             {
-                data: 'balance',
+                className: 'balance',
+                data: null,
+                render: (data,type,row)=>satToDecimal(row.balance,8),
                 defaultContent: 'Need Stream'
             },
             {
@@ -1183,6 +1185,7 @@ let assetCreatorAddresses=$("#asset_creator_addressOptions").DataTable({
         {
             data: 'null',
             render: (data, type, row) => {
+                //todo can we change Locked and unlocked to symbols of an open and closed lock
                 let html=`<button class="asset_creator_issue" data-type="locked" data-address="${row.address}">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}">Unlocked</button>`;
                 for (let assetId of row.issuance) {
                     if (assetId.substr(0,1)==="L") continue;
@@ -1969,8 +1972,8 @@ $(document).on('click','#asset_creator_new',async()=>{
         let data = {address, quantity: satToDecimal(quantity,decimals),recipients:[{address,quantity}]};
         if ((address[0] === "L") || (address[0] === "U")) {
             //lookup height and asset
-            let height = api.stream("height");
-            let assetData = api.stream(address);
+            let height = api.stream.get("height");
+            let assetData = api.stream.get(address);
             await Promise.all([height, assetData]);
 
             //get total assets
