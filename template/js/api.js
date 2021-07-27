@@ -43,7 +43,7 @@ const stream=async(url,data,mimeType)=>{
 
 const postFile=async(url,file)=>{
     return new Promise((resolve,reject)=>{
-        var formdata = new FormData();
+        let formdata = new FormData();
         formdata.append("file", file);
         $.ajax({
             url,
@@ -451,7 +451,7 @@ api.stream={};
 
 /**
  * Gets a digiassetX DigiAsset Data Stream
- * @param {string}  key
+ * @param {string}  Key
  * @param {boolean} useCache
  * @return {Promise<*>}
  *
@@ -490,7 +490,7 @@ api.wallet.blockHeight=async()=>get('/api/wallet/height.json');
  * @return {Promise<{
  *     label:   string,
  *     address: string,
- *     balance: string?
+ *     balance: string?,
  *     kyc:     KycState?,
  *     issuance:string[]?
  * }[]>}
@@ -498,6 +498,16 @@ api.wallet.blockHeight=async()=>get('/api/wallet/height.json');
  * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
  */
 api.wallet.addresses.list=async(label)=>post('/api/wallet/addresses/list.json',{label});
+
+/**
+ * Returns a new bech32 address
+ * @param {string?} label
+ * @param {string?} type
+ * @return {Promise<string>}
+ *
+ * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
+ */
+api.wallet.addresses.new=async(label="",type="bech32")=>post('/api/wallet/addresses/new.json',{label,type});
 
 /**
  * Gets a list of assets
@@ -509,7 +519,7 @@ api.wallet.addresses.list=async(label)=>post('/api/wallet/addresses/list.json',{
  *      decimals:   int,
  *      cid:        string?,
  *      cache: {
- *          rules:  AssetRules?
+ *          rules:  AssetRules?,
  *          kyc:    KycState?,
  *          issuer: string,
  *          divisibility: int,
@@ -548,15 +558,6 @@ api.wallet.asset.json=async(assetId)=>get(`/api/wallet/asset/${assetId}.json`);
  * @return {Promise<unknown>}   todo
  */
 api.wallet.asset.issuable=async(kyc=true,label)=>get('/api/wallet/asset/issuable.json',{kyc,label});
-
-/**
- * Returns a new bech32 address
- * @param {string?} label
- * @return {Promise<string>}
- *
- * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
- */
-api.wallet.addresses.new=async(label="")=>post('/api/wallet/addresses/new.json',{label});
 
 /**
  * Returns the URL needed to complete KYC verification.  All signatures are precomputed for user.
@@ -619,10 +620,7 @@ api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/
  *         assetName:   string,
  *         issuer:      string,
  *         description: string,
- *         urls:        Url[]
- *         userData:    {
- *             meta:    Meta[]
- *         },
+ *         urls:        Url[],
  *         site:        {
  *             url:     string,
  *             type:    "web"|"restricted"

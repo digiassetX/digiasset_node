@@ -679,7 +679,11 @@ $(document).on('click','.sendTX',async function(){
     try {
         let txid = await api.wallet.send(hex, password);
         $("#txid").text(txid);
-        (new bootstrap.Modal(document.getElementById('WalletPasswordModal'))).show();
+        (new bootstrap.Modal(document.getElementById('txidModal'))).show();
+        setTimeout(()=>{
+            api.stream.clearCache();
+            //todo show close button on model box
+        },240000);
     } catch (e) {
         showError(e);
     }
@@ -712,6 +716,19 @@ $(document).on('click','#walletpassword_close',()=>{
     walletPasswordRR[1]();
 });
 
+$(document).on('click','.newAddress',async function() {
+    try {
+        const {type} = $(this).data();
+        const label = $("#wallet_new_label").val().trim();
+        let address = await api.wallet.addresses.new(label, type);
+        $("#new_address").text(address);
+        let size = parseInt($("#new_address").data("size"));
+        document.getElementById("new_address_qr").src = DigiQR.address(address, size, 2);
+        (new bootstrap.Modal(document.getElementById('WalletNewAddressModal'))).show();
+    } catch (e) {
+        showError(e);
+    }
+});
 
 
 
@@ -1767,6 +1784,7 @@ let assetCreator_fileTable=[];
 const assetCreator_thumbSize=[150,100];
 const drawPreviewImage=(index,data)=>{
     let canvas=document.getElementById(`preview-${index}`);
+    // noinspection JSUnresolvedFunction
     let ctx = canvas.getContext('2d');
     canvas.width=assetCreator_thumbSize[0];
     canvas.height=assetCreator_thumbSize[1];
@@ -1790,6 +1808,7 @@ const drawPreviewImage=(index,data)=>{
 }
 const drawFileLogo=(index)=>{
     let canvas=document.getElementById(`preview-${index}`);
+    // noinspection JSUnresolvedFunction
     let ctx = canvas.getContext('2d');
     canvas.width=assetCreator_thumbSize[0];
     canvas.height=assetCreator_thumbSize[1];
@@ -1865,6 +1884,7 @@ const redrawFileTable=()=>{
 }
 let timerFileUploader;
 assetCreator_fileInput.addEventListener('change', ()=>{
+    // noinspection JSUnresolvedVariable
     for (let file of assetCreator_fileInput.files) {
         createFileBlob(file).then(fileData => {
             //record the file

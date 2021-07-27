@@ -378,7 +378,7 @@
             </table>
         </div>
         <h1>Receive:</h1>
-        <label for="wallet_new_label">Label(Optional)</label><input type="text" id="wallet_new_label"><button class="button btn btn-outline-dark">Bech32 Address(All good wallets)</button><button class="button btn btn-outline-dark">Legacy Address(Lazy programmers need to update)</button>
+        <label for="wallet_new_label">Label(Optional)</label><input type="text" id="wallet_new_label"><button class="button btn btn-outline-dark newAddress" data-type="bech32">Bech32 Address(All good wallets)</button><button class="button btn btn-outline-dark newAddress" data-type="legacy">Legacy Address(Lazy programmers need to update)</button>
     </div>
     <!-- Page Wallet end -->
 
@@ -640,6 +640,7 @@
                 </table>
 
                 <div class="modal-footer">
+                    <!-- todo Cancel does not work -->
                     <button type="button" id="send_asset_cancel" class="btn btn-primary">Cancel</button>
                     <button type="button" id="send_asset_send" class="btn btn-primary sendTX" disabled>Send</button>
                 </div>
@@ -721,6 +722,28 @@
 
 
 
+    <!-- Modal Wallet New Address -->
+    <div class="modal fade" id="WalletNewAddressModal" tabindex="-1" aria-labelledby="WNAMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="WNAMLabel">New Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <!-- todo need white boarder around qr code at least 4 dots wide also center -->
+                        <img id="new_address_qr"><br>
+                        <div id="new_address" data-size="300"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Wallet New Address end -->
+
+
+
     <!-- Modal TXID -->
     <div class="modal fade" id="txidModal" tabindex="-1" aria-labelledby="txidMLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -731,11 +754,14 @@
                 </div>
                 <h5>TXID:</h5>
                 <div id="txid"></div>
+                <!-- todo please include a warning.  "Do to limits of this wallet please wait 4 min before trying to make another transaction" -->
+                <!-- todo please include a progress indicator with 240sec count down -->
             </div>
         </div>
     </div>
     <!--modal TXID end -->
 
+    <script src="/js/digiQR.min.js"></script>
     <script src="/js/jquery-3.5.1.js"></script>
     <script src="/js/flags.js"></script>
     <script src="/js/api.js"></script>
