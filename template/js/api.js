@@ -652,6 +652,19 @@ api.wallet.send=async(hex,password=undefined)=>post('/api/wallet/send.json',{hex
  */
 api.wallet.fix.labels=async()=>get('/api/wallet/fix/labels.json');
 
+/**
+ * Trys to log in with DigiId
+ * @param {string}  uri -   digiid://....
+ * @param {string}  assetId - assetId site is requesting
+ * @param {string?} password - password to unlock wallet
+ * @return {Promise<boolean>}
+ */
+api.wallet.digiId=async(uri,assetId,password)=>{
+    let {callback,payload}=await post('/api/wallet/digiId.json',{uri,assetId,password});
+    let response=await post(callback,payload);
+    //todo if success return true
+}
+
 /*
 ██████╗ ██╗ ██████╗ ██╗ █████╗ ███████╗███████╗███████╗████████╗██╗  ██╗
 ██╔══██╗██║██╔════╝ ██║██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝╚██╗██╔╝

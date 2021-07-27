@@ -290,7 +290,8 @@ let walletTable={active:""};
  *      value:  string,
  *      decimals: int,
  *      cid: string,
- *      cache: {
+ *      metadata: Object,
+ *      data: {
  *          rules:  AssetRules?
  *          kyc:    KycState?,
  *          issuer: string,
@@ -302,15 +303,16 @@ let walletTable={active:""};
  *      }
  * }} row
  * @param {string}  label
- * @param {"vote_asset"|"send_asset"}  triggerClass
+ * @param {"vote_asset"|"send_asset"|"visit_site"}  triggerClass
  */
 const createAssetSendButton=(row,label,triggerClass)=>{
     let html=`<button class="cell button btn ${triggerClass}"`;
     for (let index in row) {
-        if (index==="cache") continue;  //skip cache
+        if (index==="data") continue;  //skip data
         html+=` data-${index.toLowerCase()}="${row[index].toString()}"`;
     }
-    if (triggerClass==="vote_asset") html+=` data-options='${JSON.stringify(row.cache.rules.vote.options)}'`;
+    if (triggerClass==="vote_asset") html+=` data-options='${JSON.stringify(row.data.rules.vote.options)}'`;
+    if (triggerClass==="visit_site") html+=` data-site='${JSON.stringify(row.metadata.site)}'`;
     html+=`>${label}</button>`;
     return html;
 }
@@ -344,11 +346,12 @@ const startWallet=(type)=>{
             data: null,
             render: (data, type, row) => {
                 let html='';
-                if ((row.cache.rules!==undefined)&&(row.cache.rules.vote!==undefined)) {
+                if ((row.data.rules!==undefined)&&(row.data.rules.vote!==undefined)) {
                     html+=createAssetSendButton(row,'Vote','vote_asset');
-                    if (!row.cache.rules.vote.movable) return html;  //don't allow move option if not movable
+                    if (!row.data.rules.vote.movable) return html;  //don't allow move option if not movable
                 }
                 html+=createAssetSendButton(row,'Send','send_asset');
+                if ((row.metadata!==undefined)&&(row.metadata.site!==undefined)) html+=createAssetSendButton(row,'Visit','visit_site');
                 return html;
             }
         }
@@ -563,6 +566,27 @@ $(document).on('click','.vote_assets_neg',function(e) {
 $(document).on('click','.vote_assets_pos',function(e) {
     e.preventDefault();
     changeVoteValue(1,$(this));
+});
+
+//load site
+$(document).on('click','.visit_site',async function() {
+    let {site}=$(this).data();
+    if (site.type==="restricted") {
+        //todo show spinner
+        let {digiId,assetId,url}=await $.getJSON(site.url);
+        let password=await getWalletPassword();
+        let success=await api.wallet.digiId(digiId,assetId,password);
+        //todo remove spinner
+        if (success) {
+            window.open(site.url, "_blank");
+        } else {
+            showError("Failed to login");
+        }
+    } else {
+        //open site in tab
+        window.open(site.url,"_blank");
+    }
+    //todo open link or ask for password
 });
 
 //draw vote pop up
@@ -1214,6 +1238,10 @@ let assetCreatorAddresses=$("#asset_creator_addressOptions").DataTable({
         },
         {
             data: 'address'
+        },
+        {
+            data: null,
+            render: (data,type,row)=>satToDecimal(row.value,8)
         }
     ]
 });
