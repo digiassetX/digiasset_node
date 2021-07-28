@@ -432,11 +432,12 @@ $("#vote_assets_costs").DataTable({
     ]
 });
 
+let assetCostsWaiting={};   //0=none running, 1=1 running no need to run again,2= run again on end
+
 /**
  * triggered by addresses table this function redraws the table costs and enables/disables send button
  * @return {Promise<void>}
  */
-let assetCostsWaiting={};   //0=none running, 1=1 running no need to run again,2= run again on end
 async function redrawAssetCosts() {
     let caller=this.api();
     const {expense,send,assetid,label,vote}=caller.tables().nodes().to$().data();
@@ -703,6 +704,7 @@ $(document).on('click','.sendTX',async function(){
     try {
         let txid = await api.wallet.send(hex, password);
         $("#txid").text(txid);
+        //todo close other Modal that may be open
         (new bootstrap.Modal(document.getElementById('txidModal'))).show();
         setTimeout(()=>{
             api.stream.clearCache();
@@ -799,6 +801,25 @@ setInterval(isNewest,86400000);//recheck daily
 ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝
  */
 
+const recheckWalletAndStream=()=>{
+    //check if wallet configured
+    let walletGood=false;
+    api.wallet.blockHeight().then(()=>{
+        walletGood=true;
+        walletConfigured();
+        if (streamGood) bothConfigured();
+    },()=>{});
+
+    //check if stream configured
+    let streamGood=false;
+    api.stream.get("height").then(()=>{
+        streamGood=true;
+        streamConfigured();
+        if (walletGood) bothConfigured();
+    },()=>{});
+}
+window.recheckWalletAndStream=recheckWalletAndStream;
+
 //check if logged in
 const showLoginBox=()=>(new bootstrap.Modal(document.getElementById('LoginModal'))).show();
 const walletConfigured=()=>{
@@ -827,22 +848,6 @@ $(document).ready(async()=>{
         $('#config_values').html(generateRandomConfig());     //generate random config for instructions
         startDataTable();                                     //start cid list
 
-        //check if wallet configured
-        let walletGood=false;
-        api.wallet.blockHeight().then(()=>{
-            walletGood=true;
-            walletConfigured();
-            if (streamGood) bothConfigured();
-        },()=>{});
-
-        //check if stream configured
-        let streamGood=false;
-        api.stream.get("height").then(()=>{
-            streamGood=true;
-            streamConfigured();
-            if (walletGood) bothConfigured();
-        },()=>{});
-
         //more then 1 user so enable the remove user option
         if (userList.length>1) {
             $("#menu_remove_user").show();
@@ -852,10 +857,7 @@ $(document).ready(async()=>{
         }
 
         //if wallet set up enable kyc and create asset options
-        try {
-            await api.wallet.blockHeight();
-
-        } catch (_) {}
+        recheckWalletAndStream();
     }
 });
 $(document).on('click','#menu_login',showLoginBox);
@@ -1958,37 +1960,46 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
     drawCallback: async function() {
         let caller=this.api();
         const {address,options,metadata}=caller.tables().nodes().to$().data();
-        let expenseTable=$("#send_assets_costs").DataTable();
-        try {
-            let domAssetSend=$(".asset_send");
-            let rowCount=caller.data().count();
-            if (rowCount === 0) {
-                expenseTable.clear().draw();
-                domAssetSend.attr('disabled',true);
-            } else {
-                domAssetSend.attr('disabled',true);
-                expenseTable.processing(true);                      //show processing
-                let recipients={};
-                for (let i=0;i<rowCount;i++) {
-                    let list=caller.row(i).data().recipients;
-                    for (let {address,quantity} of list) {
-                        if (recipients[address]===undefined) recipients[address]=0;
-                        recipients[address]+=quantity;
+        const expense='send_creator_costs';
+
+        if (assetCostsWaiting[expense]===undefined) assetCostsWaiting[expense]=0;
+        if (assetCostsWaiting[expense]===2) return; //already 1 pending
+        assetCostsWaiting[expense]++;
+        if (assetCostsWaiting[expense]===2) return; //will run on complet
+
+        let expenseTable=$("#send_creator_costs").DataTable();
+        let domAssetSend=$("#asset_creator_create");
+        domAssetSend.attr('disabled',true);
+        let assetTx;
+        while (assetCostsWaiting[expense]>0) {
+            assetTx = {hex: "", costs: []};
+            try {
+                let rowCount = caller.data().count();
+                if (rowCount > 0) {
+                    expenseTable.processing(true);                      //show processing
+                    let recipients = {};
+                    for (let i = 0; i < rowCount; i++) {
+                        let list = caller.row(i).data().recipients;
+                        for (let {address, quantity} of list) {
+                            if (recipients[address] === undefined) recipients[address] = 0;
+                            recipients[address] += quantity;
+                        }
                     }
+                    assetTx = await api.wallet.build.assetIssuance(recipients, address, options, metadata);   //get updated cost
                 }
-                assetCostsWaiting++;
-                let {costs, hex} = await api.wallet.build.assetIssuance(recipients,address,options,metadata);   //get updated cost
-                assetCostsWaiting--;
-                expenseTable.clear().rows.add(costs).draw();        //update table
-                domAssetSend.data("tx",hex);                   //put unsigned tx in send buttons data
-                if (assetCostsWaiting===0) {
-                    expenseTable.processing(false);                     //remove processing
-                    if (hex!=="") domAssetSend.removeAttr('disabled');     //reenable send button if no error
-                }
+            } catch (e) {
+                //error always called on first execution so ignore
+                console.log(e);
             }
-        } catch (e) {
-            //error always called on first execution so ignore
-            console.log(e);
+            expenseTable.clear().rows.add(assetTx.costs).draw();
+            assetCostsWaiting[expense]--;
+        }
+        expenseTable.processing(false);                     //remove processing
+        domAssetSend.data("tx", assetTx.hex);                   //put unsigned tx in send buttons data
+        if (assetTx.hex === "") {
+            domAssetSend.attr('disabled', true);
+        } else {
+            domAssetSend.removeAttr('disabled');
         }
     }
 });

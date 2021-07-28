@@ -163,8 +163,8 @@ api.config.wallet={};
  * Sets core wallet credentials.  Will test if correct and return true if they work
  * @param {string}  user
  * @param {string}  pass
- * @param {string?} host
- * @param {int?}    port
+ * @param {string=} host
+ * @param {int=}    port
  * @return {Promise<void>}
  *
  * Expected Errors: "User parameter not set","Pass parameter not set","Invalid Credentials"
@@ -277,7 +277,7 @@ api.version={};
  * @return {Promise<{
  *      compatible:string[],
  *      current:string,
- *      newer:string[]?
+ *      newer:?string[]
  * }>}
  */
 api.version.list=async()=>get('/api/version/list.json');
@@ -290,8 +290,8 @@ api.version.current=async()=>get('/api/version/current.json');
 
 /**
  * Updates the template version
- * @param version
- * @return {Promise<unknown>}
+ * @param {string=} version
+ * @return {Promise<void>}
  */
 api.version.update=async(version="newest")=>post('/api/version/update.json',{version});
 
@@ -356,7 +356,7 @@ api.cid={};
 /**
  * Approves a cid
  * @param {string}  assetId
- * @param {String}  cid
+ * @param {string}  cid
  * @return {Promise<void>}
  *
  * Expected Errors: "assetId parameter not set","cid parameter not set"
@@ -366,7 +366,7 @@ api.cid.approve=async(assetId,cid)=>post('/api/cid/approve.json',{assetId,cid});
 /**
  * Rejects a cid
  * @param {string}  assetId
- * @param {String}  cid
+ * @param {string}  cid
  * @return {Promise<void>}
  *
  * Expected Errors: "assetId parameter not set","cid parameter not set"
@@ -408,7 +408,7 @@ api.assetId={};
 /**
  * Approves an assetId
  * @param {string}  assetId
- * @param {String}  cid
+ * @param {string}  cid
  * @return {Promise<void>}
  *
  * Expected Errors: "assetId parameter not set","cid parameter not set"
@@ -418,7 +418,7 @@ api.assetId.approve=async(assetId,cid)=>post('/api/assetId/approve.json',{assetI
 /**
  * Rejects an assetId
  * @param {string}  assetId
- * @param {String}  cid
+ * @param {string}  cid
  * @return {Promise<void>}
  *
  * Expected Errors: "assetId parameter not set","cid parameter not set"
@@ -452,7 +452,7 @@ api.stream={};
 /**
  * Gets a digiassetX DigiAsset Data Stream
  * @param {string}  Key
- * @param {boolean} useCache
+ * @param {boolean=} useCache
  * @return {Promise<*>}
  *
  * Expected Errors: "Stream not configured","Invalid key"
@@ -490,9 +490,9 @@ api.wallet.blockHeight=async()=>get('/api/wallet/height.json');
  * @return {Promise<{
  *     label:   string,
  *     address: string,
- *     balance: string?,
- *     kyc:     KycState?,
- *     issuance:string[]?
+ *     balance: ?string,
+ *     kyc:     ?KycState,
+ *     issuance:?string[]
  * }[]>}
  *
  * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
@@ -501,8 +501,8 @@ api.wallet.addresses.list=async(label)=>post('/api/wallet/addresses/list.json',{
 
 /**
  * Returns a new bech32 address
- * @param {string?} label
- * @param {string?} type
+ * @param {string=} label
+ * @param {string=} type
  * @return {Promise<string>}
  *
  * Expected Errors: "Wallet not set up","Wallet offline or config has changed"
@@ -511,16 +511,16 @@ api.wallet.addresses.new=async(label="",type="bech32")=>post('/api/wallet/addres
 
 /**
  * Gets a list of assets
- * @param {boolean?} byLabel - undefined for all labels
+ * @param {?boolean} byLabel - undefined for all labels
  * @return {Promise<{
  *      label:      string,
  *      assetId:    string,
  *      value:      string,
  *      decimals:   int,
- *      cid:        string?,
+ *      cid:        ?string,
  *      cache: {
- *          rules:  AssetRules?,
- *          kyc:    KycState?,
+ *          rules:  ?AssetRules,
+ *          kyc:    ?KycState,
  *          issuer: string,
  *          divisibility: int,
  *          metadata: {
@@ -534,10 +534,10 @@ api.wallet.asset.list=async(byLabel)=>get('/api/wallet/asset/list.json',{byLabel
 
 /**
  * Gets an assets data
- * @param assetId
+ * @param {?string} assetId
  * @return {{
- *     rules:   AssetRules?,
- *     kyc:     KycState?,
+ *     rules:   ?AssetRules,
+ *     kyc:     ?KycState,
  *     issuer:  string,
  *     locked:      boolean,
  *     aggregation: "aggregatable"|"hybrid"|"dispersed",
@@ -553,9 +553,13 @@ api.wallet.asset.json=async(assetId)=>get(`/api/wallet/asset/${assetId}.json`);
 
 /**
  * Gets a list of addresses that can be used to issue an asset
- * @param {boolean} kyc
- * @param {string?} label - undefined for all labels
- * @return {Promise<unknown>}   todo
+ * @param {boolean=} kyc
+ * @param {?string} label - undefined for all labels
+ * @return {Promise<{
+ *     address:  string,
+ *     issuance: string[],
+ *     value:    string
+ * }[]>}
  */
 api.wallet.asset.issuable=async(kyc=true,label)=>get('/api/wallet/asset/issuable.json',{kyc,label});
 
@@ -569,20 +573,20 @@ api.wallet.asset.issuable=async(kyc=true,label)=>get('/api/wallet/asset/issuable
  * type: donate - label is required, goal is optional value in sats
  *
  * @param {string[]}  addresses
- * @param {{
+ * @param {?{
  *     type:    "public"|"donate"|"secret",
- *     pin:     string?,
- *     label:   string?,
- *     goal:    int?
- * }?}   options
- * @param {string?}  password
+ *     pin:     ?string,
+ *     label:   ?string,
+ *     goal:    ?int
+ * }}   options
+ * @param {?string}  password
  * @return {Promise<string>}
  *
  * Expected Errors: "Wallet not set up","Wallet offline or config has changed","donate type requires a label",
  *                  "donate label must be at least 2 characters","secret type requires a pin",
  *                  "secret pin must be at least 4 characters","Unknown option type","addresses must be an array of string"
  */
-api.wallet.kyc=async(addresses,options,password=undefined)=>post('/api/wallet/kyc.json',{addresses,password});
+api.wallet.kyc=async(addresses,options,password)=>post('/api/wallet/kyc.json',{addresses,password});
 
 /**
  * Returns a list of UTXOs
@@ -595,8 +599,8 @@ api.wallet.utxos=async(addresses)=>post('/api/wallet/utxos.json',{addresses});
  * Create an asset transaction and get costs
  * @param {Object<int>} recipients
  * @param {string}      assetId
- * @param {string?}     label
- * @param {boolean?}    vote
+ * @param {?string}     label
+ * @param {boolean=}    vote
  * @return {Promise<{
  *     costs:   Object<int>,
  *     hex:     string
@@ -609,12 +613,12 @@ api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/
  * @param {Object<int>} recipients
  * @param {string}      address
  * @param {{
- *         divisibility:    int=0,
- *         locked:          boolean=true,
- *         aggregation:     "aggregatable|hybrid|dispersed"="aggregatable",
+ *         divisibility:    int,
+ *         locked:          boolean,
+ *         aggregation:     "aggregatable"|"hybrid"|"dispersed",
  *         changeAddress:   string,
- *         nodes:           {Number},
- *         rules:           AssetRules|boolean=false
+ *         nodes:           Object<number>,
+ *         rules:           AssetRules|boolean
  *     }}   options
  * @param {{
  *         assetName:   string,
@@ -625,8 +629,8 @@ api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/
  *             url:     string,
  *             type:    "web"|"restricted"
  *         },
- *         encryptions: Encryption[]?,
- *         verifications: Object?
+ *         encryptions: ?Encryption[],
+ *         verifications: ?Object
  *     }}    metadata
  * @return {Promise<{
  *     costs:   Object<int>,
@@ -638,12 +642,12 @@ api.wallet.build.assetIssuance=async(recipients,address,options,metadata)=>post(
 /**
  * Sends a transaction and returns the txid
  * @param {string}              hex
- * @param {string?}             password
+ * @param {?string}             password
  * @return {Promise<string>}
  *
  * Expected Errors: "Wallet not set up","Wallet offline or config has changed",
  */
-api.wallet.send=async(hex,password=undefined)=>post('/api/wallet/send.json',{hex,password});
+api.wallet.send=async(hex,password)=>post('/api/wallet/send.json',{hex,password});
 
 /**
  * Finds any addresses with funds and without labels and assigns it blank label
@@ -656,7 +660,7 @@ api.wallet.fix.labels=async()=>get('/api/wallet/fix/labels.json');
  * Trys to log in with DigiId
  * @param {string}  uri -   digiid://....
  * @param {string}  assetId - assetId site is requesting
- * @param {string?} password - password to unlock wallet
+ * @param {?string} password - password to unlock wallet
  * @return {Promise<boolean>}
  */
 api.wallet.digiId=async(uri,assetId,password)=>{
