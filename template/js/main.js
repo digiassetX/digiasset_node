@@ -703,7 +703,7 @@ $(document).on('click','#send_assets_new',async()=>{
 
 //handle sending transactions
 $(document).on('click','.sendTX',async function(){
-    let {tx,change,label}=$(this).data("tx");
+    let {tx,change,label}=$(this).data();
     let password=await getWalletPassword();
     try {
         let txid = await api.wallet.send(tx, password);
