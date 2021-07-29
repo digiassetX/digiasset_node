@@ -473,7 +473,7 @@ api.stream.clearCache=async()=>get('/api/stream/clear.json');
 ╚███╔███╔╝██║  ██║███████╗███████╗███████╗   ██║
  ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝
  */
-api.wallet={asset:{},addresses:{},fix:{},build:{}};
+api.wallet={asset:{},addresses:{},fix:{},build:{},change:{}};
 
 /**
  * Gets the current wallet sync height
@@ -564,6 +564,14 @@ api.wallet.asset.json=async(assetId)=>get(`/api/wallet/asset/${assetId}.json`);
 api.wallet.asset.issuable=async(kyc=true,label)=>get('/api/wallet/asset/issuable.json',{kyc,label});
 
 /**
+ * Removes a change address from the pool
+ * @param {string}  address
+ * @param {string}  label
+ * @return {Promise<void>}
+ */
+api.wallet.change.markUsed=async(address,label="")=>post('/api/wallet/change/use.json',{address,label});
+
+/**
  * Returns the URL needed to complete KYC verification.  All signatures are precomputed for user.
  * If wallet is password protected password is needed.  Otherwise it can be left undefined
  *
@@ -603,7 +611,8 @@ api.wallet.utxos=async(addresses)=>post('/api/wallet/utxos.json',{addresses});
  * @param {boolean=}    vote
  * @return {Promise<{
  *     costs:   Object<int>,
- *     hex:     string
+ *     hex:     string,
+ *     change:  string[]
  * }>}
  */
 api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/wallet/build/assetTx.json', {recipients,assetId,label,vote});
@@ -634,7 +643,10 @@ api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/
  *     }}    metadata
  * @return {Promise<{
  *     costs:   Object<int>,
- *     hex:     string
+ *     hex:     string,
+ *     assetId: string,
+ *     cid:     string,
+ *     sha256Hash:string
  * }>}
  */
 api.wallet.build.assetIssuance=async(recipients,address,options,metadata)=>post('/api/wallet/build/assetIssuance.json', {recipients,address,options,metadata});

@@ -761,6 +761,27 @@
     </div>
     <!--modal TXID end -->
 
+    <!-- Modal Asset Creating -->
+    <div class="modal fade" id="creatingAssetModal" tabindex="-1" aria-labelledby="creatingAssetMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="creatingAssetMLabel">Creating Asset <span id="creatingAssetId"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <h5>Progress:</h5>
+                <ol>
+                    <li>Transmitting To DigiByte: <span id="creatingAssetTXID">Processing<!-- todo put small spinner here --></span></li>
+                    <li id="creatingAssetDetectLi" class="creatingAssetHideAtStart">Waiting for digiassetX to detect transaction: <span id="creatingAssetDetect">Processing<!-- todo put small spinner here --></span></li>
+                    <li id="creatingAssetPermanentLi" class="creatingAssetHideAtStart">Waiting for digiassetX to download metadata: <span id="creatingAssetPermanent">Processing<!-- todo put small spinner here --></span></li>
+                </ol>
+                <h5 id="creatingAssetWarning">Do not shut down your node</h5>
+                <button id="creatingAssetDone" class="creatingAssetHideAtStart" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            </div>
+        </div>
+    </div>
+    <!--modal Asset Creating -->
+
     <script src="/js/digiQR.min.js"></script>
     <script src="/js/jquery-3.5.1.js"></script>
     <script src="/js/flags.js"></script>

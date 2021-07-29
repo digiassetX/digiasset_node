@@ -452,7 +452,7 @@ async function redrawAssetCosts() {
     domAssetSend.attr('disabled', true);
     let assetTx;
     while (assetCostsWaiting[expense]>0) {
-        assetTx={hex:"",costs:[]};
+        assetTx={hex:"",costs:[],change:[]};
         try {
             let rowCount = caller.data().count();
             if (rowCount >0) {
@@ -474,7 +474,11 @@ async function redrawAssetCosts() {
         assetCostsWaiting[expense]--;
     }
     expenseTable.processing(false);                     //remove processing
-    domAssetSend.data("tx", assetTx.hex);                   //put unsigned tx in send buttons data
+    domAssetSend.data({
+        tx:     assetTx.hex,
+        change: assetTx.change,
+        label
+    });
     if (assetTx.hex === "") {
         domAssetSend.attr('disabled', true);
     } else {
@@ -699,10 +703,11 @@ $(document).on('click','#send_assets_new',async()=>{
 
 //handle sending transactions
 $(document).on('click','.sendTX',async function(){
-    let hex=$(this).data("tx");
+    let {tx,change,label}=$(this).data("tx");
     let password=await getWalletPassword();
     try {
-        let txid = await api.wallet.send(hex, password);
+        let txid = await api.wallet.send(tx, password);
+        for (let address of change) await api.wallet.change.markUsed(address,label);
         $("#txid").text(txid);
         //todo close other Modal that may be open
         (new bootstrap.Modal(document.getElementById('txidModal'))).show();
@@ -1995,7 +2000,11 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
             assetCostsWaiting[expense]--;
         }
         expenseTable.processing(false);                     //remove processing
-        domAssetSend.data("tx", assetTx.hex);                   //put unsigned tx in send buttons data
+        domAssetSend.data({
+            tx:         assetTx.hex,
+            sha256Hash: assetTx.sha256Hash,
+            assetId:    assetTx.assetId
+        });                   //put unsigned tx in send buttons data
         if (assetTx.hex === "") {
             domAssetSend.attr('disabled', true);
         } else {
@@ -2061,4 +2070,38 @@ $(document).on('click','#asset_creator_new',async()=>{
         console.log(e);
         showError("Invalid AssetId");   //errors only thrown when assetId is invalid
     }
+});
+
+
+$(document).on('click','#asset_creator_create',async()=>{
+    let {tx,sha256Hash,assetId}=$("#asset_creator_create").data();
+
+    //open window to show progress
+    $('.creatingAssetHideAtStart').hide();
+    $("#creatingAssetWarning").show();
+    $("#creatingAssetId").text(assetId);
+    (new bootstrap.Modal(document.getElementById('creatingAssetModal'))).show();
+
+    //send to chain
+    let txid=await api.wallet.send(tx);
+    $("#creatingAssetTXID").text(txid);
+    $("#creatingAssetDetectLi").show();
+
+    //monitor digiassetX progress
+    let timer=setInterval(async()=>{
+        let state=await api.digiassetX.asset.permanent(sha256Hash);
+        switch (state) {
+            case 0:
+                break;
+            case 1:
+                $("#creatingAssetDetect").text("✓");
+                $("#creatingAssetPermanentLi").show();
+                break;
+            case 2:
+                $("#creatingAssetPermanent").text("✓");
+                clearInterval(timer);
+                $("#creatingAssetWarning").hide();
+                $("#creatingAssetDone").show();
+        }
+    },60000);
 });
