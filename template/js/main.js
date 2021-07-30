@@ -1942,6 +1942,24 @@ assetCreator_fileInput.addEventListener('change', ()=>{
  |___/\__\___| .__/ |___/
              |_|
  */
+//setup expense table
+$("#asset_creator_costs").DataTable({
+    responsive: true,
+    processing: true,
+    language: {
+        loadingRecords: '&nbsp;',
+        processing: '<div class="spinner"></div>'
+    },
+    columns: [
+        {
+            data: 'type',
+        },
+        {
+            data: 'amount'
+        }
+    ]
+});
+
 
 //sending address data table
 let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
@@ -1976,7 +1994,7 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
         assetCostsWaiting[expense]++;
         if (assetCostsWaiting[expense]===2) return; //will run on complet
 
-        let expenseTable=$("#send_creator_costs").DataTable();
+        let expenseTable=$("#asset_creator_costs").DataTable();
         let domAssetSend=$("#asset_creator_create");
         domAssetSend.attr('disabled',true);
         let assetTx;
@@ -2080,16 +2098,25 @@ $(document).on('click','#asset_creator_new',async()=>{
 $(document).on('click','#asset_creator_create',async()=>{
     let {tx,sha256Hash,assetId}=$("#asset_creator_create").data();
 
+    //get password
+    const password=await getWalletPassword();
+
     //open window to show progress
     $('.creatingAssetHideAtStart').hide();
     $("#creatingAssetWarning").show();
     $("#creatingAssetId").text(assetId);
-    (new bootstrap.Modal(document.getElementById('creatingAssetModal'))).show();
+    let modal=new bootstrap.Modal(document.getElementById('creatingAssetModal'));
+    modal.show();
 
     //send to chain
-    let txid=await api.wallet.send(tx);
-    $("#creatingAssetTXID").text(txid);
-    $("#creatingAssetDetectLi").show();
+    try {
+        let txid = await api.wallet.send(tx, password);
+        $("#creatingAssetTXID").text(txid);
+        $("#creatingAssetDetectLi").show();
+    } catch (e) {
+        modal.hide();
+        showError(e);
+    }
 
     //monitor digiassetX progress
     let timer=setInterval(async()=>{

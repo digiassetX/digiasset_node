@@ -6,12 +6,13 @@ const post=async(url,data)=>{
         $.ajax({
             type: "POST",
             url,
-            data,
+            dataType: "json",
+            contentType: 'application/json',
+            data: JSON.stringify(data),
             success: (response)=>{
                 if (response.error!==undefined) return reject(response.error);
                 resolve(response);
-            },
-            dataType: "json"
+            }
         });
     });
 }

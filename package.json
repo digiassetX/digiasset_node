@@ -15,7 +15,7 @@
     "body-parser": "^1.19.0",
     "bs58": "^4.0.1",
     "cids": "^1.1.4",
-    "digiasset-encoder": "^0.0.6",
+    "digiasset-encoder": "^0.0.7",
     "digibyte-rpc": "^1.0.6",
     "express": "^4.17.1",
     "express-http-proxy": "^1.6.2",
