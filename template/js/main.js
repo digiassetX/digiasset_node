@@ -345,13 +345,17 @@ const startWallet=(type)=>{
             className: 'columnSend',
             data: null,
             render: (data, type, row) => {
+                let movable=true;
                 let html='';
                 if ((row.data.rules!==undefined)&&(row.data.rules.vote!==undefined)) {
                     html+=createAssetSendButton(row,'Vote','vote_asset');
-                    if (!row.data.rules.vote.movable) return html;  //don't allow move option if not movable
+                    movable=row.data.rules.vote.movable;
                 }
-                html+=createAssetSendButton(row,'Send','send_asset');
+                if (movable) html+=createAssetSendButton(row,'Send','send_asset');
                 if ((row.metadata!==undefined)&&(row.metadata.site!==undefined)) html+=createAssetSendButton(row,'Visit','visit_site');
+                let cidToUse=row.cid;
+                if ((cidToUse===undefined)&&(row.data.metadata!==undefined)) cidToUse=(row.data.metadata.pop()||{}).cid;
+                if (cidToUse!==undefined) html+=`<button class="view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${cidToUse}" data-list="unsorted">View</button>`;
                 return html;
             }
         }

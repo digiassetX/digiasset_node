@@ -518,7 +518,7 @@ api.wallet.addresses.new=async(label="",type="bech32")=>post('/api/wallet/addres
  *      value:      string,
  *      decimals:   int,
  *      cid:        ?string,
- *      cache: {
+ *      data: {
  *          rules:  ?AssetRules,
  *          kyc:    ?KycState,
  *          issuer: string,
@@ -527,7 +527,8 @@ api.wallet.addresses.new=async(label="",type="bech32")=>post('/api/wallet/addres
  *              txid:    string,
  *              cid:     string
  *          }[]
- *      }
+ *      },
+ *      metadata: Object
  * }[]>}
  */
 api.wallet.asset.list=async(byLabel)=>get('/api/wallet/asset/list.json',{byLabel});
