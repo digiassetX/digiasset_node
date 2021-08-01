@@ -312,7 +312,7 @@ const createAssetSendButton=(row,label,triggerClass)=>{
         html+=` data-${index.toLowerCase()}="${row[index].toString()}"`;
     }
     if (triggerClass==="vote_asset") html+=` data-options='${JSON.stringify(row.data.rules.vote.options)}'`;
-    if (triggerClass==="visit_site") html+=` data-site='${JSON.stringify(row.metadata.site)}'`;
+    if (triggerClass==="visit_site") html+=` data-site='${JSON.stringify(row.metadata.data.site)}'`;
     html+=`>${label}</button>`;
     return html;
 }
@@ -352,7 +352,7 @@ const startWallet=(type)=>{
                     movable=row.data.rules.vote.movable;
                 }
                 if (movable) html+=createAssetSendButton(row,'Send','send_asset');
-                if ((row.metadata!==undefined)&&(row.metadata.site!==undefined)) html+=createAssetSendButton(row,'Visit','visit_site');
+                if ((row.metadata!==undefined)&&(row.metadata.data.site!==undefined)) html+=createAssetSendButton(row,'Visit','visit_site');
                 let cidToUse=row.cid;
                 if ((cidToUse===undefined)&&(row.data.metadata!==undefined)) cidToUse=(row.data.metadata.pop()||{}).cid;
                 if (cidToUse!==undefined) html+=`<button class="view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${cidToUse}" data-list="unsorted">View</button>`;
