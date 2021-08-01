@@ -1799,7 +1799,7 @@ const createCidBlob=(cid,name,type)=>{
                 data: blob
             });
         };
-        reader.readAsArrayBuffer(await api.cid.stream(cid));
+        reader.readAsArrayBuffer(await api.cors("ipfs://"+cid,type));
     });
 }
 

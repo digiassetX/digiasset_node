@@ -381,13 +381,6 @@ api.cid.reject=async(assetId,cid)=>post('/api/cid/reject.json',{assetId,cid});
  */
 api.cid.page=(cid)=>'/api/cid/'+cid+'.html';
 
-/**
- * Gets binary data from IPFS
- * @param {string}  cid
- * @param {string}  mimeType
- * @return {Promise<Blob>}
- */
-api.cid.stream=async(cid,mimeType)=>stream('/api/cid/stream',{cid},mimeType);
 
 /**
  * Writes a Blob to IPFS and returns the cid
