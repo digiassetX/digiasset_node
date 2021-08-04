@@ -16,6 +16,13 @@ const showError=(e)=>{
 }
 
 /**
+ * Base58 Decoder
+ * @param {string}  S
+ * @return {Uint8Array}
+ */
+const from_b58 = function(S){const A="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";let d=[],b=[],i,j,c,n;for(i in S){j=0,c=A.indexOf(S[i]);if(c<0)return undefined;c||b.length^i?i:b.push(0);while(j in d||c){n=d[j];n=n?n*58+c:c;c=n>>8;d[j]=n%256;j++}}while(j--)b.push(d[j]);return new Uint8Array(b)};
+
+/**
  * Converts a sat int to string decimal
  * @param {int} value
  * @param {int} decimals
@@ -191,7 +198,6 @@ const processARclick=(type,data)=>{
         try {
             for (let i=0;true;i++) {
                 let line = dataTable[list].row(i).data();
-                console.log(line);
                 if (line[column] !== old) {
                     next = line;
                     break;
@@ -1118,7 +1124,6 @@ const kycStart=()=>{
         ]
     });
     $('#kycAddresses tbody').on('click', 'tr', function () {
-        console.log("x");
         $(this).toggleClass('selected');
         // noinspection JSIgnoredPromiseFromCall
         validateKYCInputs();
@@ -1238,12 +1243,15 @@ let assetCreatorAddresses=$("#asset_creator_addressOptions").DataTable({
             data: 'null',
             render: (data, type, row) => {
                 //todo can we change Locked and unlocked to symbols of an open and closed lock
-                let html=`<button class="asset_creator_issue" data-type="locked" data-address="${row.address}">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}">Unlocked</button>`;
+                let availableDivisibility=0x1ff;
+                let html='';
                 for (let assetId of row.issuance) {
                     if (assetId.substr(0,1)==="L") continue;
+                    let divisibility=from_b58(assetId)[23];
+                    availableDivisibility&=(0x1ff-Math.pow(2,divisibility));
                     html+=`<button class="asset_creator_issue" data-type="reissue" data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
                 }
-                return html;
+                return `<button class="asset_creator_issue" data-type="locked" data-address="${row.address}">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>`+html;
             },
             orderable: false
         },
@@ -1263,7 +1271,7 @@ $(document).on('click','#asset_creator_useKyc',()=>assetCreatorAddresses.ajax.re
 //handle reissue click
 $(document).on('click','.asset_creator_issue',async function(){
     //get data
-    const {type,address,assetid}=$(this).data();
+    const {type,address,assetid,divisibility}=$(this).data();
     /*
     type: "locked"|"unlocked","reissue"
     address: string
@@ -1399,6 +1407,14 @@ $(document).on('click','.asset_creator_issue',async function(){
         }
 
         //todo remove spinner
+    } else
+
+        //not a reissuance remove any options that may conflict with already existing assets.
+        let mask=parseInt(divisibility,16);
+        for (let i=0;i<9;i++) {
+            if ((mask&Math.pow(2,i))===0) $("#asset_creator_divisibility option[value=" + i + "]").attr('disabled', true);
+        }
+
     }
 
 
