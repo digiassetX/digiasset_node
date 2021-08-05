@@ -62,6 +62,18 @@ const postFile=async(url,file)=>{
 }
 
 /*
+████████╗ ██████╗ ███████╗
+╚══██╔══╝██╔═══██╗██╔════╝
+   ██║   ██║   ██║███████╗
+   ██║   ██║   ██║╚════██║
+   ██║   ╚██████╔╝███████║
+   ╚═╝    ╚═════╝ ╚══════╝
+ */
+api.tos={};
+api.tos.get=async()=>get('/api/tos.json');
+api.tos.set=async(hash)=>post('/api/tos.json',{hash});
+
+/*
  ██████╗ ██████╗ ██████╗ ███████╗
 ██╔════╝██╔═══██╗██╔══██╗██╔════╝
 ██║     ██║   ██║██████╔╝███████╗
@@ -577,7 +589,7 @@ api.wallet.change.markUsed=async(address,label="")=>post('/api/wallet/change/use
  *
  * @param {string[]}  addresses
  * @param {?{
- *     type:    "public"|"donate"|"secret",
+ *     type:    "public"|"donate"|"secret"|"voter",
  *     pin:     ?string,
  *     label:   ?string,
  *     goal:    ?int

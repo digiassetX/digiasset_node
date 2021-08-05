@@ -47,6 +47,9 @@
                 <li><a class="dropdown-item clickable" id="menu_stream">Stream</a></li>
               </ul>
             </li>
+              <li class="nav-item">
+                  <a class="nav-link clickable" id="menu_tos">TOS</a>
+              </li>
             <li class="nav-item">
               <a class="nav-link clickable" style="display: none;" id="menu_login">Login</a>
             </li>
@@ -336,6 +339,7 @@
                             <option value="public">Public(Name and country will be publicly viewable)</option>
                             <option value="donate">Donate(Name and country will be publicly viewable-listed on donate.digiassetX.com)</option>
                             <option value="secret">Secret(Country will be publicly viewable)</option>
+                            <option value="voter">Register as Voter(Anonymous)</option>
                         </select>
 
                         <label style="font-size: 14px;font-weight: 600" for="kycPin" class="for_secret">Pin:</label>
@@ -345,7 +349,7 @@
                         <label style="font-size: 14px;font-weight: 600" for="kycGoal" class="for_donate">Goal(0 for no goal):</label>
                         <input type="number" name="w3lName" placeholder="" class="contact-input for_donate kyc_option" id="kycGoal" value="0"/>
 
-                        Addresses:  (check 1 or more addresses you want to prove you own):
+                        Addresses:  (check 1 or more addresses you want to prove you own-only 1 for voter registration):
                         <table class="table table-bordered table-striped" id="kycAddresses">
                             <thead><tr><th>Address</th><th>Label</th><th>Balance</th><th>KYC</th></tr></thead>
                         </table>
@@ -781,6 +785,31 @@
         </div>
     </div>
     <!--modal Asset Creating -->
+
+    <!-- Modal TOS -->
+    <div class="modal fade" id="tosModal" tabindex="-1" aria-labelledby="tosMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tosMLabel">Terms Of Service</h5>
+                </div>
+                <h1>Simplified:</h1>
+                <p>We wanted to just write</p>
+                <ul>
+                    <li>Don't be evil</li>
+                    <li>We did our best so you can't sue us if anything goes wrong</li>
+                    <li>This is an open source project.  Find a problem or want to improve it please fix.</li>
+                </ul>
+                <p>But the lawyers said this wasn't good enough so here is there version.</p>
+                <h1>Full Terms of Service:</h1>
+                <div id="tosLegal"></div>
+                <div class="modal-footer">
+                    <button id="tosAgree">Agree to the Terms of Service</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal TOS ends -->
 
     <script src="/js/digiQR.min.js"></script>
     <script src="/js/jquery-3.5.1.js"></script>

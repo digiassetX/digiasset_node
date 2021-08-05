@@ -29,6 +29,7 @@
     "mime-types": "^2.1.28",
     "multer": "^1.4.2",
     "outputpair": "^1.0.1",
+    "showdown": "^1.9.1",
     "sleep-promise": "^9.1.0",
     "tx-size": "^1.0.0",
     "unzipper": "^0.10.11"

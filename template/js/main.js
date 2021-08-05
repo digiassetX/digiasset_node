@@ -6,9 +6,6 @@ let getHeight=async()=>{
     let height=await api.height();
     $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
 }
-setInterval(getHeight,60000);
-// noinspection JSIgnoredPromiseFromCall
-getHeight();
 
 const showError=(e)=>{
     $("#error_message").text(e);
@@ -41,6 +38,47 @@ jQuery.fn.dataTable.Api.register( 'processing()', function ( show ) {
         ctx.oApi._fnProcessingDisplay( ctx, show );
     } );
 } );
+
+/*
+████████╗ ██████╗ ███████╗
+╚══██╔══╝██╔═══██╗██╔════╝
+   ██║   ██║   ██║███████╗
+   ██║   ██║   ██║╚════██║
+   ██║   ╚██████╔╝███████║
+   ╚═╝    ╚═════╝ ╚══════╝
+ */
+let tosModal=new bootstrap.Modal(document.getElementById('tosModal'),{
+    backdrop:   "static",
+    keyboard:   false
+});
+let tosResolve;
+
+/**
+ * Shows the TOS and returns a promise until the user accepts it
+ * @param {boolean} onceOnly
+ * @return {Promise<void>}
+ */
+const showTOS=(onceOnly=true)=>new Promise(resolve=>{
+    api.tos.get().then(({agreed, tos, hash}) => {
+        if (onceOnly&&agreed) return resolve();
+        tosResolve=resolve;
+        $("#tosLegal").html(tos);
+        $("#tosAgree").data("hash", hash);
+        tosModal.show();
+    });
+});
+
+$(document).on('click','#menu_tos',()=>showTOS(false));
+
+$(document).on('click',"#tosAgree",()=>{
+    const hash=$("#tosAgree").data("hash");
+    api.tos.set(hash);
+    tosModal.hide();
+    if (tosResolve!==undefined) {
+        tosResolve();
+        tosResolve=undefined;
+    }
+});
 
 /*
 ███╗   ███╗███████╗████████╗ █████╗     ██████╗  █████╗ ████████╗ █████╗     ██╗     ██╗███████╗████████╗███████╗
@@ -130,7 +168,6 @@ const startDataTable=()=>dataTable={
 let redraw=()=>{
     for (let list in dataTable) dataTable[list].ajax.reload(null,false);
 }
-setInterval(redraw,60000);
 
 /*
 ██╗   ██╗██╗███████╗██╗    ██╗███████╗██████╗
@@ -794,18 +831,19 @@ $(document).on('click','#updateBtn',async()=>{
 
 //check if newest
 const isNewest=async()=>{
-    let {compatible,newer,current}=await api.version.list();
-    let newestAvailable=compatible.pop();
-    //todo we should do something with newer.  if newer!==undefined then there is new binaries they can download from git hub
-    if (newestAvailable===current) {
-        $("#updateBtn").hide();  //we have updated
-    } else {
-        $("#updateBtn").text(`Update Available (Version: ${newestAvailable})`).show();
+    try {
+        let {compatible, newer, current} = await api.version.list();
+        let newestAvailable = compatible.pop();
+        if (newestAvailable===undefined) return;
+        //todo we should do something with newer.  if newer!==undefined then there is new binaries they can download from git hub
+        if (newestAvailable === current) {
+            $("#updateBtn").hide();  //we have updated
+        } else {
+            $("#updateBtn").text(`Update Available (Version: ${newestAvailable})`).show();
+        }
+    } catch (e) {
     }
 }
-// noinspection JSIgnoredPromiseFromCall
-isNewest();//check at start
-setInterval(isNewest,86400000);//recheck daily
 
 /*
 ██╗      ██████╗  ██████╗ ██╗███╗   ██╗
@@ -815,6 +853,39 @@ setInterval(isNewest,86400000);//recheck daily
 ███████╗╚██████╔╝╚██████╔╝██║██║ ╚████║
 ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝
  */
+const runOnceAfterLogin=async()=>{
+    //show tos if not yet agreed
+    await showTOS();
+
+    //show IPFS scan height
+    setInterval(getHeight,60000);
+    // noinspection JSIgnoredPromiseFromCall
+    getHeight();
+
+    //check if template is up to date
+    setInterval(isNewest,86400000);//recheck daily
+    // noinspection JSIgnoredPromiseFromCall
+    isNewest();//check at start
+
+    //logged in or no login
+    $("#menu_settings").removeAttr('disabled');     //enable settings
+    let userList=await api.config.user.list();            //find out how many users there are
+    if (userList.length>0) $("#menu_logout").show();      //actually logged in so show logout button
+    $('#config_values').html(generateRandomConfig());     //generate random config for instructions
+    startDataTable();                                     //start cid list
+
+    //more then 1 user so enable the remove user option
+    if (userList.length>1) {
+        $("#menu_remove_user").show();
+        for (let user of userList) {
+            $('#remove_user').append(new Option(user, user));
+        }
+    }
+
+    //if wallet set up enable kyc and create asset options
+    recheckWalletAndStream();
+}
+
 
 const recheckWalletAndStream=()=>{
     //check if wallet configured
@@ -848,6 +919,9 @@ const streamConfigured=()=>{
 const bothConfigured=()=>{
     $('.needWalletAndStream').removeAttr('disabled');
     startWallet("assets");
+
+    //start asset creator
+    startAssetCreatorOptions();
 }
 $(document).ready(async()=>{
     let isLogedIn=await api.user.state();
@@ -856,23 +930,7 @@ $(document).ready(async()=>{
         showLoginBox();
         $("#menu_login").show();
     } else {
-        //logged in or no login
-        $("#menu_settings").removeAttr('disabled');     //enable settings
-        let userList=await api.config.user.list();            //find out how many users there are
-        if (userList.length>0) $("#menu_logout").show();      //actually logged in so show logout button
-        $('#config_values').html(generateRandomConfig());     //generate random config for instructions
-        startDataTable();                                     //start cid list
-
-        //more then 1 user so enable the remove user option
-        if (userList.length>1) {
-            $("#menu_remove_user").show();
-            for (let user of userList) {
-                $('#remove_user').append(new Option(user, user));
-            }
-        }
-
-        //if wallet set up enable kyc and create asset options
-        recheckWalletAndStream();
+        runOnceAfterLogin();
     }
 });
 $(document).on('click','#menu_login',showLoginBox);
@@ -1152,15 +1210,19 @@ const validateKYCInputs=async(submit)=>{
 
         //get options
         switch (options.type) {
-            case "donate":   //donate
+            case "donate":
                 options.label=$("kycLabel").val().trim();
                 options.goal=parseInt($("kycGoal").val().trim());
                 if (options.label.length<2) throw "Invalid Label Length";
                 break;
 
-            case "secret":   //secret
+            case "secret":
                 options.pin=$("kycPin").val().trim();
                 if (options.pin.length<4) throw "Invalid Pin Length";
+                break;
+
+            case "voter":
+                if (rows.length>1) throw "Only 1 address allowed";
         }
 
         $("#kycDone2").removeAttr('disabled');
@@ -1221,49 +1283,52 @@ $(document).on('click','.asset_creator_reset',()=>{
 });
 
 //create address table
-let assetCreatorAddresses=$("#asset_creator_addressOptions").DataTable({
-    processing: true,
-    responsive: true,
-    language: {
-        loadingRecords: '&nbsp;',
-        processing: '<div class="spinner"></div>'
-    },
-    ajax: {
-        url: '/api/wallet/asset/issuable.json',
-        data: function(d) {
-            d.kyc = ($("#asset_creator_useKyc").is(':checked'));
+let assetCreatorAddresses;
+const startAssetCreatorOptions=()=> {
+    assetCreatorAddresses=$("#asset_creator_addressOptions").DataTable({
+        processing: true,
+        responsive: true,
+        language: {
+            loadingRecords: '&nbsp;',
+            processing: '<div class="spinner"></div>'
         },
-        dataSrc: ''
-    },
-    order: [
-        [1, "asc"]
-    ],
-    columns: [
-        {
-            data: 'null',
-            render: (data, type, row) => {
-                //todo can we change Locked and unlocked to symbols of an open and closed lock
-                let availableDivisibility=0x1ff;
-                let html='';
-                for (let assetId of row.issuance) {
-                    if (assetId.substr(0,1)==="L") continue;
-                    let divisibility=from_b58(assetId)[23];
-                    availableDivisibility&=(0x1ff-Math.pow(2,divisibility));
-                    html+=`<button class="asset_creator_issue" data-type="reissue" data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
-                }
-                return `<button class="asset_creator_issue" data-type="locked" data-address="${row.address}">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>`+html;
+        ajax: {
+            url: '/api/wallet/asset/issuable.json',
+            data: function (d) {
+                d.kyc = ($("#asset_creator_useKyc").is(':checked'));
             },
-            orderable: false
+            dataSrc: ''
         },
-        {
-            data: 'address'
-        },
-        {
-            data: null,
-            render: (data,type,row)=>satToDecimal(row.value,8)
-        }
-    ]
-});
+        order: [
+            [1, "asc"]
+        ],
+        columns: [
+            {
+                data: 'null',
+                render: (data, type, row) => {
+                    //todo can we change Locked and unlocked to symbols of an open and closed lock
+                    let availableDivisibility = 0x1ff;
+                    let html = '';
+                    for (let assetId of row.issuance) {
+                        if (assetId.substr(0, 1) === "L") continue;
+                        let divisibility = from_b58(assetId)[23];
+                        availableDivisibility &= (0x1ff - Math.pow(2, divisibility));
+                        html += `<button class="asset_creator_issue" data-type="reissue" data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
+                    }
+                    return `<button class="asset_creator_issue" data-type="locked" data-address="${row.address}">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>` + html;
+                },
+                orderable: false
+            },
+            {
+                data: 'address'
+            },
+            {
+                data: null,
+                render: (data, type, row) => satToDecimal(row.value, 8)
+            }
+        ]
+    });
+}
 
 //handle Verified check button click
 $(document).on('click','#asset_creator_useKyc',()=>assetCreatorAddresses.ajax.reload());
@@ -1313,11 +1378,12 @@ $(document).on('click','.asset_creator_issue',async function(){
         let {aggregation,divisibility,metadata,rules}=await api.wallet.asset.json(assetid);
 
         //set divisibility
-        $("#asset_creator_divisibility option[value=" + divisibility + "]").removeAttr('disabled').prop('selected', true)
+        $("#asset_creator_divisibility option[value=" + divisibility + "]").prop('selected', true)
             .siblings().attr('disabled',true);
 
         //set aggregation
-        $("#asset_creator_aggregation option[value=" + aggregation + "]").removeAttr('disabled').prop('selected', true)
+        console.log(aggregation);
+        $("#asset_creator_aggregation option[value=" + aggregation + "]").prop('selected', true)
             .siblings().attr('disabled',true);
 
         //handle metadata
@@ -1407,7 +1473,7 @@ $(document).on('click','.asset_creator_issue',async function(){
         }
 
         //todo remove spinner
-    } else
+    } else {
 
         //not a reissuance remove any options that may conflict with already existing assets.
         let mask=parseInt(divisibility,16);
