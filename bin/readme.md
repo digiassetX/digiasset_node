@@ -33,7 +33,7 @@ cd digiasset_ipfs_metadata_server
 # install dependencies
 npm install
 
-3) Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
+# Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
 ipfs init
 ipfs daemon
 
