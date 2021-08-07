@@ -5,7 +5,7 @@ Thanks for your interest in supporting the DigiAsset Network.  This tool creates
 - Helps distribute DigiAsset metadata between nodes and those looking for Asset Data
 - Allows you to see the contents of all DigiAssets that have been created so far
 
-### Install:
+### Install - PC/Mac/Linux:
 
 1) Copy the file that corresponds to your operating system
    [Windows](digiasset_ipfs_metadata_server-win.exe),
@@ -16,7 +16,7 @@ Thanks for your interest in supporting the DigiAsset Network.  This tool creates
 4) Forward port 4001 to this machine
 5) Go to http:127.0.0.1:8090 to see the user interface.
 
-### Install Raspberry Pi:
+### Install - Raspberry Pi:
 
 1) Install IPFS Daemon(https://snapcraft.io/install/ipfs/raspbian)
 2) Install the app
@@ -33,7 +33,11 @@ cd digiasset_ipfs_metadata_server
 # install dependencies
 npm install
 
-# run the app
+3) Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
+ipfs init
+ipfs daemon
+
+# Launch DigiAsset IPFS Metadata Server (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
 node index.js
 ```
 
