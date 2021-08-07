@@ -38,7 +38,7 @@ sudo snap install ipfs
 ipfs init
 ```
 
-3) Install DigiAsset IPFS Metadata Server
+2) Install DigiAsset IPFS Metadata Server
 ```bash
 # go to the folder you want it to be installed in(sub folder will be created)
 cd ~
@@ -53,14 +53,14 @@ cd digiasset_ipfs_metadata_server
 npm install
 ```
 
-4) Run the  DigiAsset IPFS Metadata Server
+3) Run the  DigiAsset IPFS Metadata Server
 
 ```bash
 # Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
 ipfs daemon
 
 # Launch DigiAsset IPFS Metadata Server (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
-cd ~/
+cd ~/digiasset_ipfs_metadata_server
 node index.js
 ```
 
