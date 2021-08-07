@@ -18,8 +18,27 @@ Thanks for your interest in supporting the DigiAsset Network.  This tool creates
 
 ### Install - Raspberry Pi:
 
-1) Install IPFS Daemon(https://snapcraft.io/install/ipfs/raspbian)
-2) Install the app
+1) Install IPFS Daemon (https://snapcraft.io/install/ipfs/raspbian)
+
+```bash
+# Install Snapd
+sudo apt update
+sudo apt install snapd
+
+# Reboot raspberry Pi
+sudo reboot
+
+# Install snap core to get the latest snapd
+sudo snap install core
+
+# Install the IPFS daemon
+sudo snap install ipfs
+
+# Inilitialise the IPFS daemon
+ipfs init
+```
+
+3) Install DigiAsset IPFS Metadata Server
 ```bash
 # go to the folder you want it to be installed in(sub folder will be created)
 cd ~
@@ -32,12 +51,16 @@ cd digiasset_ipfs_metadata_server
 
 # install dependencies
 npm install
+```
 
+4) Run the  DigiAsset IPFS Metadata Server
+
+```bash
 # Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
-ipfs init
 ipfs daemon
 
 # Launch DigiAsset IPFS Metadata Server (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
+cd ~/
 node index.js
 ```
 
