@@ -23,7 +23,7 @@
     "express-session": "^1.17.2",
     "form-data": "^3.0.0",
     "got": "^11.8.1",
-    "ipfs-simple": "^0.0.8",
+    "ipfs-simple": "^0.0.10",
     "limit-parallel": "^1.0.1",
     "memorystore": "^1.6.6",
     "mime-types": "^2.1.28",

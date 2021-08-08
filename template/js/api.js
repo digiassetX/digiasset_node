@@ -23,10 +23,10 @@ const get=async(url,data)=>{
     return response;
 }
 
-const stream=async(url,data,mimeType)=>{
+const stream=async(url,data,mimeType,method="POST")=>{
     return new Promise((resolve,reject)=>{
         let oReq = new XMLHttpRequest();
-        oReq.open("POST", url, true);
+        oReq.open(method, url, true);
         oReq.responseType = "arraybuffer";
         oReq.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
@@ -88,6 +88,23 @@ api.tos.set=async(hash)=>post('/api/tos.json',{hash});
  * @return {Promise<Blob>}
  */
 api.cors=async(url,mimeType)=>stream('/api/cors',{url},mimeType);
+
+/*
+██╗██████╗ ███████╗███████╗
+██║██╔══██╗██╔════╝██╔════╝
+██║██████╔╝█████╗  ███████╗
+██║██╔═══╝ ██╔══╝  ╚════██║
+██║██║     ██║     ███████║
+╚═╝╚═╝     ╚═╝     ╚══════╝
+ */
+api.ipfs={};
+/**
+ * Gets binary data from ipfs
+ * @param {string}  cid
+ * @param {string}  mimeType
+ * @return {Promise<unknown>}
+ */
+api.ipfs.stream=async(cid,mimeType)=>stream((await api.config.ipfsViewer.get())+cid,undefined,mimeType,"GET");
 
 /*
 ██╗   ██╗███████╗███████╗██████╗
@@ -274,6 +291,15 @@ api.config.subscription={};
 api.config.subscription.add=(url,approved=false,rejected=false)=>post('/api/config/subscription/add.json',{url,approved,rejected});
 api.config.subscription.approved=(url,enabled)=>post('/api/config/subscription/approved.json',{url,enabled});
 api.config.subscription.rejected=(url,enabled)=>post('/api/config/subscription/rejected.json',{url,enabled});
+
+/*___ ___ ___ ___  __   ___
+ |_ _| _ \ __/ __| \ \ / (_)_____ __ _____ _ _
+  | ||  _/ _|\__ \  \ V /| / -_) V  V / -_) '_|
+ |___|_| |_| |___/   \_/ |_\___|\_/\_/\___|_|
+ */
+api.config.ipfsViewer={};
+api.config.ipfsViewer.get=()=>get('/api/config/ipfsViewer/json');
+api.config.ipfsViewer.set=(start)=>post('/api/config/ipfsViewer/json',{start});
 
 /*
 ██╗   ██╗███████╗██████╗ ███████╗██╗ ██████╗ ███╗   ██╗
@@ -547,7 +573,7 @@ api.wallet.asset.list=async(byLabel)=>get('/api/wallet/asset/list.json',{byLabel
  *     kyc:     ?KycState,
  *     issuer:  string,
  *     locked:      boolean,
- *     aggregation: "aggregatable"|"hybrid"|"dispersed",
+ *     aggregation: int,
  *     divisibility: int,
  *     metadata:    {
  *         txid:    string,
@@ -648,15 +674,17 @@ api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/
  *         encryptions: ?Encryption[],
  *         verifications: ?Object
  *     }}    metadata
+ * @param {?string}     password
  * @return {Promise<{
  *     costs:   Object<int>,
- *     hex:     string,
+ *     hex:     string[],
  *     assetId: string,
  *     cid:     string,
- *     sha256Hash:string
+ *     sha256Hash:string,
+ *     signed:  boolean
  * }>}
  */
-api.wallet.build.assetIssuance=async(recipients,address,options,metadata)=>post('/api/wallet/build/assetIssuance.json', {recipients,address,options,metadata});
+api.wallet.build.assetIssuance=async(recipients,address,options,metadata,password)=>post('/api/wallet/build/assetIssuance.json', {recipients,address,options,metadata,password});
 
 /**
  * Sends a transaction and returns the txid
@@ -667,6 +695,15 @@ api.wallet.build.assetIssuance=async(recipients,address,options,metadata)=>post(
  * Expected Errors: "Wallet not set up","Wallet offline or config has changed",
  */
 api.wallet.send=async(hex,password)=>post('/api/wallet/send.json',{hex,password});
+
+/**
+ * Sends a transaction and returns the txid
+ * @param {string}              hex
+ * @return {Promise<string>}
+ *
+ * Expected Errors: "Wallet not set up","Wallet offline or config has changed",
+ */
+api.wallet.sendSigned=async(hex)=>post('/api/wallet/sendSigned.json',{hex});
 
 /**
  * Finds any addresses with funds and without labels and assigns it blank label
@@ -707,7 +744,7 @@ api.digiassetX={asset:{}};
  * @param {string}  metadata - hex
  * @return {Promise<int>}
  */
-api.digiassetX.asset.permanent=async(metadata)=>post('https://ipfs.digiassetX.com/checkNew.json',{metadata});
+api.digiassetX.asset.permanent=async(metadata)=>post('/api/digiassetX/asset/permanent.json',{metadata});
 
 
 

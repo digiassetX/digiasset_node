@@ -13,6 +13,13 @@ const showError=(e)=>{
 }
 
 /**
+ * Sleeps processing for a time
+ * @param {int} ms
+ * @return {Promise<void>}
+ */
+const sleep=(ms)=>new Promise(resolve=>setTimeout(resolve,ms));
+
+/**
  * Base58 Decoder
  * @param {string}  S
  * @return {Uint8Array}
@@ -769,9 +776,11 @@ $(document).on('click','.sendTX',async function(){
 
 /**
  * Request the wallet password from user
+ * @param {string}  text
  * @return {Promise<string>}
  */
-const getWalletPassword=async()=>{
+const getWalletPassword=async(text="Wallet password is needed for this function.")=>{
+    $("#walletpassword_message").text(text);
     let finished=false;
     let modal=new bootstrap.Modal(document.getElementById('WalletPasswordModal'));
     modal.show();
@@ -1368,6 +1377,7 @@ $(document).on('click','.asset_creator_issue',async function(){
     assetCreatorVoteOptions.clear().buttons().enable().draw();
     $(".asset_creator_voteInputs").removeAttr('disabled');
     $("#asset_creator_expiry").val(0).removeAttr('disabled');
+    $("#asset_creator_site").val("");
     assetCreator_fileTable=[];
 
     //handle if reissuing
@@ -1383,7 +1393,8 @@ $(document).on('click','.asset_creator_issue',async function(){
 
         //set aggregation
         console.log(aggregation);
-        $("#asset_creator_aggregation option[value=" + aggregation + "]").prop('selected', true)
+        let agTypes=["aggregatable","hybrid","dispersed"];
+        $("#asset_creator_aggregation option[value=" + agTypes[aggregation] + "]").prop('selected', true)
             .siblings().attr('disabled',true);
 
         //handle metadata
@@ -1391,7 +1402,7 @@ $(document).on('click','.asset_creator_issue',async function(){
         if (metadata.data!==undefined) {
             const {data,votes}=metadata.data;
             if (data!==undefined) {
-                const {assetName,issuer,description,urls}=data;
+                const {assetName,issuer,description,urls,site}=data;
                 if (assetName!==undefined) $("#asset_creator_assetName").val(assetName);
                 if (issuer!==undefined) $("#asset_creator_assetIssuer").val(issuer);
                 if (description!==undefined) $("#asset_creator_description").val(description);
@@ -1408,6 +1419,7 @@ $(document).on('click','.asset_creator_issue',async function(){
                     }
                     redrawFileTable();
                 }
+                if (site!==undefined) $("#asset_creator_site").val(site.url);
             }
             if (votes!==undefined) {
                 assetCreatorVoteOptions.rows.add(votes).buttons().disable().draw();
@@ -1881,7 +1893,7 @@ const createCidBlob=(cid,name,type)=>{
                 data: blob
             });
         };
-        reader.readAsArrayBuffer(await api.cors("ipfs://"+cid,type));
+        reader.readAsArrayBuffer(await api.ipfs.stream(cid,type));
     });
 }
 
@@ -2068,7 +2080,7 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
     ],
     drawCallback: async function() {
         let caller=this.api();
-        const {address,options,metadata}=caller.tables().nodes().to$().data();
+        const {address,options,metadata,password}=caller.tables().nodes().to$().data();
         const expense='send_creator_costs';
 
         if (assetCostsWaiting[expense]===undefined) assetCostsWaiting[expense]=0;
@@ -2081,7 +2093,7 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
         domAssetSend.attr('disabled',true);
         let assetTx;
         while (assetCostsWaiting[expense]>0) {
-            assetTx = {hex: "", costs: []};
+            assetTx = {hex: [], costs: []};
             try {
                 let rowCount = caller.data().count();
                 if (rowCount > 0) {
@@ -2094,7 +2106,7 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
                             recipients[address] += quantity;
                         }
                     }
-                    assetTx = await api.wallet.build.assetIssuance(recipients, address, options, metadata);   //get updated cost
+                    assetTx = await api.wallet.build.assetIssuance(recipients, address, options, metadata,password);   //get updated cost
                 }
             } catch (e) {
                 //error always called on first execution so ignore
@@ -2105,11 +2117,19 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
         }
         expenseTable.processing(false);                     //remove processing
         domAssetSend.data({
-            tx:         assetTx.hex,
+            txs:        assetTx.hex,
             sha256Hash: assetTx.sha256Hash,
-            assetId:    assetTx.assetId
+            assetId:    assetTx.assetId,
+            signed:     assetTx.signed
         });                   //put unsigned tx in send buttons data
-        if (assetTx.hex === "") {
+        if (assetTx.hex.length === 0) {
+            if ((options!==undefined)&&(!options.locked)&&(assetTx.costs[0].type==="Asset can not be encoded to many outputs")) {
+                let password=await getWalletPassword("This asset creation will require multiple txs.  Please provide the wallet password.");
+                let data=caller.tables().nodes().to$().data();
+                data.password=password;
+                caller.tables().nodes().to$().data(password);
+                caller.draw();
+            }
             domAssetSend.attr('disabled', true);
         } else {
             domAssetSend.removeAttr('disabled');
@@ -2153,9 +2173,9 @@ $(document).on('click','#asset_creator_new',async()=>{
             let {holders}=await assetData;
             let recipients=[];
             for (let address in holders) {
-                let quantity=assetsPerHolder?quantity:parseInt(holders[address])*quantity;
-                total+=quantity;
-                recipients.push({address,quantity})
+                let recipientQuantity=assetsPerHolder?quantity:parseInt(holders[address])*quantity;
+                total+=recipientQuantity;
+                recipients.push({address,quantity:recipientQuantity})
             }
 
             //update data
@@ -2178,10 +2198,11 @@ $(document).on('click','#asset_creator_new',async()=>{
 
 
 $(document).on('click','#asset_creator_create',async()=>{
-    let {tx,sha256Hash,assetId}=$("#asset_creator_create").data();
+    let {txs,sha256Hash,assetId,signed}=$("#asset_creator_create").data();
 
     //get password
-    const password=await getWalletPassword();
+    let password;
+    if (!signed) password=await getWalletPassword();
 
     //open window to show progress
     $('.creatingAssetHideAtStart').hide();
@@ -2192,9 +2213,29 @@ $(document).on('click','#asset_creator_create',async()=>{
 
     //send to chain
     try {
-        let txid = await api.wallet.send(tx, password);
-        $("#creatingAssetTXID").text(txid);
-        $("#creatingAssetDetectLi").show();
+        if (!signed) {
+            let txid = await api.wallet.send(txs[0], password);
+            $("#creatingAssetTXID").text(txid);
+            $("#creatingAssetDetectLi").show();
+        } else {
+            let txids=[];
+            while (txs.length>0) {
+                let tx=txs.unshift();
+                try {
+                    let txid = await api.wallet.sendSigned(tx);
+                    txids.push(txid);
+                } catch (e) {
+                    //there was an error try again in 10seconds
+                    txs.shift(tx);
+                    console.log("failed to send: "+tx);
+                    console.log(e);
+                    console.log("retry in 10 seconds");
+                    await sleep(10000);
+                }
+            }
+            $("#creatingAssetTXID").text(txids.join(","));
+            $("#creatingAssetDetectLi").show();
+        }
     } catch (e) {
         modal.hide();
         showError(e);
@@ -2204,17 +2245,15 @@ $(document).on('click','#asset_creator_create',async()=>{
     let timer=setInterval(async()=>{
         let state=await api.digiassetX.asset.permanent(sha256Hash);
         switch (state) {
-            case 0:
-                break;
-            case 1:
-                $("#creatingAssetDetect").text("✓");
-                $("#creatingAssetPermanentLi").show();
-                break;
             case 2:
                 $("#creatingAssetPermanent").text("✓");
                 clearInterval(timer);
                 $("#creatingAssetWarning").hide();
                 $("#creatingAssetDone").show();
+            case 1:
+                $("#creatingAssetDetect").text("✓");
+                $("#creatingAssetPermanentLi").show();
+            case 0:
         }
     },60000);
 });
