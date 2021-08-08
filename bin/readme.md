@@ -65,7 +65,7 @@ npm install
 # Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
 ipfs daemon
 ```
-Note:- If you are planning to run this all the time you may want to set IPFS to run on boot.  In linux I did that by running ```crontab -e``` and adding ```@reboot /usr/local/bin/ipfs daemon```
+Note:- If you are planning to run this all the time you may want to set IPFS to run on boot.  In linux I did that by running ```crontab -e``` and adding ```@reboot ipfs daemon```
 
 4) Run the DigiAsset Metadata server
 
