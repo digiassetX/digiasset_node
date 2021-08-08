@@ -9,7 +9,7 @@ Thanks for your interest in supporting the DigiAsset Network.  This tool creates
 
 - Forward port 4001 to your DigiAsset IPFS Metadata server to ensure it is accessible over the internet
 - Visit http://127.0.0.1:8090 to access the web interface
-- If planning to run this all the time you may want to set IPFS to run on boot.  In linux I did that by running ```crontab -e``` and adding ```@reboot /usr/local/bin/ipfs daemon```
+
 
 ### Installation - PC/Mac/Linux:
 
@@ -57,12 +57,17 @@ cd digiasset_ipfs_metadata_server
 npm install
 ```
 
-3) Run the  DigiAsset IPFS Metadata Server
+3) Run the IPFS Demon
 
 ```bash
 # Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
 ipfs daemon
+```
+Note:- If you are planning to run this all the time you may want to set IPFS to run on boot.  In linux I did that by running ```crontab -e``` and adding ```@reboot /usr/local/bin/ipfs daemon```
 
+4) Run the DigiAsset Metadata server
+
+```bash
 # Launch DigiAsset IPFS Metadata Server (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
 cd ~/digiasset_ipfs_metadata_server
 node index.js
