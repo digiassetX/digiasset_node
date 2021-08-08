@@ -5,6 +5,8 @@ Thanks for your interest in supporting the DigiAsset Network.  This tool creates
 - Helps distribute DigiAsset metadata between nodes and those looking for Asset Data
 - Allows you to see the contents of all DigiAssets that have been created so far
 
+To learn more about DigiAssets go [here](https://digibyte.org/en-gb/#digiassets).
+
 ## Important
 
 - Forward port 4001 to your DigiAsset IPFS Metadata server to ensure it is accessible over the internet
