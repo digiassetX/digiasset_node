@@ -30,6 +30,9 @@ Note:-
 
 ### Installation - Raspberry Pi (headless):
 
+If you are already running a DigiByte Full Node on a Raspberry Pi, these instructions will help you run the DigiAsset Metadata Server as well. 
+(You don't need to run the DigiByte node for this this work, but if you can run both, why not!)
+
 1) Install IPFS Daemon (https://snapcraft.io/install/ipfs/raspbian)
 
 ```bash
