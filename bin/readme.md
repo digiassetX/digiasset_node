@@ -22,6 +22,11 @@ To learn more about DigiAssets go [here](https://digibyte.org/en-gb/#digiassets)
 2) Install IPFS Desktop (Instructions: https://docs.ipfs.io/install/ipfs-desktop/)
 3) Run the program
 
+Note:- 
+- If you are planning to run this all the time, you may want to set IPFS to run on boot. In linux, you can do this by running ```crontab -e``` and the add ```@reboot /usr/local/bin/ipfs daemon``` to the bottom of the file. Save, quit and reboot.
+- If the 'IPFS Desktop' status line says 'Running' in green, the DigiAsset Metadata server is working correctly. If the line is red, there is a problem with the IPFS daemon.
+- The 'Security' status will likely say 'No Password Set'. This is the password for the web UI. You can create one by visiting the web UI, and adding a new user via the Settings menu.
+
 ### Installation - Raspberry Pi (headless):
 
 1) Install IPFS Daemon (https://snapcraft.io/install/ipfs/raspbian)
@@ -65,7 +70,7 @@ npm install
 # Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
 ipfs daemon
 ```
-Note:- If you are planning to run this all the time you may want to set IPFS to run on boot.  In linux I did that by running ```crontab -e``` and adding ```@reboot ipfs daemon```
+Note:- If you are planning to run this all the time you may want to set IPFS to run on boot.  You can do this using crontab. Run ```crontab -e``` and add ```@reboot ipfs daemon``` to the bottom of the file. Save and quit, then reboot your Pi using ```sudo reboot```. Once rebooted you can check that the IPFS daemon is running by entering ```ps aux | grep ipfs```.
 
 4) Run the DigiAsset Metadata server
 
@@ -74,6 +79,10 @@ Note:- If you are planning to run this all the time you may want to set IPFS to 
 cd ~/digiasset_ipfs_metadata_server
 node index.js
 ```
+
+Note:- 
+- If the 'IPFS Desktop' status line says 'Running' in green, the DigiAsset Metadata server is working correctly. If the line is red, there is a problem with the IPFS daemon.
+- The 'Security' status will likely say 'No Password Set'. This is the password for the web UI. You can create one by visiting the web UI, and adding a new user via the Settings menu.
 
 ### Future features:
 
