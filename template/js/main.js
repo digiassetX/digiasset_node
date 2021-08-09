@@ -342,8 +342,8 @@ let walletTable={active:""};
  *      cid: string,
  *      metadata: Object,
  *      data: {
- *          rules:  AssetRules?
- *          kyc:    KycState?,
+ *          rules:  ?AssetRules
+ *          kyc:    ?KycState,
  *          issuer: string,
  *          divisibility: int,
  *          metadata: {
@@ -1729,6 +1729,9 @@ $(document).on('click','#asset_creator_goToOutputs',async()=>{
     //get original values
     let {locked, address}=$('#asset_creator_addresses').data();
 
+    //get divisibility
+    const divisibility=parseInt($("#asset_creator_divisibility").val());
+
     //compute rules
     let rules=false;
     if ($("#asset_creator_rulesEnabled").is(':checked')) {
@@ -1784,15 +1787,14 @@ $(document).on('click','#asset_creator_goToOutputs',async()=>{
         }
 
         //handle deflation
-        let deflate=parseInt($("#asset_creator_deflate").val());
+        let deflate=Math.round(Math.pow(10,divisibility)*parseFloat($("#asset_creator_deflate").val()));
         if (deflate!==0) rules.deflate=deflate;
 
     }
 
     //create options
     let options={
-        locked,rules,
-        divisibility:   parseInt($("#asset_creator_divisibility").val()),
+        locked,rules,divisibility,
         aggregation:    $("#asset_creator_aggregation").val()
     };
 
