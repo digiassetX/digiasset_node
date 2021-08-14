@@ -14,10 +14,11 @@ Thanks for your interest in supporting the DigiAsset Network.  This tool creates
 ### Installation - PC/Mac/Linux:
 
 1) Install IPFS Desktop (Instructions: https://docs.ipfs.io/install/ipfs-desktop/)
-2) Download DigiAsset Node Software.
-  - [Windows](digiasset_ipfs_metadata_server-win.exe),
-  - [macOS](digiasset_ipfs_metadata_server-macos),
-  - [Linux](digiasset_ipfs_metadata_server-linux)
+2) Download DigiAsset Node Software (
+   [Windows](digiasset_ipfs_metadata_server-win.exe),
+   [macOS](digiasset_ipfs_metadata_server-macos),
+   [Linux](digiasset_ipfs_metadata_server-linux)
+   )
 3) Run  DigiAsset Node Software.
 
 ### Installation - Raspberry Pi (headless):
