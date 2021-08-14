@@ -715,14 +715,28 @@ api.wallet.fix.labels=async()=>get('/api/wallet/fix/labels.json');
 /**
  * Trys to log in with DigiId
  * @param {string}  uri -   digiid://....
- * @param {string}  assetId - assetId site is requesting
+ * @param {string}  assetIdOrAddress - assetId site is requesting or address to sign with
  * @param {?string} password - password to unlock wallet
  * @return {Promise<boolean>}
  */
-api.wallet.digiId=async(uri,assetId,password)=>{
-    let {callback,payload}=await post('/api/wallet/digiId.json',{uri,assetId,password});
-    let response=await post(callback,payload);
-    //todo if success return true
+api.wallet.digiId=async(uri,assetIdOrAddress,password)=>{
+    //calculate request for signature
+    let data;
+    if ((assetIdOrAddress[0]==="L")||(assetIdOrAddress[0]==="U")) {
+        data={
+            uri,password,
+            assetId: assetIdOrAddress
+        };
+    } else {
+        data={
+            uri,password,
+            address: assetIdOrAddress
+        };
+    }
+
+    //Make digi-id request
+    let response=await post('/api/wallet/digiId.json',data);
+    return (response.address!==undefined);
 }
 
 /*
