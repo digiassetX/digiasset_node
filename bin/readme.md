@@ -21,7 +21,7 @@ To learn more about DigiAssets go [here](https://digibyte.org/en-gb/#digiassets)
    [Windows](digiasset_ipfs_metadata_server-win.exe),
    [macOS](digiasset_ipfs_metadata_server-macos),
    [Linux](digiasset_ipfs_metadata_server-linux)
-3) Run the DigiAsset Node Software
+3) Run the DigiAsset Metadata Server
 
 Note:- 
 - If you are planning to run this all the time, you may want to set IPFS to run on boot. In linux, you can do this by running ```crontab -e``` and the add ```@reboot /usr/local/bin/ipfs daemon``` to the bottom of the file. Save, quit and reboot.
