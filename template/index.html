@@ -686,22 +686,6 @@
 
 
 
-    <!-- Modal Error -->
-    <div class="modal fade" id="ErrorModal" tabindex="-1" aria-labelledby="EMLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="EMLabel">Error</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <p id="error_message"></p>
-            </div>
-        </div>
-    </div>
-    <!--modal Error end-->
-
-
-
     <!-- Modal Wallet Password -->
     <div class="modal fade" id="WalletPasswordModal" tabindex="-1" aria-labelledby="WPMLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -804,6 +788,13 @@
                 <p>But the lawyers said this wasn't good enough so here is there version.</p>
                 <h1>Full Terms of Service:</h1>
                 <div id="tosLegal"></div>
+                <h1>Opt In:</h1>
+                <p>Want to get paid for hosting a IPFS Node?  If so agree to the fields below and provide us an address to pay you with:</p>
+                <div>
+                    <input type="checkbox" id="tosShow">I would like my node to be displayed on node map(locations are not exact)<br>
+                    <input type="checkbox" id="tosPeer">I would like to publish my IPFS Peer Id<br>
+                    <input type="text" id="tosPayout">Payout Address
+                </div>
                 <div class="modal-footer">
                     <button id="tosAgree">Agree to the Terms of Service</button>
                 </div>
@@ -811,6 +802,22 @@
         </div>
     </div>
     <!--modal TOS ends -->
+
+
+
+    <!-- Modal Error -->
+    <div class="modal fade" id="ErrorModal" tabindex="-1" aria-labelledby="EMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="EMLabel">Error</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p id="error_message"></p>
+            </div>
+        </div>
+    </div>
+    <!--modal Error end-->
 
     <script src="/js/digiQR.min.js"></script>
     <script src="/js/jquery-3.5.1.js"></script>

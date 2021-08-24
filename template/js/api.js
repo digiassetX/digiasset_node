@@ -301,6 +301,33 @@ api.config.ipfsViewer={};
 api.config.ipfsViewer.get=()=>get('/api/config/ipfsViewer/json');
 api.config.ipfsViewer.set=(start)=>post('/api/config/ipfsViewer/json',{start});
 
+/* ___       _     ___
+  / _ \ _ __| |_  |_ _|_ _
+ | (_) | '_ \  _|  | || ' \
+  \___/| .__/\__| |___|_||_|
+       |_|
+ */
+api.config.optIn={};
+
+/**
+ * Sets the opt in values
+ * @param {boolean} showOnMap
+ * @param {boolean} publishPeerId
+ * @param {string}  payout
+ * @returns {Promise<void>}
+ */
+api.config.optIn.set=async(showOnMap,publishPeerId,payout="")=>post('/api/config/optIn.json',{showOnMap,publishPeerId,payout});
+
+/**
+ * Gets the opt in values
+ * @returns {Promise<{
+ *     showOnMap:   boolean,
+ *     publishId:   boolean,
+ *     payout:      string
+ * }>}
+ */
+api.config.optIn.get=async()=>get('/api/config/optIn.json');
+
 /*
 ██╗   ██╗███████╗██████╗ ███████╗██╗ ██████╗ ███╗   ██╗
 ██║   ██║██╔════╝██╔══██╗██╔════╝██║██╔═══██╗████╗  ██║
@@ -719,17 +746,17 @@ api.wallet.fix.labels=async()=>get('/api/wallet/fix/labels.json');
  * @param {?string} password - password to unlock wallet
  * @return {Promise<boolean>}
  */
-api.wallet.digiId=async(uri,assetIdOrAddress,password)=>{
+api.wallet.digiId=async(uri,assetIdOrAddress,password,test=false)=>{
     //calculate request for signature
     let data;
     if ((assetIdOrAddress[0]==="L")||(assetIdOrAddress[0]==="U")) {
         data={
-            uri,password,
+            uri,password,test,
             assetId: assetIdOrAddress
         };
     } else {
         data={
-            uri,password,
+            uri,password,test,
             address: assetIdOrAddress
         };
     }
@@ -738,6 +765,24 @@ api.wallet.digiId=async(uri,assetIdOrAddress,password)=>{
     let response=await post('/api/wallet/digiId.json',data);
     return (response.address!==undefined);
 }
+
+/*
+██████╗ ██╗ ██████╗ ██╗██████╗ ██╗   ██╗████████╗███████╗
+██╔══██╗██║██╔════╝ ██║██╔══██╗╚██╗ ██╔╝╚══██╔══╝██╔════╝
+██║  ██║██║██║  ███╗██║██████╔╝ ╚████╔╝    ██║   █████╗
+██║  ██║██║██║   ██║██║██╔══██╗  ╚██╔╝     ██║   ██╔══╝
+██████╔╝██║╚██████╔╝██║██████╔╝   ██║      ██║   ███████╗
+╚═════╝ ╚═╝ ╚═════╝ ╚═╝╚═════╝    ╚═╝      ╚═╝   ╚══════╝
+ */
+api.digibyte={};
+
+/**
+ * Checks if a DigiByte address is valid or not
+ * @param {string}  address
+ * @returns {Promise<boolean>}
+ */
+api.digibyte.checkAddress=async(address)=>post('/api/digibyte/checkAddress.json',{address});
+
 
 /*
 ██████╗ ██╗ ██████╗ ██╗ █████╗ ███████╗███████╗███████╗████████╗██╗  ██╗

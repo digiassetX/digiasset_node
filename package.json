@@ -13,6 +13,7 @@
   "dependencies": {
     "aws-sdk": "^2.827.0",
     "base58check": "^2.0.0",
+    "bitcoinjs-lib": "^5.2.0",
     "body-parser": "^1.19.0",
     "bs58": "^4.0.1",
     "cids": "^1.1.4",
@@ -23,7 +24,7 @@
     "express-session": "^1.17.2",
     "form-data": "^3.0.0",
     "got": "^11.8.1",
-    "ipfs-simple": "^0.0.10",
+    "ipfs-simple": "^0.0.11",
     "limit-parallel": "^1.0.1",
     "memorystore": "^1.6.6",
     "mime-types": "^2.1.28",

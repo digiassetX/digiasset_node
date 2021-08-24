@@ -7,6 +7,10 @@ let getHeight=async()=>{
     $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
 }
 
+/**
+ * Shows an error message pop up
+ * @param {string}  e
+ */
 const showError=(e)=>{
     $("#error_message").text(e);
     (new bootstrap.Modal(document.getElementById('ErrorModal'))).show();
@@ -66,6 +70,12 @@ let tosResolve;
  * @return {Promise<void>}
  */
 const showTOS=(onceOnly=true)=>new Promise(resolve=>{
+    api.config.optIn.get().then(({showOnMap,publishPeerId,payout})=>{
+        $('#tosShow').prop('checked', showOnMap);
+        $('#tosPeer').prop('checked', publishPeerId);
+        $("#tosPayout").val(payout);
+    });
+
     api.tos.get().then(({agreed, tos, hash}) => {
         if (onceOnly&&agreed) return resolve();
         tosResolve=resolve;
@@ -77,7 +87,28 @@ const showTOS=(onceOnly=true)=>new Promise(resolve=>{
 
 $(document).on('click','#menu_tos',()=>showTOS(false));
 
-$(document).on('click',"#tosAgree",()=>{
+$(document).on('click',"#tosAgree",async ()=>{
+    //check if they opted in to some features
+    let showOnMap=$("#tosShow").is(':checked');
+    let publishPeerId=$("#tosPeer").is(':checked');
+    let payout=$("#tosPayout").val().trim();
+    if (payout!=="") {
+        if (!await api.digibyte.checkAddress(payout)) {
+            showError("Invalid Payout address");
+            return;
+        }
+        if (!showOnMap) {
+            showError("To get paid you must agree to display your node");
+            return;
+        }
+        if (!publishPeerId) {
+            showError("To get paid you must agree to publish your Peer Id");
+            return;
+        }
+    }
+    api.config.optIn.set(showOnMap,publishPeerId,payout);
+
+    //mark tos as agreed
     const hash=$("#tosAgree").data("hash");
     api.tos.set(hash);
     tosModal.hide();
@@ -637,7 +668,7 @@ $(document).on('click','.visit_site',async function() {
         let success=await api.wallet.digiId(digiId,assetId,password);
         //todo remove spinner
         if (success) {
-            window.open(site.url, "_blank");
+            window.open(url, "_blank");
         } else {
             showError("Failed to login");
         }
@@ -645,7 +676,6 @@ $(document).on('click','.visit_site',async function() {
         //open site in tab
         window.open(site.url,"_blank");
     }
-    //todo open link or ask for password
 });
 
 //draw vote pop up
