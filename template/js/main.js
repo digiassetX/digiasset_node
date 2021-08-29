@@ -795,10 +795,9 @@ $(document).on('click','.sendTX',async function(){
         $("#txid").text(txid);
         //todo close other Modal that may be open
         (new bootstrap.Modal(document.getElementById('txidModal'))).show();
-        setTimeout(()=>{
-            api.stream.clearCache();
-            //todo show close button on model box
-        },240000);
+        await api.stream.clearCache(2+await api.wallet.blockHeight());
+        console.log("show close now");
+        //todo show close button on model box
     } catch (e) {
         showError(e);
     }
@@ -1250,13 +1249,13 @@ const validateKYCInputs=async(submit)=>{
         //get options
         switch (options.type) {
             case "donate":
-                options.label=$("kycLabel").val().trim();
-                options.goal=parseInt($("kycGoal").val().trim());
+                options.label=$("#kycLabel").val().trim();
+                options.goal=parseInt($("#kycGoal").val().trim());
                 if (options.label.length<2) throw "Invalid Label Length";
                 break;
 
             case "secret":
-                options.pin=$("kycPin").val().trim();
+                options.pin=$("#kycPin").val().trim();
                 if (options.pin.length<4) throw "Invalid Pin Length";
                 break;
 
@@ -1270,7 +1269,7 @@ const validateKYCInputs=async(submit)=>{
     }
 
     //submit if selected
-    if (submit) {
+    if (submit===true) {
         try {
             let password=await getWalletPassword();
             let url=await api.wallet.kyc(addresses,options,password);

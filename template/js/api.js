@@ -522,7 +522,7 @@ api.stream.get=async(Key,useCache=true)=>post('/api/stream/get.json',{Key,useCac
  * Clears the local cache
  * @return {Promise<void>}
  */
-api.stream.clearCache=async()=>get('/api/stream/clear.json');
+api.stream.clearCache=async(height)=>post('/api/stream/clear.json',{height});
 
 /*
 ██╗    ██╗ █████╗ ██╗     ██╗     ███████╗████████╗
