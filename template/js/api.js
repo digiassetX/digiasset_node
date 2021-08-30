@@ -654,7 +654,7 @@ api.wallet.change.markUsed=async(address,label="")=>post('/api/wallet/change/use
  *                  "donate label must be at least 2 characters","secret type requires a pin",
  *                  "secret pin must be at least 4 characters","Unknown option type","addresses must be an array of string"
  */
-api.wallet.kyc=async(addresses,options,password)=>post('/api/wallet/kyc.json',{addresses,password});
+api.wallet.kyc=async(addresses,options,password)=>post('/api/wallet/kyc.json',{addresses,options,password});
 
 /**
  * Returns a list of UTXOs
