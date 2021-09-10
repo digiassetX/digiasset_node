@@ -530,12 +530,15 @@ api.stream.clearCache=async(height)=>post('/api/stream/clear.json',{height});
  * @param {int}   start
  * @param {?int}  end
  * @return {Promise<{
- *     hex:     string,
+ *     hash:    string,
  *     height:  ?int,
  *     txid:    ?string
  * }>}
  */
-api.stream.hashLookup=async(file,start=1,end)=>postFile('/api/stream/hash/lookup.json',file, {start,end});
+api.stream.hashLookup=async(file,start=1,end)=>{
+    let hash=await postFile('/api/file/hash.json',file);
+    return post('/api/stream/hash/lookup.json',{hash,start,end});
+}
 
 /*
 ██╗    ██╗ █████╗ ██╗     ██╗     ███████╗████████╗
@@ -780,16 +783,19 @@ api.wallet.digiId=async(uri,assetIdOrAddress,password,test=false)=>{
 }
 
 /**
- * Searches entire chain for the files hash.  Optionally a start and end block height can be provided.
- * @param {Blob}  file
- * @param {string}address
- * @param {string}password
+ * Writes a files hash to the chain and returns the hash and txid
+ * @param {Blob}   file
+ * @param {string} address
+ * @param {string} password
  * @return {Promise<{
- *     hex:     string,
+ *     hash:    string,
  *     txid:    string
  * }>}
  */
-api.wallet.hashWrite=async(file,address,password)=>postFile('/api/wallet/hash/write.json',file, {address,password});
+api.wallet.hashWrite=async(file,address,password)=>{
+    let hash=await postFile('/api/file/hash.json',file);
+    return post('/api/wallet/hash/write.json',{hash,address,password});
+}
 
 /*
 ██████╗ ██╗ ██████╗ ██╗██████╗ ██╗   ██╗████████╗███████╗
