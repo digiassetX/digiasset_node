@@ -792,7 +792,7 @@ api.digibyte.checkAddress=async(address)=>post('/api/digibyte/checkAddress.json'
 ██████╔╝██║╚██████╔╝██║██║  ██║███████║███████║███████╗   ██║   ██╔╝ ██╗
 ╚═════╝ ╚═╝ ╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝
  */
-api.digiassetX={asset:{}};
+api.digiassetX={asset:{},ipfs:{}};
 
 /**
  * If getting digiassetX to permanently store your asset metadata this function should be called periodically until you get status 2.
@@ -805,6 +805,10 @@ api.digiassetX={asset:{}};
  */
 api.digiassetX.asset.permanent=async(metadata)=>post('/api/digiassetX/asset/permanent.json',{metadata});
 
-
+/**
+ * Checks to see if digiassetX's ipfs node can see the users ipfs node
+ * @returns {Promise<boolean>}
+ */
+api.digiassetX.ipfs.check=async()=>get('/api/digiassetX/ipfs/check.json');
 
 window.api=api;
