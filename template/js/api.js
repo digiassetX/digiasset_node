@@ -524,6 +524,19 @@ api.stream.get=async(Key,useCache=true)=>post('/api/stream/get.json',{Key,useCac
  */
 api.stream.clearCache=async(height)=>post('/api/stream/clear.json',{height});
 
+/**
+ * Searches entire chain for the files hash.  Optionally a start and end block height can be provided.
+ * @param {Blob}  file
+ * @param {int}   start
+ * @param {?int}  end
+ * @return {Promise<{
+ *     hex:     string,
+ *     height:  ?int,
+ *     txid:    ?string
+ * }>}
+ */
+api.stream.hashLookup=async(file,start=1,end)=>postFile('/api/stream/hash/lookup.json',file, {start,end});
+
 /*
 ██╗    ██╗ █████╗ ██╗     ██╗     ███████╗████████╗
 ██║    ██║██╔══██╗██║     ██║     ██╔════╝╚══██╔══╝
@@ -765,6 +778,18 @@ api.wallet.digiId=async(uri,assetIdOrAddress,password,test=false)=>{
     let response=await post('/api/wallet/digiId.json',data);
     return (response.address!==undefined);
 }
+
+/**
+ * Searches entire chain for the files hash.  Optionally a start and end block height can be provided.
+ * @param {Blob}  file
+ * @param {string}address
+ * @param {string}password
+ * @return {Promise<{
+ *     hex:     string,
+ *     txid:    string
+ * }>}
+ */
+api.wallet.hashWrite=async(file,address,password)=>postFile('/api/wallet/hash/write.json',file, {address,password});
 
 /*
 ██████╗ ██╗ ██████╗ ██╗██████╗ ██╗   ██╗████████╗███████╗
