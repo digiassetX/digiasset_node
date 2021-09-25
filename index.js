@@ -1,5 +1,9 @@
 //Print Header
-require('./lib/screen');
+const screen=require('./lib/screen');
+let args=process.argv;
+for (let arg of args) {
+    if (arg==="--log")  screen.logMode();
+}
 
 //make sure wallet and stream are initialized
 require('./lib/wallet');
