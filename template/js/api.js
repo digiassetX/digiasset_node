@@ -90,23 +90,6 @@ api.tos.set=async(hash)=>post('/api/tos.json',{hash});
 api.cors=async(url,mimeType)=>stream('/api/cors',{url},mimeType);
 
 /*
-██╗██████╗ ███████╗███████╗
-██║██╔══██╗██╔════╝██╔════╝
-██║██████╔╝█████╗  ███████╗
-██║██╔═══╝ ██╔══╝  ╚════██║
-██║██║     ██║     ███████║
-╚═╝╚═╝     ╚═╝     ╚══════╝
- */
-api.ipfs={};
-/**
- * Gets binary data from ipfs
- * @param {string}  cid
- * @param {string}  mimeType
- * @return {Promise<unknown>}
- */
-api.ipfs.stream=async(cid,mimeType)=>stream((await api.config.ipfsViewer.get())+cid,undefined,mimeType,"GET");
-
-/*
 ██╗   ██╗███████╗███████╗██████╗
 ██║   ██║██╔════╝██╔════╝██╔══██╗
 ██║   ██║███████╗█████╗  ██████╔╝
@@ -291,15 +274,6 @@ api.config.subscription={};
 api.config.subscription.add=(url,approved=false,rejected=false)=>post('/api/config/subscription/add.json',{url,approved,rejected});
 api.config.subscription.approved=(url,enabled)=>post('/api/config/subscription/approved.json',{url,enabled});
 api.config.subscription.rejected=(url,enabled)=>post('/api/config/subscription/rejected.json',{url,enabled});
-
-/*___ ___ ___ ___  __   ___
- |_ _| _ \ __/ __| \ \ / (_)_____ __ _____ _ _
-  | ||  _/ _|\__ \  \ V /| / -_) V  V / -_) '_|
- |___|_| |_| |___/   \_/ |_\___|\_/\_/\___|_|
- */
-api.config.ipfsViewer={};
-api.config.ipfsViewer.get=()=>get('/api/config/ipfsViewer/json');
-api.config.ipfsViewer.set=(start)=>post('/api/config/ipfsViewer/json',{start});
 
 /* ___       _     ___
   / _ \ _ __| |_  |_ _|_ _
