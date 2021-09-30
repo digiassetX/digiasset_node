@@ -415,7 +415,8 @@ const startWallet=(type)=>{
             render: (data,type,row)=>{
                 let cidToUse=row.cid;
                 if ((cidToUse===undefined)&&(row.data.metadata!==undefined)) cidToUse=(row.data.metadata.pop()||{}).cid;
-                return `<img width="50px" height="50px" src="/api/cors/icon/${cidToUse}">`;
+                row.data.cidToUse=cidToUse;
+                return `<img width="50px" height="50px" src="/api/cors/icon/${row.data.cidToUse}">`;
             }
         },
         {
@@ -443,9 +444,7 @@ const startWallet=(type)=>{
                 }
                 if (movable) html+=createAssetSendButton(row,'Send','send_asset');
                 if ((row.metadata!==undefined)&&(row.metadata.data.site!==undefined)) html+=createAssetSendButton(row,'Visit','visit_site');
-                let cidToUse=row.cid;
-                if ((cidToUse===undefined)&&(row.data.metadata!==undefined)) cidToUse=(row.data.metadata.pop()||{}).cid;
-                if (cidToUse!==undefined) html+=`<button class="view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${cidToUse}" data-list="unsorted">View</button>`;
+                if (row.data.cidToUse!==undefined) html+=`<button class="view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.data.cidToUse}" data-list="unsorted">View</button>`;
                 return html;
             }
         }
