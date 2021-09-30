@@ -410,6 +410,15 @@ const startWallet=(type)=>{
     if (walletTable[type]!==undefined) return;
     let columns=[
         {
+            className: 'columnWalletIcon',
+            data: null,
+            render: (data,type,row)=>{
+                let cidToUse=row.cid;
+                if ((cidToUse===undefined)&&(row.data.metadata!==undefined)) cidToUse=(row.data.metadata.pop()||{}).cid;
+                return `<img width="50px" height="50px" src="/api/cors/icon/${cidToUse}">`;
+            }
+        },
+        {
             className: 'columnWalletAssetId',
             data: null,
             render: (data,type,row)=>{
@@ -429,7 +438,7 @@ const startWallet=(type)=>{
                 let movable=true;
                 let html='';
                 if ((row.data.rules!==undefined)&&(row.data.rules.vote!==undefined)) {
-                    html+=createAssetSendButton(row,'Vote','vote_asset');
+                    if (row.data.rules.vote.options.length>0) html+=createAssetSendButton(row,'Vote','vote_asset');
                     movable=row.data.rules.vote.movable;
                 }
                 if (movable) html+=createAssetSendButton(row,'Send','send_asset');
@@ -461,7 +470,7 @@ const startWallet=(type)=>{
             data: {byLabel:(type==="assetsbylabel")}
         },
         order: [
-            [0, "asc"]
+            [1, "asc"]
         ],
         columns
     });
