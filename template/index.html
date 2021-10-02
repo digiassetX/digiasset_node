@@ -13,6 +13,7 @@
     <link href="/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css">
     <link href="/css/flags.css" rel="stylesheet" type="text/css">
     <link href="/css/main.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #002252 !important;">
@@ -620,28 +621,37 @@
 
     <!-- Modal Send Assets -->
     <div class="modal fade" id="SendAssetsModal" tabindex="-1" aria-labelledby="SAMLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="SAMLabel">Send Assets</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <h5>Addresses</h5>
-                <table class="table table-bordered table-striped" id="send_assets_addresses">
-                    <thead><tr><th></th><th>issuingAddress/assetId</th><th>Quantity</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-                <!-- todo make nicer  try putting D or U in first box to test -->
-                <input type="text" id="send_assets_new_address"><input type="number" id="send_assets_new_quantity"><button id="send_assets_new">Add</button>
-                <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per holder" id="send_asset_assetId_type_holder" checked>Per Holder
-                <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per asset" id="send_asset_assetId_type_asset">Per Asset
-                <!-- todo end -->
+                <div class="modal-body">
+                    <h5>Addresses</h5>
+                    <table class="table table-bordered table-striped" id="send_assets_addresses">
+                        <thead><tr><th>Issuing Address / Asset Id</th><th>Quantity</th><th></th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <!-- todo make nicer  try putting D or U in first box to test -->
+                    <table class="table table-responsive" style="background-color: transparent">
+                        <tr>
+                            <td><input type="text" class="form-control col-12" id="send_assets_new_address" placeholder="Send to Address"></td>
+                            <td><input type="number" class="form-control col-12" id="send_assets_new_quantity" placeholder="Asset Quantity"></td>
+                            <td><button id="send_assets_new" class="form-control btn btn-primary col-12">Add</button></td>
+                        </tr>
+                    </table>
 
-                <h5>Costs</h5>
-                <table class="table table-bordered table-striped" id="send_assets_costs">
-                    <thead><tr><th>Type</th><th>Amount</th></tr></thead>
-                </table>
+                    <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per holder" id="send_asset_assetId_type_holder" checked>Per Holder
+                    <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per asset" id="send_asset_assetId_type_asset">Per Asset
+                    <!-- todo end -->
+
+                    <h5>Costs</h5>
+                    <table class="table table-bordered table-striped" id="send_assets_costs">
+                        <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                    </table>
+                </div>
 
                 <div class="modal-footer">
                     <!-- todo Cancel does not work -->
