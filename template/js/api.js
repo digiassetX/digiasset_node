@@ -691,6 +691,7 @@ api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/
  *         encryptions: ?Encryption[],
  *         verifications: ?Object
  *     }}    metadata
+ * @param {string}      tax
  * @param {?string}     password
  * @return {Promise<{
  *     costs:   Object<int>,
@@ -701,7 +702,7 @@ api.wallet.build.assetTx=async(recipients,assetId,label,vote=false)=>post('/api/
  *     signed:  boolean
  * }>}
  */
-api.wallet.build.assetIssuance=async(recipients,address,options,metadata,password)=>post('/api/wallet/build/assetIssuance.json', {recipients,address,options,metadata,password});
+api.wallet.build.assetIssuance=async(recipients,address,options,metadata,tax,password)=>post('/api/wallet/build/assetIssuance.json', {recipients,address,options,metadata,tax,password});
 
 /**
  * Sends a transaction and returns the txid

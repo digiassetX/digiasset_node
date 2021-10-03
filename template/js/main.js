@@ -2134,7 +2134,7 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
     ],
     drawCallback: async function() {
         let caller=this.api();
-        const {address,options,metadata,password}=caller.tables().nodes().to$().data();
+        const {address,options,metadata,tax,password}=caller.tables().nodes().to$().data();
         const expense='send_creator_costs';
 
         if (assetCostsWaiting[expense]===undefined) assetCostsWaiting[expense]=0;
@@ -2160,7 +2160,7 @@ let asset_creator_addresses=$('#asset_creator_addresses').DataTable({
                             recipients[address] += quantity;
                         }
                     }
-                    assetTx = await api.wallet.build.assetIssuance(recipients, address, options, metadata,password);   //get updated cost
+                    assetTx = await api.wallet.build.assetIssuance(recipients, address, options, metadata,tax,password);   //get updated cost
                 }
             } catch (e) {
                 //error always called on first execution so ignore
