@@ -303,7 +303,14 @@
                         <tbody></tbody>
                     </table>
                     <!-- todo make nicer  try putting D or U in first box to test -->
-                    <input type="text" id="asset_creator_new_address"><input type="number" id="asset_creator_new_quantity"><button id="asset_creator_new">Add</button>
+                    <table class="table table-responsive" style="background-color: transparent">
+                        <tr>
+                            <td><input type="text" class="form-control col-12" id="asset_creator_new_address" placeholder="Address or AssetId"></td>
+                            <td><input type="number" class="form-control col-12" id="asset_creator_new_quantity" placeholder="Quantity"></td>
+                            <td><button id="asset_creator_new" class="form-control btn btn-primary col-12">Add</button></td>
+                        </tr>
+                    </table>
+
                     <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
                     <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
                     <!-- todo end -->
