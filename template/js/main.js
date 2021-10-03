@@ -786,7 +786,8 @@ $(document).on('click','#send_assets_new',async()=>{
         send_assets_addresses.row.add(data).draw();
 
         //recompute costs
-
+        $('#send_assets_new_address').val('');
+        $('#send_assets_new_quantity').val('');
     } catch (e) {
         console.log(e);
         showError("Invalid AssetId");   //errors only thrown when assetId is invalid
