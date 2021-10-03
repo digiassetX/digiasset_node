@@ -1,6 +1,6 @@
 {
-  "name": "digiasset_ipfs_metadata_server",
-  "version": "0.2.1",
+  "name": "digiasset_node",
+  "version": "0.3.0",
   "description": "Clones DigiAsset Meta Data so there are many sources.",
   "main": "index.js",
   "bin": "index.js",
