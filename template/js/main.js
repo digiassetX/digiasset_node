@@ -1362,7 +1362,7 @@ const startAssetCreatorOptions=()=> {
                         availableDivisibility &= (0x1ff - Math.pow(2, divisibility));
                         html += `<button class="asset_creator_issue" data-type="reissue" data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
                     }
-                    return `<button class="asset_creator_issue" data-type="locked" data-address="${row.address}">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>` + html;
+                    return `<button class="asset_creator_issue" data-type="locked" data-address="${row.address}" data-divisibility="1ff">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>` + html;
                 },
                 orderable: false
             },
@@ -1381,6 +1381,7 @@ const startAssetCreatorOptions=()=> {
 $(document).on('click','#asset_creator_useKyc',()=>assetCreatorAddresses.ajax.reload());
 
 //handle reissue click
+let asset_creator_rule_disabled=false;
 $(document).on('click','.asset_creator_issue',async function(){
     //get data
     const {type,address,assetid,divisibility}=$(this).data();
@@ -1417,6 +1418,8 @@ $(document).on('click','.asset_creator_issue',async function(){
     $("#asset_creator_expiry").val(0).removeAttr('disabled');
     $("#asset_creator_site").val("");
     assetCreator_fileTable=[];
+    $(".asset_creator_rule_input").attr('disabled',false);
+    asset_creator_rule_disabled=false;
 
     //handle if reissuing
     if (type==="reissue") {
@@ -1471,6 +1474,11 @@ $(document).on('click','.asset_creator_issue',async function(){
             $("#asset_creator_rulesEnabled").prop('checked',true);
             $("#asset_creator_rulesSettingBox").show();
             $("#asset_creator_rewritable").prop('checked',rewritable);
+
+            if (!rewritable) {
+                $(".asset_creator_rule_input").attr('disabled',true);
+                asset_creator_rule_disabled=true;
+            }
 
             if (signers!==undefined) {
                 throw "requires PSBT"; //todo later requires core V8 for people to use so no real hurry
@@ -1553,6 +1561,7 @@ let assetCreatorVoteOptions=$("#asset_creator_voteOptions").DataTable({
         {
             text: 'Add',
             action: function ( e, dt, node, config ) {
+                if (asset_creator_rule_disabled) return;
                 let lastIndex=assetCreatorVoteOptions.rows().count();
                 assetCreatorVoteOptions.row.add({
                     label: "Vote Option"
@@ -1567,14 +1576,14 @@ let assetCreatorVoteOptions=$("#asset_creator_voteOptions").DataTable({
         }
     ],
     createdRow: function( row, data, dataIndex ) {
-        $('.cellEditable', row).prop('contenteditable',true );
+        $('.cellEditable', row).prop('contenteditable',!asset_creator_rule_disabled );
     },
     columns: [
         {
             data: 'null',
             render: (data, type, row) => {
                 if (row.address!==undefined) return "";    //no controls if reissuance as they can't be changed
-                return `<button class="asset_creator_delete">Delete</button><button class="asset_creator_up"${row.first?' disabled':''}>Up</button><button class="asset_creator_down"${row.last?' disabled':''}>Down</button>`;
+                return `<button class="asset_creator_delete asset_creator_voteOptions">Delete</button><button class="asset_creator_up"${row.first?' disabled':''}>Up</button><button class="asset_creator_down"${row.last?' disabled':''}>Down</button>`;
             },
             orderable: false
         },
@@ -1597,6 +1606,7 @@ let assetCreatorRoyalties=$("#asset_creator_royalties").DataTable({
         {
             text: 'Add',
             action: function ( e, dt, node, config ) {
+                if (asset_creator_rule_disabled) return;
                 assetCreatorRoyalties.row.add({
                     address: "Enter Royalty Payout Address",
                     amount: 0
@@ -1605,7 +1615,7 @@ let assetCreatorRoyalties=$("#asset_creator_royalties").DataTable({
         }
     ],
     createdRow: function( row, data, dataIndex ) {
-        $('.cellEditable', row).prop('contenteditable',true );
+        $('.cellEditable', row).prop('contenteditable',!asset_creator_rule_disabled );
     },
     columns: [
         {
@@ -1615,11 +1625,11 @@ let assetCreatorRoyalties=$("#asset_creator_royalties").DataTable({
             orderable: false
         },
         {
-            className: 'cellEditable cellEditableString cellEditableCol-address',
+            className: asset_creator_rule_disabled?'':'cellEditable cellEditableString cellEditableCol-address',
             data: 'address'
         },
         {
-            className: 'cellEditable cellEditableNumber cellEditableCol-amount',
+            className: asset_creator_rule_disabled?'':'cellEditable cellEditableNumber cellEditableCol-amount',
             data: 'amount'
         }
     ]
@@ -1708,6 +1718,7 @@ $(document).ready(function() {
         row.data(data).draw('null');
     });
     $(document).on('click','.asset_creator_delete',function() {
+        if (asset_creator_rule_disabled) return;
         let {table,row}=getTableRowAndColumn($(this));
         row.remove().draw();
     });
@@ -1860,15 +1871,18 @@ $(document).on('click','#asset_creator_goToOutputs',async()=>{
         if (siteUrl.endsWith("/restricted.json")) metadata.site.type="restricted";
     }
 
+    //get tax location
+    let tax=$("#tax_location").val();
+
     //store everything in address table
-    $('#asset_creator_addresses').data({locked,address,options,metadata});
+    $('#asset_creator_addresses').data({locked,address,options,metadata,tax});
 
     $(".asset_creator_step").hide();
     $("#asset_creator_step3").show();
 });
 
-$(document).on('change',"#asset_creator_rights",()=>{
-    if ($("#asset_creator_rights").prop("checked")) {
+$(document).on('change',".legal_checks",()=>{
+    if (($("#asset_creator_rights").prop("checked"))&&($("#tax_location").val()!=="x")) {
         $("#asset_creator_goToOutputs").removeAttr('disabled');
     } else {
         $("#asset_creator_goToOutputs").attr('disabled',true);
@@ -1933,7 +1947,7 @@ const createCidBlob=(cid,name,type)=>{
                 data: blob
             });
         };
-        reader.readAsArrayBuffer(await api.ipfs.stream(cid,type));
+        reader.readAsArrayBuffer(await api.cors("ipfs://"+cid,type));
     });
 }
 

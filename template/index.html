@@ -187,20 +187,20 @@
 
                             <tr class="asset_creator_unlockedOnly">
                                 <td><label for="asset_creator_rewritable">Make rules rewritable </label></td>
-                                <td><input type="checkbox" id="asset_creator_rewritable"><br></td>
+                                <td><input type="checkbox" id="asset_creator_rewritable" class="asset_creator_rule_input"><br></td>
                             </tr>
 
                             <tr>
                                 <td><label for="asset_creator_kyc">KYC Required </label></td>
                                 <td>
-                                    <select id="asset_creator_kyc" class="form-control col-md-12" style="display: inline-block;">
+                                    <select id="asset_creator_kyc" class="form-control col-md-12 asset_creator_rule_input" style="display: inline-block;">
                                         <option value="false">Not Required</option>
                                         <option value="true">Required</option>
                                         <option value="allow">Only following countries</option>
                                         <option value="ban">Ban following countries</option>
                                     </select>
                                     <div id="asset_creator_kycList_div">
-                                        <table class="table table-bordered table-striped" id="asset_creator_kycList">
+                                        <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_kycList">
                                             <thead><tr><th>Country</th></tr></thead><tbody>
                                         </table>
                                     </div>
@@ -210,10 +210,10 @@
                             <tr>
                                 <td>Royalties:</td>
                                 <td>
-                                    <table class="table table-bordered table-striped" id="asset_creator_royalties">
+                                    <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_royalties">
                                         <thead><tr><th></th><th>Address</th><th>Amount</th></tr></thead><tbody>
                                     </table>
-                                    <label for="asset_creator_currency">Royalty Base Currency</label><select id="asset_creator_currency">
+                                    <label for="asset_creator_currency">Royalty Base Currency</label><select id="asset_creator_currency" class="asset_creator_rule_input">
                                         <optgroup label="Crypto">
                                             <option value="DGB" selected>DigiByte</option>
                                             <option value="BTC">Bitcoin</option>
@@ -246,7 +246,7 @@
                             <tr>
                                 <td><label for="asset_creator_deflate">Deflation:</label></td>
                                 <td>
-                                    <input type="number" id="asset_creator_deflate" value="0" class="form-control">
+                                    <input type="number" id="asset_creator_deflate" value="0" class="form-control asset_creator_rule_input">
                                     Should usually be zero.  If not 0 that many assets must be burned every time someone sends the asset to someone
                                 </td>
                             </tr>
@@ -254,23 +254,42 @@
                             <tr>
                                 <td>Vote: </td>
                                 <td>
-                                    <table class="table table-bordered table-striped" id="asset_creator_voteOptions">
+                                    <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_voteOptions">
                                         <thead><tr><th></th><th>Option</th></tr></thead><tbody>
                                     </table>
-                                    <label for="asset_creator_voteMovable">Votes Movable</label><input type="checkbox" id="asset_creator_voteMovable">
+                                    <label for="asset_creator_voteMovable">Votes Movable</label><input type="checkbox" id="asset_creator_voteMovable" class="asset_creator_rule_input">
                                 </td>
                             </tr>
 
                             <tr>
                                 <td><label for="asset_creator_expiry">Expiry: </label></td>
-                                <td><input type="number" id="asset_creator_expiry" value="0" class="form-control">*0=Never</td>
+                                <td><input type="number" id="asset_creator_expiry" value="0" class="form-control asset_creator_rule_input">*0=Never</td>
                             </tr>
 
                         </table>
                     </div>
 
+
                     <h3 style="margin-top:20px">Legal:</h3>
-                    <input type="checkbox" id="asset_creator_rights"><label for="asset_creator_rights">All content is legal in Canada and I have the rights to publish it</label>
+                    <label for="tax_location">Tax Location:(does not affect price so select correct location)</label>
+                    <select id="tax_location" class="legal_checks">
+                        <option value="x">-----</option>
+                        <option value="CAN.AB">Canada, Alberta</option>
+                        <option value="CAN.BC">Canada, British Columbia</option>
+                        <option value="CAN.MB">Canada, Manitoba</option>
+                        <option value="CAN.NB">Canada, New Brunswick</option>
+                        <option value="CAN.NL">Canada, Newfoundland and Labrador</option>
+                        <option value="CAN.NT">Canada, Northwest Territories</option>
+                        <option value="CAN.NS">Canada, Nova Scotia</option>
+                        <option value="CAN.NU">Canada, Nunavut</option>
+                        <option value="CAN.ON">Canada, Ontario</option>
+                        <option value="CAN.PE">Canada, Prince Edward Island</option>
+                        <option value="CAN.QC">Canada, Quebec</option>
+                        <option value="CAN.SK">Canada, Saskatchewan</option>
+                        <option value="CAN.YT">Canada, Yukon</option>
+                        <option value="NA">Outside Canada</option>
+                    </select><br>
+                    <input type="checkbox" id="asset_creator_rights" class="legal_checks"><label for="asset_creator_rights">All content is legal in Canada and I have the rights to publish it</label><br>
 
                     <button id="asset_creator_goToOutputs" disabled>Save Files to IPFS and collect recipients</button>
                 </div>
