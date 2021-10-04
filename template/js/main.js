@@ -6,10 +6,9 @@ let getHeight=async()=>{
     let height=await api.height();
     $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
     let dailyStats = await api.digiassetX.payout.daily();
-    sats=dailyStats.padStart(9,'0');
+    let sats=dailyStats.padStart(9,'0');
     let i=sats.length-8;
     let dgb=sats.substr(0,i)+"."+sats.substr(i);
-
     $("#daily_total_reward").html("Daily Payout : ~"+dgb+" DGB");
 }
 
