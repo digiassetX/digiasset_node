@@ -168,17 +168,17 @@ const startDataTable=()=>dataTable={
                 className: 'columnControls',
                 orderable: false,
                 data: null,
-                render: (data, type, row) => `<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="unsorted">View</button>`
+                render: (data, type, row) => `<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="unsorted">View</button>${(row.permanent===true)?'<span class="hidden">*</span>':""}`
             },
             {
                 className: 'columnAssetId',
                 data: 'assetId',
-                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>` + data
+                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}`
             },
             {
                 className: 'columnCid',
                 data: 'cid',
-                render: (data, type, row) => `<button class="cell approve button btn btn-outline-success" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">✓</button><button class="cell reject button btn btn-outline-danger" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>` + data
+                render: (data, type, row) => `<button class="cell approve button btn btn-outline-success" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">✓</button><button class="cell reject button btn btn-outline-danger" data-column="cid" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}`
             }
         ]
     }),

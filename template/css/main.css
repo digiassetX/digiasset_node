@@ -245,3 +245,6 @@ input:invalid {
 .asset_creator_assetId {
     display: none;
 }
+.hidden {
+    display: none
+}
