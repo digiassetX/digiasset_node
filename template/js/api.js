@@ -798,7 +798,7 @@ api.digibyte.checkAddress=async(address)=>post('/api/digibyte/checkAddress.json'
 ██████╔╝██║╚██████╔╝██║██║  ██║███████║███████║███████╗   ██║   ██╔╝ ██╗
 ╚═════╝ ╚═╝ ╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝
  */
-api.digiassetX={asset:{},ipfs:{}};
+api.digiassetX={asset:{},ipfs:{},payout:{}};
 
 /**
  * If getting digiassetX to permanently store your asset metadata this function should be called periodically until you get status 2.
@@ -816,5 +816,11 @@ api.digiassetX.asset.permanent=async(metadata)=>post('/api/digiassetX/asset/perm
  * @returns {Promise<boolean>}
  */
 api.digiassetX.ipfs.check=async()=>get('/api/digiassetX/ipfs/check.json');
+
+/**
+ * Returns the number of sats per day the current estimated daily payout is
+ * @returns {Promise<string>}
+ */
+api.digiassetX.payout.daily=async()=>get('/api/digiassetX/payout/daily.json');
 
 window.api=api;
