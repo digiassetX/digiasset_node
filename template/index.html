@@ -536,9 +536,11 @@
                     <h5 class="modal-title" id="WMLabel">Wallet Setup</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <p>For DigiAsset Creator to function you must have core wallet setup and in your digibyte.conf have the following lines.(values are randomly generated you can use if not already set)</p>
+                <p>For DigiAsset Creator to function you must have core wallet setup with rpc interface on</p>
+                <p>Step 1) Modify your digibyte.conf(in Core Wallet "Settings->Options->Open Config File") and make sure you have the following lines.(values are randomly generated you can use if not already set)</p>
                 <p id="config_values" class="json"></p>
-
+                <p>Step 2) Restart your core wallet</p>
+                <p>Step 3) When wallet is running again enter the rpcuser and rpc password from config file</p>
                 <div class="modal-body">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="wallet_user" placeholder="User">

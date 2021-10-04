@@ -918,7 +918,10 @@ const runOnceAfterLogin=async()=>{
     $("#menu_settings").removeAttr('disabled');     //enable settings
     let userList=await api.config.user.list();            //find out how many users there are
     if (userList.length>0) $("#menu_logout").show();      //actually logged in so show logout button
-    $('#config_values').html(generateRandomConfig());     //generate random config for instructions
+    let {html,user,pass}=generateRandomConfig();
+    $('#config_values').html(html);     //generate random config for instructions
+    $("#wallet_user").val(user);
+    $("#wallet_pass").val(pass);
     startDataTable();                                     //start cid list
 
     //more then 1 user so enable the remove user option
@@ -1089,7 +1092,12 @@ const generateRandomConfig=()=>{
         randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
         randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
     }
-    return `rpcuser=${randomUser}<br>rpcpassword=${randomPassword}<br>rpcbind=127.0.0.1<br>rpcport=14022<br>whitelist=127.0.0.1<br>rpcallowip=127.0.0.1`;
+    return {
+        text:`rpcuser=${randomUser}\r\nrpcpassword=${randomPassword}\r\nrpcbind=127.0.0.1\r\nrpcport=14022\r\nwhitelist=127.0.0.1\r\nrpcallowip=127.0.0.1`,
+        html:`rpcuser=${randomUser}<br>rpcpassword=${randomPassword}<br>rpcbind=127.0.0.1<br>rpcport=14022<br>whitelist=127.0.0.1<br>rpcallowip=127.0.0.1`,
+        user:randomUser,
+        pass:randomPassword
+    };
 }
 $(document).on('click','#wallet_auto',async()=>{
     let result=await api.config.wallet.auto();
@@ -1099,7 +1107,7 @@ $(document).on('click','#wallet_auto',async()=>{
     } else if (result===false) {
         showError("Could not find wallets config file");
     } else {
-        showError('Found a wallet config file at ${result} but it was not configured correctly.<br><br>Please add<br>'+generateRandomConfig());
+        showError('Found a wallet config file at ${result} but it was not configured correctly.<br><br>Please add<br>'+generateRandomConfig().html);
     }
 });
 $(document).on('click','#wallet_submit',async()=>{
@@ -2074,6 +2082,12 @@ assetCreator_fileInput.addEventListener('change', ()=>{
     // noinspection JSUnresolvedVariable
     for (let file of assetCreator_fileInput.files) {
         createFileBlob(file).then(fileData => {
+            //if known mime type remove file extension
+            if (fileData.type!=="") fileData.name=fileData.name.replace(/\.[^/.]+$/,"");
+
+            //if first file set name to icon
+            if ((assetCreator_fileTable.length===0)&&(fileData.type.substr(0,5)==="image")) fileData.name="icon";
+
             //record the file
             assetCreator_fileTable.push(fileData);
 
