@@ -1,4 +1,4 @@
-_config
+_*
 bin/*
 .idea
 node_modules
