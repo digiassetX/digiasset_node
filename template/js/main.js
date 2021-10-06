@@ -1198,6 +1198,25 @@ $(document).on('click','#included_media_submit',async()=>{
     }
 });
 
+/*___      _
+ |   \ ___| |__ _  _ __ _
+ | |) / -_) '_ \ || / _` |
+ |___/\___|_.__/\_,_\__, |
+                    |___/
+ */
+$(document).on('click','#menu_debug',async()=>{
+    (new bootstrap.Modal(document.getElementById('DebugModal'))).show();
+});
+$(document).on('click','#debug_clear_cache',async()=>{
+    await api.stream.clearCache();
+    location.reload();
+});
+$(document).on('click','#debug_fix_labels',async()=>{
+    await api.wallet.fix.labels();
+    location.reload();
+});
+
+
 /*
 ██╗  ██╗██╗   ██╗ ██████╗
 ██║ ██╔╝╚██╗ ██╔╝██╔════╝
