@@ -1098,8 +1098,8 @@ const generateRandomConfig=()=>{
         randomPassword+=String.fromCharCode(65+Math.floor(Math.random()*26)+32*Math.floor(Math.random()*2));//Pick random upper or lower case letter
     }
     return {
-        text:`rpcuser=${randomUser}\r\nrpcpassword=${randomPassword}\r\nrpcbind=127.0.0.1\r\nrpcport=14022\r\nwhitelist=127.0.0.1\r\nrpcallowip=127.0.0.1`,
-        html:`rpcuser=${randomUser}<br>rpcpassword=${randomPassword}<br>rpcbind=127.0.0.1<br>rpcport=14022<br>whitelist=127.0.0.1<br>rpcallowip=127.0.0.1`,
+        text:`listen=1\r\nserver=1\r\nrpcuser=${randomUser}\r\nrpcpassword=${randomPassword}\r\nrpcbind=127.0.0.1\r\nrpcport=14022\r\nwhitelist=127.0.0.1\r\nrpcallowip=127.0.0.1`,
+        html:`listen=1\r\nserver=1\r\nrpcuser=${randomUser}<br>rpcpassword=${randomPassword}<br>rpcbind=127.0.0.1<br>rpcport=14022<br>whitelist=127.0.0.1<br>rpcallowip=127.0.0.1`,
         user:randomUser,
         pass:randomPassword
     };

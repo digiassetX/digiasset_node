@@ -1,13 +1,9 @@
 const fs=require('fs');
-const got=require('./lib/got');
 
 /**
  * Add Error listener
  */
-const errorHandler=(err)=>{
-    fs.appendFileSync('_error.log',err.stack+"\r\n-------------------------------\r\n");
-    got.writeAll();
-}
+const errorHandler=(err)=>fs.appendFileSync('_error.log',err.stack+"\r\n-------------------------------\r\n");
 //emitter.on('error', errorHandler);
 process.on('uncaughtException', errorHandler);
 process.on('unhandledRejection', errorHandler);
