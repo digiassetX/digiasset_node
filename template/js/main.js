@@ -231,16 +231,9 @@ let redraw=()=>{
  */
 const showView=(data)=>{
     const {assetid, cid, list} = data;
-    $("#window_chaindata").html("Loading");
-    api.stream.get(assetid).then(
-        (chainData)=>{
-            console.log(chainData);
-            $("#window_chaindata").html(JSON.stringify(chainData, null, 4))
-        },
-        ()=>$("#window_chaindata").html("Stream Needed")
-    );
     try {
-        $("#window_metadata").attr('src', api.cid.page(cid));
+        $("#window_data").attr('src', api.cid.page(cid));
+        $("#window_data").data('assetid', assetid);
         $("#window_approve").data({assetid, cid, list, column: "cid"});
         $("#window_reject").data({assetid, cid, list, column: "cid"});
         $("#window_reject_all").data({assetid, cid, list, column: "assetId"});
@@ -250,6 +243,29 @@ const showView=(data)=>{
         showError(e);
     }
 }
+$("#window_data").on('load',async()=>{
+    let assetId=$("#window_data").data('assetid');
+    let pre=$("#window_data").contents().find('#pre');
+    let post=$("#window_data").contents().find('#post');
+    if (pre.length>0) {
+        try {
+            let chainData = await api.stream.get(assetId);
+            let postHtml='<h1>Chain Data:</h1><div class="json">'+JSON.stringify(chainData, null, 4)+'</div>';
+            post.html(postHtml);
+            let preHtml='<h1>Verified Asset:</h1>';
+            if (chainData.kyc===undefined) {
+                preHtml += "Unverified";
+            } else if (chainData.kyc.name!==undefined) {
+                preHtml += "Verified created by "+chainData.kyc.name;
+            } else {
+                preHtml += "Verified created by Anonymous in "+chainData.kyc.country;
+            }
+            pre.html(preHtml);
+        } catch (e) {
+
+        }
+    }
+});
 
 //handle view click event
 $(document).on('click','.view',function(){
