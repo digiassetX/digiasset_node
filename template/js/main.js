@@ -230,9 +230,17 @@ let redraw=()=>{
  * }}    data
  */
 const showView=(data)=>{
+    const {assetid, cid, list} = data;
+    $("#window_chaindata").html("Loading");
+    api.stream.get(assetid).then(
+        (chainData)=>{
+            console.log(chainData);
+            $("#window_chaindata").html(JSON.stringify(chainData, null, 4))
+        },
+        ()=>$("#window_chaindata").html("Stream Needed")
+    );
     try {
-        const {assetid, cid, list} = data;
-        $("#window_data").attr('src', api.cid.page(cid));
+        $("#window_metadata").attr('src', api.cid.page(cid));
         $("#window_approve").data({assetid, cid, list, column: "cid"});
         $("#window_reject").data({assetid, cid, list, column: "cid"});
         $("#window_reject_all").data({assetid, cid, list, column: "assetId"});
@@ -317,7 +325,8 @@ $(document).on('click','.reject',function(){
 $(document).on('click','.close',function(){
     $("#window").hide();
     $("#shadow").hide();
-    $("#window_data").attr('src','/blank.html');
+    $("#window_metadata").attr('src','/blank.html');
+    $("#window_chaindata").html("");
 });
 
 

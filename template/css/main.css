@@ -90,9 +90,17 @@ td > label {
     width:        90%;
     height:       90%;
 }
-#window_data {
+#window_metadata {
     width: 100%;
-    height:calc(100% - 50px);
+    height:calc(100% - 350px);
+}
+#window_chaindata {
+    width: 100%;
+    height: 150px;
+    overflow-y: scroll;
+    font-family: monospace;
+    white-space: pre;
+    text-align: left;
 }
 #updateBtn {
     margin-bottom: 10px;
