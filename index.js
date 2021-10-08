@@ -4,7 +4,6 @@ const fs=require('fs');
  * Add Error listener
  */
 const errorHandler=(err)=>fs.appendFileSync('_error.log',err.stack+"\r\n-------------------------------\r\n");
-//emitter.on('error', errorHandler);
 process.on('uncaughtException', errorHandler);
 process.on('unhandledRejection', errorHandler);
 
