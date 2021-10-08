@@ -131,6 +131,14 @@ $(document).on('click',"#tosAgree",async ()=>{
 ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║    ██████╔╝██║  ██║   ██║   ██║  ██║    ███████╗██║███████║   ██║   ███████║
 ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝    ╚══════╝╚═╝╚══════╝   ╚═╝   ╚══════╝
  */
+let verified={};
+updateVerified=async()=>{
+    try {
+        verified = await api.digiassetX.ipfs.verified();
+        for (let list in dataTable) dataTable[list].draw();
+    } catch (e) {}
+}
+
 let dataTable={};
 const startDataTable=()=>dataTable={
     subscription: $('#subscription').DataTable({
@@ -178,7 +186,7 @@ const startDataTable=()=>dataTable={
             {
                 className: 'columnAssetId',
                 data: 'assetId',
-                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}`
+                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}${(verified[data]!==undefined)?'<img src="images/verified.png">':''}`
             },
             {
                 className: 'columnCid',
@@ -952,7 +960,10 @@ const runOnceAfterLogin=async()=>{
     $('#config_values').html(html);     //generate random config for instructions
     $("#wallet_user").val(user);
     $("#wallet_pass").val(pass);
-    startDataTable();                                     //start cid list
+
+    //start cid list
+    updateVerified().then(startDataTable);//start cid list
+    setInterval(updateVerified,3600000);
 
     //more then 1 user so enable the remove user option
     if (userList.length>1) {

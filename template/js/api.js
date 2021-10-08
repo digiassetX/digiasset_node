@@ -823,4 +823,10 @@ api.digiassetX.ipfs.check=async()=>get('/api/digiassetX/ipfs/check.json');
  */
 api.digiassetX.payout.daily=async()=>get('/api/digiassetX/payout/daily.json');
 
+/**
+ * Returns the number of sats per day the current estimated daily payout is
+ * @returns {Promise<string>}
+ */
+api.digiassetX.ipfs.verified=async()=>get('/api/digiassetX/ipfs/verified.json');
+
 window.api=api;
