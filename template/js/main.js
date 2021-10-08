@@ -186,7 +186,7 @@ const startDataTable=()=>dataTable={
             {
                 className: 'columnAssetId',
                 data: 'assetId',
-                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}${(verified[data]!==undefined)?'<img src="images/verified.png">':''}`
+                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}${(verified[data]!==undefined)?'<img class="smallVerified" src="images/verified.png">':''}`
             },
             {
                 className: 'columnCid',
