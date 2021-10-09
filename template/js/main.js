@@ -1838,9 +1838,12 @@ $(document).on('click','#asset_creator_goToOutputs',async()=>{
     if ($("#asset_creator_description").val().trim().length===0) return showError("Description must be filled");
     let foundIcon=false;
     let names={};
-    for (let {name} of assetCreator_fileTable) {
+    for (let {name,type} of assetCreator_fileTable) {
         if (names[name]) return showError("Duplicate file name found");
-        if (name==="icon") foundIcon=true;
+        if (name==="icon") {
+            foundIcon=true;
+            if (type.substr(0,6)!=="image/") return showError("Icon must be an image");
+        }
         names[name]=true;
     }
     if (!foundIcon) return showError("Must contain one file named icon");
