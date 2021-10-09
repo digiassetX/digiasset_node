@@ -211,8 +211,16 @@ const startDataTable=()=>dataTable={
                 data: null,
                 render: (data, type, row) => `<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="approved">View</button>`
             },
-            {className: 'columnAssetId', data: 'assetId'},
-            {className: 'columnCid', data: 'cid'}
+            {
+                className: 'columnAssetId',
+                data: 'assetId',
+                render: (data, type, row) => `${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}${(verified[data]!==undefined)?' <img class="smallVerified" src="/images/verified.jpg">':''}`
+            },
+            {
+                className: 'columnCid',
+                data: 'cid',
+                render: (data, type, row) => `${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}`
+            }
         ]
     })
 };
