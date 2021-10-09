@@ -248,3 +248,6 @@ input:invalid {
 .hidden {
     display: none
 }
+.smallVerified {
+    height: 35px;
+}

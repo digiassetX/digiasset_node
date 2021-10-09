@@ -186,7 +186,7 @@ const startDataTable=()=>dataTable={
             {
                 className: 'columnAssetId',
                 data: 'assetId',
-                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}${(verified[data]!==undefined)?'<img class="smallVerified" src="images/verified.png">':''}`
+                render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}${(verified[data]!==undefined)?' <img class="smallVerified" src="/images/verified.jpg">':''}`
             },
             {
                 className: 'columnCid',
@@ -264,9 +264,9 @@ $("#window_data").on('load',async()=>{
             if (chainData.kyc===undefined) {
                 preHtml += "Unverified";
             } else if (chainData.kyc.name!==undefined) {
-                preHtml += "Verified created by "+chainData.kyc.name;
+                preHtml += '<img src="/images/verified.jpg"><br>created by '+chainData.kyc.name;
             } else {
-                preHtml += "Verified created by Anonymous in "+chainData.kyc.country;
+                preHtml += '<img src="/images/verified.jpg"><br>created by Anonymous in '+chainData.kyc.country;
             }
             pre.html(preHtml);
         } catch (e) {
