@@ -755,14 +755,11 @@ api.wallet.digiId=async(uri,assetIdOrAddress,password,test=false)=>{
 }
 
 /**
- * Writes a files hash to the chain and returns the hash and txid
+ * Writes a hash to the chain and returns the txid
  * @param {string} hash
  * @param {string} address
  * @param {string} password
- * @return {Promise<{
- *     hash:    string,
- *     txid:    string
- * }>}
+ * @return {Promise<string>}
  */
 api.wallet.hashWrite=async(hash,address,password)=>post('/api/wallet/hash/write.json',{hash,address,password});
 
