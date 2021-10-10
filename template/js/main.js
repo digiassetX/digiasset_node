@@ -1406,6 +1406,28 @@ $(document).on('click','#kycDone2',()=>{
     validateKYCInputs(true);
 });
 
+/*
+███████╗██╗██╗     ███████╗    ██╗  ██╗ █████╗ ███████╗██╗  ██╗███████╗██████╗
+██╔════╝██║██║     ██╔════╝    ██║  ██║██╔══██╗██╔════╝██║  ██║██╔════╝██╔══██╗
+█████╗  ██║██║     █████╗      ███████║███████║███████╗███████║█████╗  ██████╔╝
+██╔══╝  ██║██║     ██╔══╝      ██╔══██║██╔══██║╚════██║██╔══██║██╔══╝  ██╔══██╗
+██║     ██║███████╗███████╗    ██║  ██║██║  ██║███████║██║  ██║███████╗██║  ██║
+╚═╝     ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+ */
+const fileHasher_fileInput = document.getElementById('filehasher_files');
+fileHasher_fileInput.addEventListener('change', ()=>{
+    // noinspection JSUnresolvedVariable
+    for (let file of fileHasher_fileInput.files) {
+        createFileBlob(file).then(async({data}) => {
+            let {md5,sha256,sha512}=await api.file.hash(data);
+            $("#filehasher_hashdata").show();
+            $("#hash_md5").text(md5);
+            $("#hash_sha256").text(sha256);
+            $("#hash_sha512").text(sha512);
+        });
+    }
+});
+
 
 /*
  ██████╗██████╗ ███████╗ █████╗ ████████╗ ██████╗ ██████╗
@@ -2070,7 +2092,7 @@ $(document).on('click','.asset_creator_fileDelete',function(){
 
 //handle files
 const assetCreator_uploadedFiles = document.getElementById('asset_creator_uploadedFiles');
-const assetCreator_fileInput = document.querySelector('input[type=file]');
+const assetCreator_fileInput = document.getElementById('asset_creator_files');
 let assetCreator_fileTable=[];
 const assetCreator_thumbSize=[150,100];
 const drawPreviewImage=(index,data)=>{

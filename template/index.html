@@ -73,7 +73,17 @@
 
     <!-- Page File Hasher -->
     <div class="page" id="page_filehasher" style="padding:10px">
-        Coming Soon
+        <p>Select a file below you want analysed:</p>
+        <input type="file" id="filehasher_files"><br>
+        <div id="filehasher_hashdata" class="hidden">
+            <h1>File Hashes</h1>
+            <table>
+                <tr><th>Hash Algo</th><th>Value</th></tr>
+                <tr><td>MD5</td><td id="hash_md5"></td></tr>
+                <tr><td>SHA256</td><td id="hash_sha256"></td></tr>
+                <tr><td>SHA512</td><td id="hash_sha512"></td></tr>
+            </table>
+        </div>
     </div>
     <!-- Page Hasher end -->
 
