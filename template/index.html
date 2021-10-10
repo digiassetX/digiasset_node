@@ -36,6 +36,9 @@
             <li class="nav-item">
               <a class="nav-link nav_page needWalletAndStream asset_creator_reset clickable" data-page="page_assetcreator" data-tooltip="Requires Wallet and Stream Setup" disabled>Asset Creator</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link nav_page clickable" data-page="page_filehasher">File Hasher</a>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle clickable" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
                 Settings
@@ -46,6 +49,7 @@
                 <li><a class="dropdown-item clickable" id="menu_included_media">Set Media Limits</a></li>
                 <li><a class="dropdown-item clickable" id="menu_wallet">Wallet</a></li>
                 <li><a class="dropdown-item clickable" id="menu_stream">Stream</a></li>
+                <li><a class="dropdown-item clickable" id="menu_publishing">Publishing</a></li>
                 <li><a class="dropdown-item clickable" id="menu_debug">Debug</a></li>
               </ul>
             </li>
@@ -66,6 +70,12 @@
         </div>
       </div>
     </nav>
+
+    <!-- Page File Hasher -->
+    <div class="page" id="page_filehasher" style="padding:10px">
+        Coming Soon
+    </div>
+    <!-- Page Hasher end -->
 
     <!-- Page Meta Data -->
     <div class="page" id="page_metadata" style="padding:10px">
@@ -528,7 +538,29 @@
     </div>
     <!--modal Included Media end-->
 
-
+    <!-- Modal Publishing -->
+    <!-- todo current setup is difficult to use.  needs something more interactive. -->
+    <div class="modal fade" id="PublishingModal" tabindex="-1" aria-labelledby="PMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="PMLabel">Reject/Approve Publishing</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p>If you wish to share your reject/approve list with others then enter a port number in the field bellow(Recommend try 9000)</p>
+                <div class="modal-body">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="pm_port" placeholder="Max Size">
+                        <label for="pm_port">Publishing Port</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="pm_submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Publishing end-->
 
     <!-- Modal Wallet -->
     <div class="modal fade" id="WalletModal" tabindex="-1" aria-labelledby="WMLabel" aria-hidden="true">

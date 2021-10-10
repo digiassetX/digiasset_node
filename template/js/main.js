@@ -1193,6 +1193,31 @@ $(document).on('click','#stream_submit',async()=>{
 });
 $(document).on('click','#clearCache',api.stream.clearCache);
 
+
+/*___      _    _ _    _    _
+ | _ \_  _| |__| (_)__| |_ (_)_ _  __ _
+ |  _/ || | '_ \ | (_-< ' \| | ' \/ _` |
+ |_|  \_,_|_.__/_|_/__/_||_|_|_||_\__, |
+                                  |___/
+ */
+$(document).on('click','#menu_publishing',async()=>{
+    (new bootstrap.Modal(document.getElementById('PublishingModal'))).show();
+    let port=await api.config.publishing.get();
+    $("#pm_port").val(port);
+});
+$(document).on('click','#pm_submit',async()=>{
+    let port=$("#pm_port").val().trim();
+    if (parseInt(port).toString()!==port) return showError("Port must be an integer");
+    port=parseInt(port);
+    if ((port<0)||(port>65535)) return showError("Port must be between 0 and 65535");
+    try {
+        await api.config.publishing.set(port);
+        showError("You will need to restart node for changes to take effect");
+    } catch (e) {
+        showError(e);
+    }
+});
+
 /*__  __        _ _
  |  \/  |___ __| (_)__ _
  | |\/| / -_) _` | / _` |
