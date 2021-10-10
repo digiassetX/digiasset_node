@@ -80,9 +80,22 @@
             <table>
                 <tr><th>Hash Algo</th><th>Value</th></tr>
                 <tr><td>MD5</td><td id="hash_md5"></td></tr>
+                <tr><td>SHA1</td><td id="hash_sha1"></td></tr>
                 <tr><td>SHA256</td><td id="hash_sha256"></td></tr>
+                <tr><td>SHA384</td><td id="hash_sha384"></td></tr>
                 <tr><td>SHA512</td><td id="hash_sha512"></td></tr>
             </table>
+
+            <h1>Search Chain:</h1>
+            <p>Search all or part of the chain for these hashes.  This can use a lot of data.</p>
+            <label for="filehasher_searchStart">Block height to start search at:</label><input type="number" id="filehasher_searchStart" value="1"><br>
+            <button id="filehasher_search" class="needStream" data-tooltip="requires stream" disabled>Search Chain</button><br>
+            <div id="filehasher_searchresults"></div>
+
+            <h1>Store in Chain:</h1>
+            <p>Store the hash to the chain as a permanent time stamp that you had this file at this date.</p>
+            <label for="filehasher_saveAddress">Address to use(Must have funds):</label><select id="filehasher_saveAddress"></select><br>
+            <button id="filehasher_save256" class="needWallet" data-tooltip="requires wallet" disabled>Store SHA256 on chain</button>
         </div>
     </div>
     <!-- Page Hasher end -->

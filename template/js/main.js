@@ -1416,15 +1416,64 @@ $(document).on('click','#kycDone2',()=>{
  */
 const fileHasher_fileInput = document.getElementById('filehasher_files');
 fileHasher_fileInput.addEventListener('change', ()=>{
-    // noinspection JSUnresolvedVariable
+    //update address list
+    $("#filehasher_saveAddress option").remove();
+    api.wallet.addresses.list().then((addresses)=>{
+        let found=false;
+        for (let {label,address,balance} of addresses) {
+            if (parseInt(balance)<1000) continue;
+            found=true;
+            $("#filehasher_saveAddress").append(`<option selected value="${address}">${address} - ${label}</option>`);
+        }
+        if (!found) $("#filehasher_saveAddress").append('<option selected value="*">No funded addresses</option>');
+    },()=>{
+        $("#filehasher_saveAddress").append('<option selected value="*">Wallet Offline</option>');
+    });
+
+
+    //hash file
     for (let file of fileHasher_fileInput.files) {
         createFileBlob(file).then(async({data}) => {
-            let {md5,sha256,sha512}=await api.file.hash(data);
+            let {md5,sha1,sha256,sha384,sha512}=await api.file.hash(data);
             $("#filehasher_hashdata").show();
             $("#hash_md5").text(md5);
+            $("#hash_sha1").text(sha1);
             $("#hash_sha256").text(sha256);
+            $("#hash_sha384").text(sha384);
             $("#hash_sha512").text(sha512);
         });
+    }
+});
+$(document).on('click',"#filehasher_save256",async()=>{
+    try {
+        let hash = $("#hash_sha256").text();
+        let address = $("#filehasher_saveAddress :selected").val();
+        let password = await getWalletPassword();
+        let txid = await api.wallet.hashWrite(hash, address, password);
+        $("#txid").text(txid);
+        (new bootstrap.Modal(document.getElementById('txidModal'))).show();
+    } catch (e) {
+        showError(e);
+    }
+});
+$(document).on('click','#filehasher_search',async()=>{
+    try {
+        $("#filehasher_searchresults").text("Searching");
+        let start=parseInt($("#filehasher_searchStart").val().trim());
+        let {hash,height,txid}=await api.stream.hashLookup([
+            $("#hash_md5").text(),
+            $("#hash_sha1").text(),
+            $("#hash_sha256").text(),
+            $("#hash_sha384").text(),
+            $("#hash_sha512").text()
+        ],start);
+        if (hash===undefined) {
+            $("#filehasher_searchresults").text("Not Found");
+        } else {
+            $("#filehasher_searchresults").text(`Found ${hash} in ${txid} at height ${height}`);
+        }
+    } catch (e) {
+        showError(e);
     }
 });
 
