@@ -184,6 +184,11 @@ const startDataTable=()=>dataTable={
                 render: (data, type, row) => `<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="unsorted">View</button>${(row.permanent===true)?'<span class="hidden">*</span>':""}`
             },
             {
+                className: 'columnHeight',
+                orderable: true,
+                data: 'height'
+            },
+            {
                 className: 'columnAssetId',
                 data: 'assetId',
                 render: (data, type, row) => `<button class="cell reject button btn btn-outline-danger" data-column="assetId" data-assetid="${row.assetId}" data-cid="${row.cid}">X</button>${(row.permanent===true)?"<b>":""}${data}${(row.permanent===true)?"</b>":""}${(verified[data]!==undefined)?' <img class="smallVerified" src="/images/verified.jpg">':''}`
@@ -210,6 +215,11 @@ const startDataTable=()=>dataTable={
                 orderable: false,
                 data: null,
                 render: (data, type, row) => `<button class="cell view button btn btn-outline-dark" data-assetid="${row.assetId}" data-cid="${row.cid}" data-list="approved">View</button>`
+            },
+            {
+                className: 'columnHeight',
+                orderable: true,
+                data: 'height'
             },
             {
                 className: 'columnAssetId',
