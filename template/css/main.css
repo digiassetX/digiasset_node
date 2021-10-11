@@ -57,6 +57,10 @@ td > label {
     font-family: monospace;
     white-space: pre;
 }
+.jsonSpaced {
+    font-family: monospace;
+    white-space: pre;
+}
 #shadow {
     position:     fixed;
     padding:      0;
