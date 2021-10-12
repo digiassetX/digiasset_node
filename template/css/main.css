@@ -251,3 +251,6 @@ input:invalid {
 .smallVerified {
     height: 35px;
 }
+.media-link {
+    color: black !important;
+}
