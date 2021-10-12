@@ -97,6 +97,15 @@
             <label for="filehasher_saveAddress">Address to use(Must have funds):</label><select id="filehasher_saveAddress"></select><br>
             <button id="filehasher_save256" class="needWallet" data-tooltip="requires wallet" disabled>Store SHA256 on chain</button>
         </div>
+
+        <div class="needStream">
+        <br><h1>OR</h1><br>
+
+            <label for="filehasher_hash">Hash:</label><input type="text" id="filehasher_hash"><br>
+            <label for="filehasher_searchhashStart">Start from:</label><input type="number" id="filehasher_searchhashStart" value="1"><br>
+            <button id="filehasher_searchhash" class="needStream" data-tooltip="requires stream" disabled>Search Chain</button><br>
+            <div id="filehasher_searchhashresults"></div>
+        </div>
     </div>
     <!-- Page Hasher end -->
 

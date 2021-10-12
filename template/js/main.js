@@ -1486,6 +1486,22 @@ $(document).on('click','#filehasher_search',async()=>{
         showError(e);
     }
 });
+$(document).on('click','#filehasher_searchhash',async()=>{
+    try {
+        $("#filehasher_searchhashresults").text("Searching");
+        let start=parseInt($("#filehasher_searchhashStart").val().trim());
+        let {hash,height,txid}=await api.stream.hashLookup([
+            $("#filehasher_hash").val().trim()
+        ],start);
+        if (hash===undefined) {
+            $("#filehasher_searchhashresults").text("Not Found");
+        } else {
+            $("#filehasher_searchhashresults").text(`Found ${hash} in ${txid} at height ${height}`);
+        }
+    } catch (e) {
+        showError(e);
+    }
+});
 
 
 /*
