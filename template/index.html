@@ -545,19 +545,44 @@
                     <h5 class="modal-title" id="IMMLabel">Media to Include</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <p>Put 0 in box if you wish to accept all values and set max size to -1 if dont want to allow any</p>
                 <div class="modal-body">
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="im_maxsize" placeholder="Max Size">
-                        <label for="im_maxsize">Max Size</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="im_names" placeholder="Names">
-                        <label for="im_names">Names</label>
-                    </div>
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="im_mimeTypes" placeholder="Mime Types">
-                        <label for="im_mimeTypes">Mime Types</label>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <a class="nav-link media-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Off</a>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <a class="nav-link media-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Custom</a>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <a class="nav-link media-link" id="contact-tab" data-bs-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">On</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+                      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                          <!--custom--><br>
+                            <p>Put 0 in box if you wish to accept all values and set max size to -1 if dont want to allow any</p>
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="im_maxsize" placeholder="Max Size">
+                                <label for="im_maxsize">Max Size</label>
+                            </div><br>
+                            <div class="form-floating">
+                                <textarea class="form-control" id="im_names" style="height: 100px"></textarea>
+                                <label for="im_names">Names</label>
+                            </div><br>
+                            <div class="form-floating">
+                                <textarea class="form-control" id="im_mimeTypes" style="height: 100px"></textarea>
+                                <label for="im_mimeTypes">Mime Types</label>
+                            </div><br>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="im_paidContent">
+                              <label class="form-check-label" for="im_paidContent">
+                                All Paid Content
+                              </label>
+                            </div>
+                          <!--end-->
+                      </div>
+                      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
                     </div>
                 </div>
                 <div class="modal-footer">
