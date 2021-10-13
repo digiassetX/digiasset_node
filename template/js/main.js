@@ -1233,44 +1233,56 @@ $(document).on('click','#pm_submit',async()=>{
  | |\/| / -_) _` | / _` |
  |_|  |_\___\__,_|_\__,_|
  */
+const openMediaTab=(tab)=>{
+    $(".media-link").removeClass('active');
+    $(".media-tab-pane").removeClass('show').removeClass('active');
+    $("#media_tab_"+tab).addClass("active");
+    $("#media_"+tab).addClass('show').addClass('active');
+    $("#included_media_submit").data("tab",tab);
+}
 $(document).on('click','#menu_included_media',async()=>{
     let currentData=await api.config.media.get();
     //current mime config format is awkward should make better.
+    $("#im_maxsize").val("1000000");
+    $("#im_names").val("icon");
+    $("#im_mimeTypes").val("image/png\nimage/jpg\nimage/jpeg\nimage/gif\napplication/json");
+    $("#im_paidContent").prop("checked",true);
     if (currentData===false){
-        $("#im_maxsize").val("-1");
-        $("#im_names").val("");
-        $("#im_mimeTypes").val("");
+        openMediaTab("off");
     } else if (currentData===true){
-        $("#im_maxsize").val("0");
-        $("#im_names").val("0");
-        $("#im_mimeTypes").val("0");
+        openMediaTab("on");
     } else {
+        openMediaTab("custom");
         $("#im_maxsize").val(currentData.maxSize===true?"0":currentData.maxSize);
-        $("#im_names").val(currentData.names===true?"0":JSON.stringify(currentData.names));
-        $("#im_mimeTypes").val(currentData.mimeTypes===true?"0":JSON.stringify(currentData.mimeTypes));
+        $("#im_names").val(currentData.names===true?"0":currentData.names.join("\n"));
+        $("#im_mimeTypes").val(currentData.mimeTypes===true?"0":currentData.mimeTypes.join("\n"));
+        $("#im_paidContent").prop("checked",currentData.paid==="always");
     }
     (new bootstrap.Modal(document.getElementById('IncludedMediaModal'))).show();
 });
+$(document).on('click','.media-link',function() {
+    let tab=$(this).data('tab');
+    openMediaTab(tab);
+});
 $(document).on('click','#included_media_submit',async()=>{
     try {
-        let maxSize=parseInt($("#im_maxsize").val().trim());
-        let names=$("#im_names").val().trim();
-        let mimeTypes=$("#im_mimeTypes").val().trim();
+        let data=false;
+        switch ($("#included_media_submit").data("tab")) {
+            case "on":
+                data=true;
+            case "off":
+                break;
 
-        let data;
-        if (maxSize===-1) {
-            data=false;
-        } else if ((maxSize===0)&&(names==="0")&&(mimeTypes==="0")) {
-            data=true;
-        } else {
-            maxSize=(maxSize===0)?true:maxSize;
-            names=(names==="0")?true:JSON.stringify(names);
-            mimeTypes=(mimeTypes==="0")?true:JSON.stringify(mimeTypes);
-            data={maxSize,names,mimeTypes};
+            case "custom":
+                data={
+                    maxSize:    parseInt($("#im_maxsize").val().trim()),
+                    names:      $("#im_names").val().trim().split("\n"),
+                    mimeTypes:  $("#im_mimeTypes").val().trim().split("\n"),
+                    paid:       $("#im_paidContent").is(':checked')?"always":false
+                };
         }
 
         await api.config.media.set(data);
-        //todo make better success screen
         location.reload();
     } catch(e) {
         showError(e);

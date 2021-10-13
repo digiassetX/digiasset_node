@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <!--suppress HtmlUnknownTarget -->
 
-<!-- todo add clear cache button with class="needStream clearCache" -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -548,18 +547,18 @@
                 <div class="modal-body">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                       <li class="nav-item" role="presentation">
-                        <a class="nav-link media-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Off</a>
+                        <a class="clickable nav-link media-link" id="media_tab_off" data-bs-toggle="tab" role="tab" data-tab="off" aria-selected="true">Off</a>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <a class="nav-link media-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Custom</a>
+                        <a class="clickable nav-link media-link" id="media_tab_custom" data-bs-toggle="tab" role="tab" data-tab="custom" aria-selected="false">Custom</a>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <a class="nav-link media-link" id="contact-tab" data-bs-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">On</a>
+                        <a class="clickable nav-link media-link" id="media_tab_on" data-bs-toggle="tab" role="tab" data-tab="on" aria-selected="false">On</a>
                       </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
-                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
-                      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                      <div class="tab-pane media-tab-pane fade" id="media_off" role="tabpanel" aria-labelledby="media_tab_off">Only metadata will be stored</div>
+                      <div class="tab-pane media-tab-pane fade" id="media_custom" role="tabpanel" aria-labelledby="media_tab_custom">
                           <!--custom--><br>
                             <p>Put 0 in box if you wish to accept all values and set max size to -1 if dont want to allow any</p>
                             <div class="form-floating">
@@ -575,14 +574,14 @@
                                 <label for="im_mimeTypes">Mime Types</label>
                             </div><br>
                             <div class="form-check">
-                              <input class="form-check-input" type="checkbox" value="" id="im_paidContent">
+                              <input class="form-check-input" type="checkbox" id="im_paidContent">
                               <label class="form-check-label" for="im_paidContent">
                                 All Paid Content
                               </label>
                             </div>
                           <!--end-->
                       </div>
-                      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                      <div class="tab-pane media-tab-pane fade" id="media_on" role="tabpanel" aria-labelledby="media_tab_on">All metadata and media files will be stored</div>
                     </div>
                 </div>
                 <div class="modal-footer">
