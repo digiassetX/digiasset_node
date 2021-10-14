@@ -276,7 +276,7 @@ $("#window_data").on('load',async()=>{
     if (pre.length>0) {
         try {
             let chainData = await api.stream.get(assetId);
-            let postHtml='<h1>Chain Data:</h1><div class="json">'+JSON.stringify(chainData, null, 4)+'</div>';
+            let postHtml=`<h1>Chain Data:<button class="btn btn-primary" id="refreshChain" data-assetid="${assetId}">Refresh</button></h1><div id="chainData" class="json">${JSON.stringify(chainData, null, 4)}</div>`;
             post.html(postHtml);
             let preHtml='<h1>Verified Asset:</h1>';
             if (chainData.kyc===undefined) {
