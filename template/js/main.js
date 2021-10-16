@@ -2530,3 +2530,38 @@ $(document).on('click','#asset_creator_create',async()=>{
         }
     },60000);
 });
+
+/*
+███████╗██╗  ██╗██████╗ ██╗      ██████╗ ██████╗ ███████╗██████╗
+██╔════╝╚██╗██╔╝██╔══██╗██║     ██╔═══██╗██╔══██╗██╔════╝██╔══██╗
+█████╗   ╚███╔╝ ██████╔╝██║     ██║   ██║██████╔╝█████╗  ██████╔╝
+██╔══╝   ██╔██╗ ██╔═══╝ ██║     ██║   ██║██╔══██╗██╔══╝  ██╔══██╗
+███████╗██╔╝ ██╗██║     ███████╗╚██████╔╝██║  ██║███████╗██║  ██║
+╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+ */
+$(document).on('click','#explorer_search',async()=>{
+    //get value user entered
+    let searchWord=$("#explorer_searchText").val().trim();
+
+    //show we are searching
+    $("#explorer_searchResults").html("Searching");//todo change to spinner
+
+    //lookup value in streaming service
+    let data=await api.stream.get(searchWord);
+
+    //quick and dirty dump results out //todo make it look pretty
+    let html;
+    if (data===false) {
+
+        //no data
+        let height=await api.stream.get("height");
+        html=`No results found.  Your value may be right but we are only up to ${height} so if what you are searching for is after that then try again in a minute.`;
+
+    } else {
+
+        //found it
+        html=`<div class="json">${JSON.stringify(data,null,4)}</div>`;
+
+    }
+    $("#explorer_searchResults").html(html);
+});

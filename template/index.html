@@ -38,6 +38,9 @@
             <li class="nav-item">
               <a class="nav-link nav_page clickable" data-page="page_filehasher">File Hasher</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link nav_page clickable needStream" data-page="page_explorer" data-tooltip="Requires Stream Setup" disabled>Block Explorer</a>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle clickable" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
                 Settings
@@ -105,6 +108,16 @@
         <div id="filehasher_searchhashresults"></div>
     </div>
     <!-- Page Hasher end -->
+
+    <!-- Page Block Explorer -->
+    <div class="page" id="page_explorer" style="padding:10px">
+        <h4>Search</h4>
+        <input type="text" id="explorer_searchText"><br>
+        <button id="explorer_search" class="btn btn-outline-dark">Search</button>
+        <hr>
+        <div id="explorer_searchResults"></div>
+    </div>
+    <!-- Page Block Explorer end -->
 
     <!-- Page Meta Data -->
     <div class="page" id="page_metadata" style="padding:10px">
