@@ -1955,7 +1955,7 @@ $(document).ready(function() {
  * @return {string[]}
  */
 const kycList=()=>{
-    let rows=assetCreatorKYC.rows({selected:true}).data().toArray();
+    let rows=assetCreatorKYC.rows('.selected').data().toArray();
     let list=[];
     for (let {code} of rows) {
         list.push(code);
