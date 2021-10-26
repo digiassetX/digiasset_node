@@ -59,10 +59,10 @@ ipfs init
 cd ~
 
 # clone the git
-git clone https://github.com/digiassetX/digiasset_ipfs_metadata_server
+git clone https://github.com/digiassetX/digiasset_node
 
 # go in to the app folder
-cd digiasset_ipfs_metadata_server
+cd digiasset_node
 
 # install dependencies
 npm install
