@@ -480,7 +480,7 @@ const startWallet=(type)=>{
             data: null,
             render: (data,type,row)=>{
                 if (row.cid===undefined) return row.assetId;
-                return row.assetId+':'+row.cid;
+                return `${row.assetId}<br><span class="assetSubType">${row.cid}</span>`;
             }
         },
         {

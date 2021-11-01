@@ -254,3 +254,7 @@ input:invalid {
 .media-link {
     color: black !important;
 }
+.assetSubType {
+    font-size: small;
+    color: #707070;
+}
