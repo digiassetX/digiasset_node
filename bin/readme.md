@@ -52,23 +52,41 @@ sudo snap install ipfs
 # Inilitialise the IPFS daemon
 ipfs init
 ```
+2) Install NodeJS (https://github.com/nodesource/distributions)
 
-2) Install DigiAsset Metadata Server
+```bash
+# Add NodeJS LTS repository (if you are using either Ubuntu or Debian)
+# For Ubuntu:
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+# For Debian:
+curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+
+# Update the local repos
+sudo apt update
+
+# 
+sudo apt install nodejs
+
+# Test it's working (this should display the version number)
+node -v
+```
+
+3) Install DigiAsset Metadata Server
 ```bash
 # go to the folder you want it to be installed in(sub folder will be created)
 cd ~
 
 # clone the git
-git clone https://github.com/digiassetX/digiasset_ipfs_metadata_server
+git clone --depth 1 --branch apiV3 https://github.com/digiassetX/digiasset_node.git
 
 # go in to the app folder
-cd digiasset_ipfs_metadata_server
+cd digiasset_node
 
 # install dependencies
 npm install
 ```
 
-3) Run the IPFS Demon
+4) Run the IPFS Demon
 
 ```bash
 # Launch IPFS daemon (Launch in a seperate window using a terminal multiplex like tmux/screen etc.)
