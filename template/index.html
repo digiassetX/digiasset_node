@@ -317,8 +317,12 @@
                             </tr>
 
                             <tr>
-                                <td><label for="asset_creator_expiry">Expiry: </label></td>
-                                <td><input type="number" id="asset_creator_expiry" value="0" class="form-control asset_creator_rule_input">*0=Never</td>
+                                <td><label>Expiry: </label></td>
+                                <td>
+                                    <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_never" name="asset_creator_expiry" value="never" checked>Never<br>
+                                    <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_height" name="asset_creator_expiry" value="height">Block Height: <input type="number" id="asset_creator_expiry_height" value="0" class="form-control asset_creator_expiry asset_creator_rule_input"><br>
+                                    <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_time" name="asset_creator_expiry" value="time">Time: <input type="datetime-local" id="asset_creator_expiry_time" min="2020-01-01T00:00" class="form-control asset_creator_expiry asset_creator_rule_input">
+                                </td>
                             </tr>
 
                         </table>

@@ -1625,11 +1625,12 @@ $(document).on('click','.asset_creator_issue',async function(){
     $("#asset_creator_voteMovable").prop('checked',false);
     assetCreatorVoteOptions.clear().buttons().enable().draw();
     $(".asset_creator_voteInputs").removeAttr('disabled');
-    $("#asset_creator_expiry").val(0).removeAttr('disabled');
+    $(".asset_creator_expiry").removeAttr('disabled');
     $("#asset_creator_site").val("");
     assetCreator_fileTable=[];
     $(".asset_creator_rule_input").attr('disabled',false);
     asset_creator_rule_disabled=false;
+    $("#asset_creator_expiry_radio_never").prop('checked',true);
 
     //handle if reissuing
     if (type==="reissue") {
@@ -1730,13 +1731,26 @@ $(document).on('click','.asset_creator_issue',async function(){
 
             if (vote!==undefined) {
                 if (!voteProcessed) throw "Could not recover vote options";
-                if (vote.cutoff!==undefined) $("#asset_creator_expiry").val(vote.cutoff);
+                if (vote.cutoff!==undefined) {
+                    vote.cutoff=parseInt(vote.cutoff);
+                    $("#asset_creator_expiry_radio_never").prop('checked',false);
+                    if (vote.cutoff>1577836800000) {
+                        let date=new Date(vote.cutoff);
+                        let local=`${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}T${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}:${date.getSeconds().toString().padStart(2,'0')}`;
+                        $("#asset_creator_expiry_radio_time").prop('checked',true);
+                        $("#asset_creator_expiry_time").val(local);
+
+                    }else {
+                        $("#asset_creator_expiry_radio_height").prop('checked',true);
+                        $("#asset_creator_expiry_height").val(vote.cutoff);
+                    }
+                }
                 if (vote.movable!==undefined)$("#asset_creator_voteMovable").prop('checked',true);
                 $(".asset_creator_voteInputs").attr('disabled',true);
             }
 
             if (expires!==undefined) {
-                $("#asset_creator_expiry").val(expires).attr('disabled',true);
+                $(".asset_creator_expiry").val(expires).attr('disabled',true);
             }
         }
 
@@ -2035,7 +2049,17 @@ $(document).on('click','#asset_creator_goToOutputs',async()=>{
         if (currency!=="DGB") rules.currency=currency;
 
         //handle vote
-        let expiry=parseInt($("#asset_creator_expiry").val());
+        let expiry=0;
+        switch ($("input[name='asset_creator_expiry']:checked").val()) {
+            case "time":
+                expiry=(new Date($("#asset_creator_expiry_time").val())).getTime();
+                if (expiry<1577836800000) return showError("Expiry block time must be in the future");
+                break;
+
+            case "height":
+                expiry=parseInt($("#asset_creator_expiry_height").val());
+                if (expiry>=1577836800000) return showError("Expiry block height must be less then 1577836800000");
+        }
         let voteOptions=assetCreatorVoteOptions.rows().data().toArray();
         if (voteOptions.length>0) {
             rules.vote={
