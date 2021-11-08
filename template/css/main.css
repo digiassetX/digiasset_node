@@ -258,3 +258,11 @@ input:invalid {
     font-size: small;
     color: #707070;
 }
+.description {
+    border: black;
+    border-width: thin;
+    border-style: dashed;
+    border-radius: 15px;
+    margin: 0% 5% 0% 5%;
+    padding: 5px;
+}
