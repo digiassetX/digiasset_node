@@ -266,3 +266,11 @@ input:invalid {
     margin: 0% 5% 0% 5%;
     padding: 5px;
 }
+
+#asset_creator_addressOptions_alt {
+    border: black;
+    border-style: dashed;
+    border-radius: 20px;
+    margin: 10px 10%;
+    width: 80%;
+}

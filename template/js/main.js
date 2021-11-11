@@ -1542,6 +1542,7 @@ $(document).on('click','.asset_creator_reset',()=>{
 //create address table
 let assetCreatorAddresses;
 const startAssetCreatorOptions=()=> {
+    let firstRun=true;
     assetCreatorAddresses=$("#asset_creator_addressOptions").DataTable({
         processing: true,
         responsive: true,
@@ -1583,7 +1584,17 @@ const startAssetCreatorOptions=()=> {
                 data: null,
                 render: (data, type, row) => satToDecimal(row.value, 8)
             }
-        ]
+        ],
+        drawCallback: async function() {
+            if (firstRun) {
+                firstRun=false;
+                return;
+            }
+            let caller = this.api();
+            let showAlt = (caller.data().count()===0);
+            $("#asset_creator_addressOptions_box")[showAlt?"hide":"show"]();
+            $("#asset_creator_addressOptions_alt")[showAlt?"show":"hide"]();
+        }
     });
 }
 

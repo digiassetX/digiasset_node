@@ -175,7 +175,12 @@
                 <div class="asset_creator_step" id="asset_creator_step1">
                     <h1>Issuing Address:</h1>
                     <input type="checkbox" id="asset_creator_useKyc" checked>Create Verified Asset
-                    <div class="table-responsive col-md-12">
+                    <div id="asset_creator_addressOptions_alt" class="table-responsive col-md-12">
+                        <h1>Oh no it looks like you don't have any verified addresses</h1>
+                        <p>Ideally you should got to the Address Verifier tab above and verify an address.  This helps instill confidence in the assets you create since your customers will know that at least digiassetX knows who created it.</p>
+                        <p>If your just creating a frivolous or joke token then feel free to uncheck the Create Verified Asset to make an unverified asset</p>
+                    </div>
+                    <div id="asset_creator_addressOptions_box" class="table-responsive col-md-12">
                         <table class="table table-bordered table-striped" id="asset_creator_addressOptions">
                             <thead><tr><th></th><th>Address</th><th>Balance</th></tr></thead><tbody>
                         </table>
