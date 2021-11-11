@@ -911,6 +911,34 @@ $(document).on('click','.newAddress',async function() {
     }
 });
 
+let addressList;
+const addressListStart=()=>{
+    addressList=$('#wallet_addresses').DataTable({
+        responsive: true,
+        ajax: {
+            url: '/api/wallet/addresses/list.json',
+            dataSrc: ''
+        },
+        order: [
+            [1, "asc"]
+        ],
+        columns: [
+            {
+                data: 'address'
+            },
+            {
+                data: 'label'
+            },
+            {
+                className: 'balance',
+                data: null,
+                render: (data,type,row)=>satToDecimal(row.balance,8),
+                defaultContent: 'Need Stream'
+            }
+        ]
+    });
+}
+addressListStart();
 
 
 /*
