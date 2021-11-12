@@ -472,7 +472,8 @@ const startWallet=(type)=>{
                 let cidToUse=row.cid;
                 if ((cidToUse===undefined)&&(row.data.metadata!==undefined)) cidToUse=(row.data.metadata.pop()||{}).cid;
                 row.data.cidToUse=cidToUse;
-                return `<img width="50px" height="50px" src="/api/cors/icon/${row.data.cidToUse}">`;
+                let imageUrl=(row.assetId==="DigiByte")?"/images/DigiByte_Logo.png":`/api/cors/icon/${row.data.cidToUse}`;
+                return `<img width="50px" height="50px" src="${imageUrl}">`;
             }
         },
         {
