@@ -1,4 +1,52 @@
-@import url('https://fonts.googleapis.com/css?family=Chivo&display=swap');
+/* Add custom font */
+
+/* Chivo light */
+
+@font-face {
+    font-family: "Chivo";
+    src: url("/fonts/Chivo-Light.eot");
+    src: url("/fonts/Chivo-Light.woff2") format('woff2'),
+         url("/fonts/Chivo-Light.woff") format('woff'),
+         url("/fonts/Chivo-Light.ttf") format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Chivo regular */
+
+@font-face {
+    font-family: "Chivo";
+    src: url("/fonts/Chivo-Regular.eot");
+    src: url("/fonts/Chivo-Regular.woff2") format('woff2'),
+         url("/fonts/Chivo-Regular.woff") format('woff'),
+         url("/fonts/Chivo-Regular.ttf") format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Chivo bold */
+
+@font-face {
+    font-family: "Chivo";
+    src: url("/fonts/Chivo-Bold.eot");
+    src: url("/fonts/Chivo-Bold.woff2") format('woff2'),
+         url("/fonts/Chivo-Bold.woff") format('woff'),
+         url("/fonts/Chivo-Bold.ttf") format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Chivo black */
+
+@font-face {
+    font-family: "Chivo";
+    src: url("/fonts/Chivo-Black.eot");
+    src: url("/fonts/Chivo-Black.woff2") format('woff2'),
+         url("/fonts/Chivo-Black.woff") format('woff'),
+         url("/fonts/Chivo-Black.ttf") format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
 
 .table {
     vertical-align: middle;
@@ -288,7 +336,7 @@ p, body {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: "Chivo",sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     color: #898989; 
 }
 
