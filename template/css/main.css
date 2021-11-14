@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Chivo&display=swap');
+
 .table {
     vertical-align: middle;
 }
@@ -274,3 +276,197 @@ input:invalid {
     margin: 10px 10%;
     width: 80%;
 }
+
+/* ############# */ 
+/* Customisation */
+/* ############# */ 
+
+p, body {
+    font-family: "Chivo",sans-serif;
+    font-weight: 300;
+    color: #898989;}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Chivo",sans-serif;
+    font-weight: 600;
+    color: #898989; 
+}
+
+h4 {color: black; font-size: calc(1.275rem + .3vw);font-weight: 800;}
+
+body {background: black;}
+
+/*table {
+    background-color: #ebeced;
+}*/
+
+.dgaXcol1 {color: #2964af;}
+.dgaXcol2 {color: #07b2a9;}
+.dgaXgradientFill, .table>thead, table {
+    background: rgb(41,100,175);
+    background: -moz-linear-gradient(74deg, rgba(41,100,175,1) 0%, rgba(41,100,175,1) 35%, rgba(7,178,169,1) 100%); 
+    background: -webkit-linear-gradient(74deg, rgba(41,100,175,1) 0%, rgba(41,100,175,1) 35%, rgba(7,178,169,1) 100%);
+    background: linear-gradient(74deg, rgba(41,100,175,1) 0%, rgba(41,100,175,1) 35%, rgba(7,178,169,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#2964af",endColorstr="#07b2a9",GradientType=1);
+}
+table {border-radius: 15px;}
+
+.navbar-expand-lg .navbar-nav {
+    font-family: 'Chivo';
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+.bg-light {
+    background-color: #00225200 !important;
+}
+
+.navbar .navbar-brand img {
+    max-width: 200px;
+}
+
+#videoBackground {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+    background-position: center center;
+  }
+  
+.x-section-heading {
+    margin: 50px 0 0 50px;
+    width: 20%;
+    background: #ffffffeb;
+    padding: 10px;
+    border-radius: 20px 20px 0 0;
+}
+.x-section-info {
+    margin: 0 0 0 50px;
+    width: 60%;
+    background: white;
+    padding: 10px;
+    border-radius: 0 20px 0 0;
+}
+.x-section-main, .dataTables_wrapper {
+    background: #ffffffeb;
+    padding: 10px;
+    border-radius: 20px;  
+}
+.x-section-after {
+    margin: 0 0 0 50px;
+    width: 40%;
+    background: white;
+    padding: 10px;
+    border-radius: 0 0 20px 20px;
+}
+.navbar-light .navbar-nav .nav-link {
+    font-family: 'Nunito Sans';
+    font-weight: 800;
+    border-radius: 20px;
+    margin: 0 0 0 20px;
+}
+
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  transform: scale(2);
+  padding: 10px;
+  margin-right: 10PX;
+}
+
+.dataTables_wrapper .dataTables_length select, .dataTables_wrapper .dataTables_filter input {
+    background-color: #ffffff;
+}
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    margin: 10px;
+}
+
+.btn {
+    border-radius: 20px;
+    margin: 0 3px;
+}
+
+/* table styling */
+
+
+table.dataTable.no-footer {
+    background: #ffffff00;
+}
+
+table.dataTable tbody tr {
+    /*background-color: blue;*/
+    margin: 5px 0;
+}
+
+table.dataTable tbody td {
+    border-spacing: 5px;
+    border: solid 5px #ededed;
+    border-width: 5px 0 5px 0;
+}
+
+.columnApproved, .columnRejected, .columnControls, .columnHeight, .columnWalletLabel, .columnWalletIcon, .columnWalletBalance {
+    text-align: center;
+}
+
+table.dataTable tbody .odd .columnWalletIcon, table.dataTable tbody .even .columnWalletIcon {
+    border: 5px solid #ebebed;
+    border-width: 5px 0 5px 0;
+}
+
+.cell {
+    border-width: 2px;
+    background: white;
+}
+
+.view {padding: 3px;}
+
+table.dataTable.no-footer {
+    border-bottom: none;
+}
+
+.th {background: linear-gradient(
+    74deg, rgba(41,100,175,1) 0%, rgba(41,100,175,1) 35%, rgba(7,178,169,1) 100%);
+}
+
+.columnWalletIcon img {
+    vertical-align: middle; 
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 5px;
+    width: 100px;
+}
+
+#wallet_list_assets .columnWalletIcon {
+border-radius: 30px 0 0 30px;
+}
+
+.columnWalletLabel, .columnApproved, .columnControls, .columnNarrowControls {
+    border-radius: 30px 0 0 30px;
+}
+
+.columnSend, .columnCid, .columnUrl {
+    border-radius: 0 30px 30px 0;
+}
+
+.asset_creator_fileEntry {
+    vertical-align: middle;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 10px;
+    width: 170px;
+    margin-right: 10px;
+}
+
+#filehasher_hashdata table {background: white!important;}
+
+/* ##################### */ 
+/* End of customisations */ 
+/* ##################### */ 
