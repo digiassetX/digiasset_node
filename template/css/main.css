@@ -433,8 +433,9 @@ table {border-radius: 15px;}
 }
 .navbar-light .navbar-nav .nav-link {
     font-family: 'Nunito Sans';
-    font-weight: 800;
+    font-weight: bold;
     border-radius: 20px;
+    line-height: 20px;
     margin: 0 0 0 20px;
 }
 
