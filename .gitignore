@@ -1,5 +1,4 @@
-_config
-bin/_config
+_*
 .idea
 node_modules
 .DS_Store
