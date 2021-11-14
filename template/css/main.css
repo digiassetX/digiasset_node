@@ -358,7 +358,7 @@ p, body {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: "Chivo",sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     color: #898989; 
 }
 
@@ -433,9 +433,8 @@ table {border-radius: 15px;}
 }
 .navbar-light .navbar-nav .nav-link {
     font-family: 'Nunito Sans';
-    font-weight: bold;
+    font-weight: 800;
     border-radius: 20px;
-    line-height: 20px;
     margin: 0 0 0 20px;
 }
 
