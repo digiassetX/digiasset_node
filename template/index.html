@@ -16,8 +16,9 @@
 </head>
 <body>
     <video autoplay muted loop id="videoBackground">
-        <source src="/images/background-globe_MP4_1920_18MG.mp4" type="video/mp4">
+        <source src="/images/background-globe-nodes.mp4" type="video/mp4">
     </video>
+    
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <a class="navbar-brand clickable" style="color:white"><img src="/images/dgaXnode-logoV2.png" alt="digiassetx logo" width="200px"></a>
@@ -77,56 +78,63 @@
     </nav>
 
     <!-- Page File Hasher -->
-    <div class="page" id="page_filehasher" style="padding:10px">
-        <div class="x-section-heading">
-            <h2>File Hasher</h2>
-        </div>
-        <div class="x-section-info">
-            <p>Select a file below you want analysed:</p>
-        </div>
-        <div class="x-section-main">
-            <input type="file" id="filehasher_files"><br>
-            <div id="filehasher_hashdata" class="hidden">
-                <h2>File Hashes</h2>
-                <table>
-                    <tr><th>Hash Algo</th><th>Value</th></tr>
-                    <tr><td>MD5</td><td id="hash_md5"></td></tr>
-                    <tr><td>SHA1</td><td id="hash_sha1"></td></tr>
-                    <tr><td>SHA256</td><td id="hash_sha256"></td></tr>
-                    <tr><td>SHA384</td><td id="hash_sha384"></td></tr>
-                    <tr><td>SHA512</td><td id="hash_sha512"></td></tr>
-                </table>
+    <div class="page" id="page_filehasher" style="padding:10px;">
+        <div class="container">
+        
+            <div class="x-section-heading">
+                <h2>File Hasher</h2>
+            </div>
+        
+            <div class="x-section-info">
+                <p>Select a file below you want analysed:</p>
+            </div>
+        
+            <div class="x-section-main">
+                <input type="file" id="filehasher_files"><br>
+                <div id="filehasher_hashdata" class="hidden">
+                    <h2><br>File Hashes</h2>
+                    <table>
+                        <tr><th>Hash Algo</th><th>Value</th></tr>
+                        <tr><td>MD5</td><td id="hash_md5"></td></tr>
+                        <tr><td>SHA1</td><td id="hash_sha1"></td></tr>
+                        <tr><td>SHA256</td><td id="hash_sha256"></td></tr>
+                        <tr><td>SHA384</td><td id="hash_sha384"></td></tr>
+                        <tr><td>SHA512</td><td id="hash_sha512"></td></tr>
+                    </table>
+                    
+                    <h2><br>Store in Chain:</h2>
+                    <p>Store the hash to the chain as a permanent time stamp that you had this file at this date.</p>
+                    <label for="filehasher_saveAddress">Address to use(Must have funds):</label><select id="filehasher_saveAddress"></select><br>
+                    <button id="filehasher_save256" class="needWallet" data-tooltip="requires wallet" disabled>Store SHA256 on chain</button>
+                </div>  
+            </div>
+            <div class="x-section-after">
                 <h2>Search Chain:</h2>
                 <p>Search all or part of the chain for these hashes.  This can use a lot of data.</p>
                 <label for="filehasher_searchStart">Block height to start search at:</label><input type="number" id="filehasher_searchStart" value="1"><br>
                 <button id="filehasher_search" class="needStream" data-tooltip="requires stream" disabled>Search Chain</button><br>
                 <div id="filehasher_searchresults"></div>
-                <h1>Store in Chain:</h1>
-                <p>Store the hash to the chain as a permanent time stamp that you had this file at this date.</p>
-                <label for="filehasher_saveAddress">Address to use(Must have funds):</label><select id="filehasher_saveAddress"></select><br>
-                <button id="filehasher_save256" class="needWallet" data-tooltip="requires wallet" disabled>Store SHA256 on chain</button>
+                <h4>OR</h4>
+                <label for="filehasher_hash">Hash:</label><input type="text" id="filehasher_hash"><br>
+                <label for="filehasher_searchhashStart">Start from:</label><input type="number" id="filehasher_searchhashStart" value="1"><br>
+                <button id="filehasher_searchhash" class="needStream" data-tooltip="requires stream" disabled>Search Chain</button><br>
+                <div id="filehasher_searchhashresults"></div>
             </div>
-        
-            <h4>OR</h4>
-        
-        
-            <label for="filehasher_hash">Hash:</label><input type="text" id="filehasher_hash"><br>
-            <label for="filehasher_searchhashStart">Start from:</label><input type="number" id="filehasher_searchhashStart" value="1"><br>
-            <button id="filehasher_searchhash" class="needStream" data-tooltip="requires stream" disabled>Search Chain</button><br>
-            <div id="filehasher_searchhashresults"></div>
         </div>
     </div>
     <!-- Page Hasher end -->
 
     <!-- Page Block Explorer -->
     <div class="page" id="page_explorer" style="padding:10px">
-        <div class="x-section-heading"><h2>Block Explorer</h2></div>
-        <div class="x-section-info"><p>Enter a block height,hash,address,txid,or assetId:</p>
-             
-            <input type="text" id="explorer_searchText" style="width: 620px;">
-            <button id="explorer_search" class="btn btn-outline-dark">Search</button>
+        <div class="container">
+            <div class="x-section-heading"><h2>Block Explorer</h2></div>
+            <div class="x-section-info"><p>Enter a block height,hash,address,txid,or assetId:</p>
+                <input type="text" id="explorer_searchText" style="width: 620px;">
+                <button id="explorer_search" class="btn btn-outline-dark">Search</button>
+            </div>
+            <div class="x-section-main" style="overflow: auto; color: black;" id="explorer_searchResults">
+            </div>
         </div>
-        <div class="x-section-main" style="overflow: auto; color: black;" id="explorer_searchResults"></div>
     </div>
     <!-- Page Block Explorer end -->
 
@@ -135,45 +143,54 @@
         <div>
             <button id="updateBtn" class="btn btn-success" >Update Available</button>
         </div>
-        <div class="x-section-heading">
-            <h2>Subscriptions</h2>
+        <div class="container">
+            <div class="x-section-heading">
+                <h2>Subscriptions</h2>
+            </div>
+            <div class="x-section-info">
+                <p>You can subscribe to other peoples approved/rejected lists.  ✓ means subscribed to approve list.  X means subscribed to reject list.  Click to change.</p>
+            </div>
+            <div class="table-responsive col-md-12">
+                <table class="table table-bordered table-striped" id="subscription">
+                    <thead><tr><th>✓</th><th>X</th><th>Url</th></tr></thead>
+                </table>
+            </div>
+    
+            <div class="x-section-after">
+                <label for="subscription_new">New Subscription:</label><input type="url" id="subscription_new"><button class="subscription_add btn btn-warning" data-type="both">Both</button><button class="subscription_add btn btn-danger" data-type="rejected">Reject List</button><button class="subscription_add btn btn-success" data-type="approved">Approved List</button><br>
+            </div>
+        
+            <div class="x-section-heading">
+                <h2>Unsorted Meta Data</h2>
+            </div>
+        
+            <div class="x-section-info">
+                <p>This is a list of asset contents that have not been sorted through.  If you approve any contents it will be moved to the approved list.  If you reject any contents it will be removed from your machine.</p>
+            </div>
+        
+            <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
+            <div class="table-responsive col-md-12">
+                <table class="table table-bordered table-striped" id="unsorted">
+                    <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead>
+                </table>
+            </div>
+            <br>
+    
+            <div class="x-section-heading">
+                <h2>Approved Meta Data</h2>
+            </div>
+    
+            <div class="x-section-info">
+                <p>Add explainer text here</p>
+            </div>
+        
+            <div class="table-responsive col-md-12">
+                <table class="table table-bordered table-striped" id="approved">
+                    <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead><tbody>
+                </table>
+            </div>
+            
         </div>
-        <div class="x-section-info">
-            <p>You can subscribe to other peoples approved/rejected lists.  ✓ means subscribed to approve list.  X means subscribed to reject list.  Click to change.</p>
-        </div>
-        <div class="table-responsive col-md-12">
-            <table class="table table-bordered table-striped" id="subscription">
-                <thead><tr><th>✓</th><th>X</th><th>Url</th></tr></thead>
-            </table>
-        </div>
-        <div class="x-section-after">
-            <label for="subscription_new">New Subscription:</label><input type="url" id="subscription_new"><button class="subscription_add btn btn-warning" data-type="both">Both</button><button class="subscription_add btn btn-danger" data-type="rejected">Reject List</button><button class="subscription_add btn btn-success" data-type="approved">Approved List</button><br>
-        </div>
-        <div class="x-section-heading">
-            <h2>Unsorted Meta Data</h2>
-        </div>
-        <div class="x-section-info">
-            <p>This is a list of asset contents that have not been sorted through.  If you approve any contents it will be moved to the approved list.  If you reject any contents it will be removed from your machine.</p>
-        </div>
-        <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
-        <div class="table-responsive col-md-12">
-            <table class="table table-bordered table-striped" id="unsorted">
-                <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead>
-            </table>
-        </div>
-        <br>
-        <div class="x-section-heading">
-            <h2>Approved Meta Data</h2>
-        </div>
-        <div class="x-section-info">
-            <p>Add explainer text here</p>
-        </div>
-        <div class="table-responsive col-md-12">
-            <table class="table table-bordered table-striped" id="approved">
-                <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead><tbody>
-            </table>
-        </div>
-
 
     </div>
     <!-- Page Meta Data end -->
@@ -190,190 +207,189 @@
 
     <!-- Page Asset Creator -->
     <div class="page" id="page_assetcreator" style="padding:10px">
-        <section class="w3l-index2 py-5">
-            <div class="container py-md-3">
+        
+        <div class="container">
+            <div class="asset_creator_step" id="asset_creator_step1">
+                <div class="x-section-heading">
+                    <h2>Issuing Address</h2>
+                </div>
+                <div class="x-section-info" style="padding-left: 20px;">
+                    <input type="checkbox" id="asset_creator_useKyc" checked>Create Verified Asset
+                </div>
+                <div class="table-responsive col-md-12">
+                    <table class="table table-bordered table-striped" id="asset_creator_addressOptions">
+                        <thead><tr><th></th><th>Address</th><th>Balance</th></tr></thead><tbody>
+                    </table>
+                </div>
+            </div>
 
-                <div class="asset_creator_step" id="asset_creator_step1">
-                    <div class="x-section-heading" style="width: 40%;">
-                        <h2>Issuing Address</h2>
-                    </div>
-                    <div class="x-section-info" style="padding-left: 20px;">
-                        <input type="checkbox" id="asset_creator_useKyc" checked>Create Verified Asset
-                    </div>
-                    <div class="table-responsive col-md-12">
-                        <table class="table table-bordered table-striped" id="asset_creator_addressOptions">
-                            <thead><tr><th></th><th>Address</th><th>Balance</th></tr></thead><tbody>
+            <div class="asset_creator_step" id="asset_creator_step2">
+                <div class="x-section-heading">
+                    <h2>Asset Creator</h2>
+                </div>
+        
+                <div class="x-section-main">
+                    <label for="asset_creator_assetIssuer">Your Name</label>
+                    <input id="asset_creator_assetIssuer" type="text" class="form-control col-md-12" style="display: inline-block;">
+              </div>
+
+                <div class="x-section-heading">
+                    <h2>Files</h2>
+                </div>
+                <div class="x-section-main">
+                    <p>Wallets will use what ever image is named icon as the thumbnail</p>
+                    <input type="file" id="asset_creator_files" multiple><br>
+                    <div id="asset_creator_uploadedFiles"></div>
+                    <div>Publishing Cost: $<span id="asset_creator_fileCost">0.000</span> USD</div>
+                </div>                        
+                    
+                <div class="x-section-heading">
+                    <h2>Data</h2>
+                </div>
+                <div class="x-section-main" STYLE="background: white;">
+                    <table class="table table-responsive">
+                        <tr>
+                            <td><label for="asset_creator_assetName">Asset Name </label></td>
+                            <td><input id="asset_creator_assetName" type="text" class="form-control col-md-12"></td>
+                        </tr>
+                        <tr>    <!--todo change to multi line input -->
+                            <td><label for="asset_creator_description">Description </label></td>
+                            <td><input id="asset_creator_description" type="text" class="form-control col-md-12"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="asset_creator_aggregation">Aggregation </label>
+                            <td><select id="asset_creator_aggregation" class="form-control col-md-12">
+                                <option value="aggregatable">Aggregatable(Normal)</option>
+                                <option value="hybrid">Hybrid</option>
+                                <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(NFT)</option>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <td><label for="asset_creator_divisibility">Divisibility: </label></td>
+                            <td><select id="asset_creator_divisibility" class="form-control col-md-12">
+                                <option value="0">1</option>
+                                <option value="1">0.1</option>
+                                <option value="2">0.01</option>
+                                <option value="3">0.001</option>
+                                <option value="4">0.0001</option>
+                                <option value="5">0.00001</option>
+                                <option value="6">0.000001</option>
+                                <option value="7">0.0000001</option>
+                                <option value="8">0.00000001</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="asset_creator_site">Web Site: </label></td>
+                            <td><input id="asset_creator_site" type="url" class="form-control col-md-12"></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="x-section-heading">
+                    <h2>Rules</h2>
+                </div>
+                <div class="x-section-main">
+                    <label for="asset_creator_rulesEnabled">Enable Rules: </label><input type="checkbox" id="asset_creator_rulesEnabled"><br>
+                    <div id="asset_creator_rulesSettingBox" class="table">
+                        <table class="table table-responsive"><!-- todo this really should not be a table -->
+
+                            <tr class="asset_creator_unlockedOnly">
+                                <td><label for="asset_creator_rewritable">Make rules rewritable </label></td>
+                                <td><input type="checkbox" id="asset_creator_rewritable" class="asset_creator_rule_input"><br></td>
+                            </tr>
+
+                            <tr>
+                                <td><label for="asset_creator_kyc">KYC Required </label></td>
+                                <td>
+                                    <select id="asset_creator_kyc" class="form-control col-md-12 asset_creator_rule_input" style="display: inline-block;">
+                                        <option value="false">Not Required</option>
+                                        <option value="true">Required</option>
+                                        <option value="allow">Only following countries</option>
+                                        <option value="ban">Ban following countries</option>
+                                    </select>
+                                    <div id="asset_creator_kycList_div">
+                                        <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_kycList">
+                                            <thead><tr><th>Country</th></tr></thead><tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="color: white">Royalties</td>
+                                <td>
+                                    <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_royalties">
+                                        <thead><tr><th></th><th>Address</th><th>Amount</th></tr></thead><tbody>
+                                    </table>
+                                    <label for="asset_creator_currency">Royalty Base Currency</label><select id="asset_creator_currency" class="asset_creator_rule_input">
+                                        <optgroup label="Crypto">
+                                            <option value="DGB" selected>DigiByte</option>
+                                            <option value="BTC">Bitcoin</option>
+                                            <option value="ETH">Ethereum</option>
+                                            <option value="LTC">Litecoin</option>
+                                            <option value="DCR">Decred</option>
+                                            <option value="ZIL">Zilliqa</option>
+                                            <option value="RVN">Ravencoin</option>
+                                            <option value="XVG">Verge</option>
+                                            <option value="RDD">ReddCoin</option>
+                                            <option value="NXS">Nexus</option>
+                                            <option value="POT">PotCoin</option>
+                                        </optgroup>
+                                        <optgroup label="Fiat">
+                                            <option value="CAD">Canadian Dollars</option>
+                                            <option value="USD">United States Dollars</option>
+                                            <option value="EUR">Euro</option>
+                                            <option value="GBP">Pound</option>
+                                            <option value="AUD">Australian Dollars</option>
+                                            <option value="JPY">Japanese Yen</option>
+                                            <option value="CNY">Chinese Yuan</option>
+                                            <option value="TRY">Turkish Lira</option>
+                                            <option value="BRL">Brazilian Real</option>
+                                            <option value="CHF">Swiss Franc</option>
+                                        </optgroup>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><label for="asset_creator_deflate">Deflation:</label></td>
+                                <td>
+                                    <input type="number" id="asset_creator_deflate" value="0" class="form-control   asset_creator_rule_input">
+                                <p style="color: white">Should usually be zero.  If not 0 that many assets must be burned every time someone sends the asset to someone</p>
+                                </td>
+                            </tr>
+                                
+                            <tr>
+                                <td style="color: white">Vote: </td>
+                                <td>
+                                    <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_voteOptions">
+                                        <thead><tr><th></th><th>Option</th></tr></thead><tbody>
+                                    </table>
+                                    <label for="asset_creator_voteMovable">Votes Movable</label><input type="checkbox" id="asset_creator_voteMovable" class="asset_creator_rule_input">
+                                </td>
+                            </tr>
+                             <tr>
+                                <td><label>Expiry: </label></td>
+                                <td style="color: white">
+                                    <span></span><input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_never" name="asset_creator_expiry" value="never" checked>Never
+                                    <br><strong>&nbsp;&nbsp;&nbsp;&nbsp;OR</strong><br>
+                                    <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_height" name="asset_creator_expiry" value="height">Block Height: <input type="number" id="asset_creator_expiry_height" value="0"  class="form-control asset_creator_expiry asset_creator_rule_input" style="width: 200px">
+                                    <strong>&nbsp;&nbsp;&nbsp;&nbsp;OR</strong><br>
+                                    <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_time" name="asset_creator_expiry" value="time" >Time: <input type="datetime-local" id="asset_creator_expiry_time" min="2020-01-01T00:00" class="form-control asset_creator_expiry asset_creator_rule_input" style="width: 200px"></span>
+                                </td>
+                            </tr>
+
                         </table>
                     </div>
                 </div>
 
-                <div class="asset_creator_step" id="asset_creator_step2">
-                    <div class="x-section-heading">
-                        <h2>Asset Creator</h2>
-                    </div>
-        
-                    <div class="x-section-main">
-                        <label for="asset_creator_assetIssuer">Your Name</label>
-                        <input id="asset_creator_assetIssuer" type="text" class="form-control col-md-12" style="display: inline-block;">
-                    </div>
+                <div class="x-section-heading">
+                    <h2>Legal</h2>
+                </div>
 
-                    <div class="x-section-heading">
-                        <h2>Files</h2>
-                    </div>
-                    <div class="x-section-main">
-                        <p>Wallets will use what ever image is named icon as the thumbnail</p>
-                        <input type="file" id="asset_creator_files" multiple><br>
-                        <div id="asset_creator_uploadedFiles"></div>
-                        <div>Publishing Cost: $<span id="asset_creator_fileCost">0.000</span> USD</div>
-                    </div>                        
-                    
-                    <div class="x-section-heading">
-                        <h2>Data</h2>
-                    </div>
-                    <div class="x-section-main" STYLE="background: white;">
-                        <table class="table table-responsive">
-                            <tr>
-                                <td><label for="asset_creator_assetName">Asset Name </label></td>
-                                <td><input id="asset_creator_assetName" type="text" class="form-control col-md-12"></td>
-                            </tr>
-                            <tr>    <!--todo change to multi line input -->
-                                <td><label for="asset_creator_description">Description </label></td>
-                                <td><input id="asset_creator_description" type="text" class="form-control col-md-12"></td>
-                            </tr>
-                            <tr>
-                                <td><label for="asset_creator_aggregation">Aggregation </label>
-                                <td><select id="asset_creator_aggregation" class="form-control col-md-12">
-                                    <option value="aggregatable">Aggregatable(Normal)</option>
-                                    <option value="hybrid">Hybrid</option>
-                                    <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(NFT)</option>
-                                </select></td>
-                            </tr>
-                            <tr>
-                                <td><label for="asset_creator_divisibility">Divisibility: </label></td>
-                                <td><select id="asset_creator_divisibility" class="form-control col-md-12">
-                                    <option value="0">1</option>
-                                        <option value="1">0.1</option>
-                                        <option value="2">0.01</option>
-                                    <option value="3">0.001</option>
-                                    <option value="4">0.0001</option>
-                                    <option value="5">0.00001</option>
-                                    <option value="6">0.000001</option>
-                                    <option value="7">0.0000001</option>
-                                    <option value="8">0.00000001</option>
-                                </select></td>
-                            </tr>
-                            <tr>
-                                <td><label for="asset_creator_site">Web Site: </label></td>
-                                <td><input id="asset_creator_site" type="url" class="form-control col-md-12"></td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <div class="x-section-heading">
-                        <h2>Rules</h2>
-                    </div>
-                    <div class="x-section-main">
-                        <label for="asset_creator_rulesEnabled">Enable Rules: </label><input type="checkbox" id="asset_creator_rulesEnabled"><br>
-                        <div id="asset_creator_rulesSettingBox" class="table">
-                            <table class="table table-responsive"><!-- todo this really should not be a table -->
-
-                                <tr class="asset_creator_unlockedOnly">
-                                    <td><label for="asset_creator_rewritable">Make rules rewritable </label></td>
-                                    <td><input type="checkbox" id="asset_creator_rewritable" class="asset_creator_rule_input"><br></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="asset_creator_kyc">KYC Required </label></td>
-                                    <td>
-                                        <select id="asset_creator_kyc" class="form-control col-md-12 asset_creator_rule_input" style="display: inline-block;">
-                                            <option value="false">Not Required</option>
-                                            <option value="true">Required</option>
-                                            <option value="allow">Only following countries</option>
-                                            <option value="ban">Ban following countries</option>
-                                        </select>
-                                        <div id="asset_creator_kycList_div">
-                                            <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_kycList">
-                                                <thead><tr><th>Country</th></tr></thead><tbody>
-                                            </table>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td style="color: white">Royalties</td>
-                                    <td>
-                                        <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_royalties">
-                                            <thead><tr><th></th><th>Address</th><th>Amount</th></tr></thead><tbody>
-                                        </table>
-                                        <label for="asset_creator_currency">Royalty Base Currency</label><select id="asset_creator_currency" class="asset_creator_rule_input">
-                                            <optgroup label="Crypto">
-                                                <option value="DGB" selected>DigiByte</option>
-                                                <option value="BTC">Bitcoin</option>
-                                                <option value="ETH">Ethereum</option>
-                                                <option value="LTC">Litecoin</option>
-                                                <option value="DCR">Decred</option>
-                                                <option value="ZIL">Zilliqa</option>
-                                                <option value="RVN">Ravencoin</option>
-                                                <option value="XVG">Verge</option>
-                                                <option value="RDD">ReddCoin</option>
-                                                <option value="NXS">Nexus</option>
-                                                <option value="POT">PotCoin</option>
-                                            </optgroup>
-                                            <optgroup label="Fiat">
-                                                <option value="CAD">Canadian Dollars</option>
-                                                <option value="USD">United States Dollars</option>
-                                                <option value="EUR">Euro</option>
-                                                <option value="GBP">Pound</option>
-                                                <option value="AUD">Australian Dollars</option>
-                                                <option value="JPY">Japanese Yen</option>
-                                                <option value="CNY">Chinese Yuan</option>
-                                                <option value="TRY">Turkish Lira</option>
-                                                <option value="BRL">Brazilian Real</option>
-                                                <option value="CHF">Swiss Franc</option>
-                                            </optgroup>
-                                        </select>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="asset_creator_deflate">Deflation:</label></td>
-                                    <td>
-                                        <input type="number" id="asset_creator_deflate" value="0" class="form-control   asset_creator_rule_input">
-                                    <p style="color: white">Should usually be zero.  If not 0 that many assets must be burned every time someone sends the asset to someone</p>
-                                    </td>
-                                </tr>
-                                
-                                <tr>
-                                    <td style="color: white">Vote: </td>
-                                    <td>
-                                        <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_voteOptions">
-                                            <thead><tr><th></th><th>Option</th></tr></thead><tbody>
-                                        </table>
-                                        <label for="asset_creator_voteMovable">Votes Movable</label><input type="checkbox" id="asset_creator_voteMovable" class="asset_creator_rule_input">
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td><label>Expiry: </label></td>
-                                    <td style="color: white">
-                                        <span></span><input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_never" name="asset_creator_expiry" value="never" checked>Never
-                                        <br><strong>&nbsp;&nbsp;&nbsp;&nbsp;OR</strong><br>
-                                        <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_height" name="asset_creator_expiry" value="height">Block Height: <input type="number" id="asset_creator_expiry_height" value="0"  class="form-control asset_creator_expiry asset_creator_rule_input" style="width: 200px">
-                                        <strong>&nbsp;&nbsp;&nbsp;&nbsp;OR</strong><br>
-                                        <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_time" name="asset_creator_expiry" value="time" >Time: <input type="datetime-local" id="asset_creator_expiry_time" min="2020-01-01T00:00" class="form-control asset_creator_expiry asset_creator_rule_input" style="width: 200px"></span>
-                                    </td>
-                                </tr>
-
-                            </table>
-                        </div>
-                    </div>
-
-
-                    <div class="x-section-heading">
-                        <h2>Legal</h2>
-                    </div>
-                    <div class="x-section-main">
-                        <label for="tax_location">Tax Location:(does not affect price so select correct location)</label>
+                <div class="x-section-main">
+                    <label for="tax_location">Tax Location:(does not affect price so select correct location)</label>
                         <select id="tax_location" class="legal_checks">
                             <option value="x">-----</option>
                             <option value="CAN.AB">Canada, Alberta</option>
@@ -391,41 +407,43 @@
                             <option value="CAN.YT">Canada, Yukon</option>
                             <option value="NA">Outside Canada</option>
                         </select><br>
-                        <input type="checkbox" id="asset_creator_rights" class="legal_checks"><label for="asset_creator_rights">All content is legal in Canada and I have the rights to publish it</label><br>
+                    <input type="checkbox" id="asset_creator_rights" class="legal_checks"><label for="asset_creator_rights">All content is legal in Canada and I have the rights to publish it</label><br>
 
-                        <button id="asset_creator_goToOutputs" disabled>Save Files to IPFS and collect recipients</button>
-                    </div>
+                    <button id="asset_creator_goToOutputs" disabled>Save Files to IPFS and collect recipients</button>
                 </div>
 
-                <div class="asset_creator_step" id="asset_creator_step3">
-                    <h3 style="margin-top:20px">Recipients:</h3>
-                    <h5>Addresses</h5>
-                    <table class="table table-bordered table-striped" id="asset_creator_addresses">
-                        <thead><tr><th></th><th>issuingAddress/assetId</th><th>Quantity</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                    <!-- todo make nicer  try putting D or U in first box to test -->
-                    <table class="table table-responsive" style="background-color: transparent">
-                        <tr>
-                            <td><input type="text" class="form-control col-12" id="asset_creator_new_address" placeholder="Address or AssetId"></td>
-                            <td><input type="number" class="form-control col-12" id="asset_creator_new_quantity" placeholder="Quantity"></td>
-                            <td><button id="asset_creator_new" class="form-control btn btn-primary col-12">Add</button></td>
-                        </tr>
-                    </table>
-
-                    <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
-                    <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
-                    <!-- todo end -->
-
-                    <h3 style="margin-top:20px">Costs:</h3>
-                    <table class="table table-bordered table-striped" id="asset_creator_costs">
-                        <thead><tr><th>Type</th><th>Amount</th></tr></thead>
-                    </table>
-
-                    <button id="asset_creator_create" class="btn btn-secondary">Create Asset</button>
-                </div>
             </div>
-        </section>
+
+            <div class="asset_creator_step" id="asset_creator_step3">
+                <h3 style="margin-top:20px">Recipients:</h3>
+                <h5>Addresses</h5>
+                <table class="table table-bordered table-striped" id="asset_creator_addresses">
+                    <thead><tr><th></th><th>issuingAddress/assetId</th><th>Quantity</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                <!-- todo make nicer  try putting D or U in first box to test -->
+                <table class="table table-responsive" style="background-color: transparent">
+                    <tr>
+                        <td><input type="text" class="form-control col-12" id="asset_creator_new_address" placeholder="Address or AssetId"></td>
+                        <td><input type="number" class="form-control col-12" id="asset_creator_new_quantity" placeholder="Quantity"></td>
+                        <td><button id="asset_creator_new" class="form-control btn btn-primary col-12">Add</button></td>
+                    </tr>
+                </table>
+
+                <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
+                <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
+                <!-- todo end -->
+
+                <h3 style="margin-top:20px">Costs:</h3>
+                <table class="table table-bordered table-striped" id="asset_creator_costs">
+                    <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                </table>
+
+                <button id="asset_creator_create" class="btn btn-secondary">Create Asset</button>
+            </div>
+
+        </div>
+
     </div>
     <!-- Page Asset Creator end -->
 
@@ -433,18 +451,19 @@
 
     <!-- Page KYC -->
     <div class="page" id="page_kyc" style="padding:10px">
-        <div class="w3l-index1" style="margin:100px 0px -70px 0px">
-            <div class="container">
-                <div class="row align-items-center">
-                    <h3 class="col-md-12">DigiByte Address Verifier</h3>
-                    <p class="col-md-12">This tool proves you own an issuingAddress and tags it as KYC verified. Will cost $4+$1/issuingAddress</p>
-                </div>
+        
+        <div class="container">
+            <div class="x-section-heading">
+                <h3 class="col-md-12">DigiByte Address Verifier</h3>
+            </div>
+            <div class="x-section-info">
+                <p class="col-md-12">This tool proves you own an issuingAddress and tags it as KYC verified. Will cost $4+$1/issuingAddress</p>
             </div>
         </div>
-
-        <div class="w3l-index1 kycStep" id="kycStep1">
-            <div class="content">
-                <div class="container">
+        
+        <div class="kycStep" id="kycStep1">
+            <div class="container">
+                <div class="x-section-main">
                     <div class="row align-items-center">
                         <div class="col-lg-6 content-left">
                             <p class="mt-3 mb-lg-5 mb-4">Download and install Yoti. Create your identity profile with your drivers license and passport.</p>
@@ -459,9 +478,10 @@
             </div>
         </div>
 
-        <div class="w3l-index1 kycStep" id="kycStep2">
-            <div class="content">
-                <div class="container">
+        <div class="kycStep" id="kycStep2">
+            <div class="container">
+                <div class="x-section-main">
+
                     <div class="row align-items-center">
                         <p style="font-size: 14px;font-weight: 600;margin-top: 15px">Verify Type (Select from Dropdown Below)</p>
                         <select class="kyc_option" style="display: block;outline: none;padding: 15px 20px;-webkit-appearance: none;border-radius: 0;color: #000;font-weight: 400;width: 100%;font-size: 16px;line-height: 26px;margin-bottom: 15px;border-radius: var(--card-curve);border: 1px solid #eee;background: var(--light-bg-color);" id="kycType">
@@ -487,42 +507,48 @@
                     <button id="kycDone2" disabled>Validate</button>
                 </div>
             </div>
-        </div>
-
-
-
-    </div>
+        </div> 
+        
+    </div> 
+    <br>
     <!-- Page KYC end -->
 
 
 
     <!-- Page Wallet -->
     <div class="page" id="page_wallet" style="padding:10px">
-        <div class="x-section-heading">
-            <h2>Balance</h2>
+        
+        <div class="container">
+            <div class="x-section-heading">
+                <h2>Balance</h2>
+            </div>
+            <div class="x-section-info">
+                <input type="checkbox" id="wallet_split_by_label"><label for="wallet_split_by_label">Split By Label</label><button id="wallet_refresh" class="button btn btn-outline-dark">Refresh</button>
+            </div>
+            <div class="table-responsive col-md-12 wallet" id="wallet_div_assets">
+                <table class="table table-bordered table-striped" id="wallet_list_assets">
+                    <thead><tr><th>Icon</th><th>assetId</th><th>Balance</th><th>Send</th></tr></thead>
+                </table>
+            </div>
+            <div class="table-responsive col-md-12 wallet" id="wallet_div_assetsbylabel">
+                <table class="table table-bordered table-striped" id="wallet_list_assetsbylabel">
+                    <thead><tr><th>label</th><th>Icon</th><th>assetId</th><th>Balance</th><th>Send</th></tr></thead>
+                </table>
+            </div>
         </div>
-        <div class="x-section-info" style="padding-left: 20px;">
-            <input type="checkbox" id="wallet_split_by_label"><label for="wallet_split_by_label">Split By Label</label><button id="wallet_refresh" class="button btn btn-outline-dark">Refresh</button>
+            
+        <div class="container">
+            <div class="x-section-heading">
+                <h2>Receive</h2>
+            </div>
+            <div class="x-section-info">
+                <p>If you don't have an asset wallet above, or you would like to generate a fresh address, click the corresponding button below. You can optionally add a label to easily reference it <em>eg. Asset Wallet 1</em> </p>
+            </div>
+            <div class="x-section-main">
+                <label for="wallet_new_label">Label(Optional)</label><input type="text" style="width: 250px;" id="wallet_new_label"><button class="button btn btn-outline-dark newAddress" data-type="bech32">Bech32 Address(All good wallets)</button><button class="button btn btn-outline-dark newAddress" data-type="legacy">Legacy Address(Lazy programmers need to update)</button>
+            </div>
         </div>
-        <div class="table-responsive col-md-12 wallet" id="wallet_div_assets">
-            <table class="table table-bordered table-striped" id="wallet_list_assets">
-                <thead><tr><th>Icon</th><th>assetId</th><th>Balance</th><th>Send</th></tr></thead>
-            </table>
-        </div>
-        <div class="table-responsive col-md-12 wallet" id="wallet_div_assetsbylabel">
-            <table class="table table-bordered table-striped" id="wallet_list_assetsbylabel">
-                <thead><tr><th>label</th><th>Icon</th><th>assetId</th><th>Balance</th><th>Send</th></tr></thead>
-            </table>
-        </div>
-        <div class="x-section-heading">
-            <h2>Receive</h2>
-        </div>
-        <div class="x-section-info">
-            <p>Add explainer text here</p>
-        </div>
-        <div class="x-section-main">
-            <label for="wallet_new_label">Label(Optional)</label><input type="text" id="wallet_new_label"><button class="button btn btn-outline-dark newAddress" data-type="bech32">Bech32 Address(All good wallets)</button><button class="button btn btn-outline-dark newAddress" data-type="legacy">Legacy Address(Lazy programmers need to update)</button>
-        </div>
+
     </div>
     <br>
     <!-- Page Wallet end -->

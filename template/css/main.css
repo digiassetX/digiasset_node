@@ -353,22 +353,22 @@ input:invalid {
 
 p, body {
     font-family: "Chivo",sans-serif;
-    font-weight: 300;
-    color: #898989;}
+    font-weight: 400;
+    color: #333;}
 
 h1, h2, h3, h4, h5, h6 {
     font-family: "Chivo",sans-serif;
     font-weight: 600;
-    color: #898989; 
+    color: #333; 
 }
 
 h4 {color: black; font-size: calc(1.275rem + .3vw);font-weight: 800;}
 
 body {background: black;}
 
-/*table {
-    background-color: #ebeced;
-}*/
+table {
+    max-width: 95%;
+}
 
 .dgaXcol1 {color: #2964af;}
 .dgaXcol2 {color: #07b2a9;}
@@ -383,7 +383,7 @@ table {border-radius: 15px;}
 
 .navbar-expand-lg .navbar-nav {
     font-family: 'Chivo';
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.2rem;
 }
 
@@ -398,7 +398,7 @@ table {border-radius: 15px;}
 #videoBackground {
     position: fixed;
     right: 0;
-    bottom: 0;
+    /*bottom: 0;*/
     min-width: 100%;
     min-height: 100%;
     z-index: -1;
@@ -407,7 +407,7 @@ table {border-radius: 15px;}
   
 .x-section-heading {
     margin: 50px 0 0 50px;
-    width: 20%;
+    width: 40%;
     background: #ffffffeb;
     padding: 10px;
     border-radius: 20px 20px 0 0;
@@ -426,7 +426,7 @@ table {border-radius: 15px;}
 }
 .x-section-after {
     margin: 0 0 0 50px;
-    width: 40%;
+    width: 50%;
     background: white;
     padding: 10px;
     border-radius: 0 0 20px 20px;
@@ -434,6 +434,7 @@ table {border-radius: 15px;}
 .navbar-light .navbar-nav .nav-link {
     font-family: 'Nunito Sans';
     font-weight: 800;
+    line-height: 20px;
     border-radius: 20px;
     margin: 0 0 0 20px;
 }
