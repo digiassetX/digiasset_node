@@ -366,9 +366,9 @@ h4 {color: black; font-size: calc(1.275rem + .3vw);font-weight: 800;}
 
 body {background: black;}
 
-/*table {
-    background-color: #ebeced;
-}*/
+table {
+    max-width: 95%;
+}
 
 .dgaXcol1 {color: #2964af;}
 .dgaXcol2 {color: #07b2a9;}
@@ -426,7 +426,7 @@ table {border-radius: 15px;}
 }
 .x-section-after {
     margin: 0 0 0 50px;
-    width: 40%;
+    width: 50%;
     background: white;
     padding: 10px;
     border-radius: 0 0 20px 20px;
@@ -434,6 +434,7 @@ table {border-radius: 15px;}
 .navbar-light .navbar-nav .nav-link {
     font-family: 'Nunito Sans';
     font-weight: 800;
+    line-height: 20px;
     border-radius: 20px;
     margin: 0 0 0 20px;
 }
