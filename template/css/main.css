@@ -1,51 +1,73 @@
-/* Add custom font */
+/* Add custom fonts */
 
 /* Chivo light */
 
 @font-face {
-    font-family: "Chivo";
-    src: url("/fonts/Chivo-Light.eot");
-    src: url("/fonts/Chivo-Light.woff2") format('woff2'),
-         url("/fonts/Chivo-Light.woff") format('woff'),
-         url("/fonts/Chivo-Light.ttf") format('truetype');
+    font-family: 'Chivo';
+    src: url('/fonts/Chivo-Light.eot');
+    src: url('/fonts/Chivo-Light.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/Chivo-Light.woff2') format('woff2'),
+        url('/fonts/Chivo-Light.woff') format('woff'),
+        url('/fonts/Chivo-Light.svg#Chivo-Light') format('svg');
     font-weight: 300;
     font-style: normal;
+    font-display: swap;
 }
 
 /* Chivo regular */
 
 @font-face {
-    font-family: "Chivo";
-    src: url("/fonts/Chivo-Regular.eot");
-    src: url("/fonts/Chivo-Regular.woff2") format('woff2'),
-         url("/fonts/Chivo-Regular.woff") format('woff'),
-         url("/fonts/Chivo-Regular.ttf") format('truetype');
-    font-weight: 400;
+    font-family: 'Chivo';
+    src: url('/fonts/Chivo-Regular.eot');
+    src: url('/fonts/Chivo-Regular.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/Chivo-Regular.woff2') format('woff2'),
+        url('/fonts/Chivo-Regular.woff') format('woff'),
+        url('/fonts/Chivo-Regular.svg#Chivo-Regular') format('svg');
+    font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 /* Chivo bold */
 
 @font-face {
-    font-family: "Chivo";
-    src: url("/fonts/Chivo-Bold.eot");
-    src: url("/fonts/Chivo-Bold.woff2") format('woff2'),
-         url("/fonts/Chivo-Bold.woff") format('woff'),
-         url("/fonts/Chivo-Bold.ttf") format('truetype');
-    font-weight: 700;
+    font-family: 'Chivo';
+    src: url('/fonts/Chivo-Bold.eot');
+    src: url('/fonts/Chivo-Bold.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/Chivo-Bold.woff2') format('woff2'),
+        url('/fonts/Chivo-Bold.woff') format('woff'),
+        url('/fonts/Chivo-Bold.svg#Chivo-Bold') format('svg');
+    font-weight: bold;
     font-style: normal;
+    font-display: swap;
 }
 
-/* Chivo black */
+/* Nunito regular */
 
 @font-face {
-    font-family: "Chivo";
-    src: url("/fonts/Chivo-Black.eot");
-    src: url("/fonts/Chivo-Black.woff2") format('woff2'),
-         url("/fonts/Chivo-Black.woff") format('woff'),
-         url("/fonts/Chivo-Black.ttf") format('truetype');
-    font-weight: 900;
+    font-family: 'Nunito Sans';
+    src: url('/fonts/NunitoSans-Regular.eot');
+    src: url('/fonts/NunitoSans-Regular.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/NunitoSans-Regular.woff2') format('woff2'),
+        url('/fonts/NunitoSans-Regular.woff') format('woff'),
+        url('/fonts/NunitoSans-Regular.svg#NunitoSans-Regular') format('svg');
+    font-weight: normal;
     font-style: normal;
+    font-display: swap;
+}
+
+/* Nunito bold */
+
+@font-face {
+    font-family: 'Nunito Sans';
+    src: url('/fonts/NunitoSans-Bold.eot');
+    src: url('/fonts/NunitoSans-Bold.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/NunitoSans-Bold.woff2') format('woff2'),
+        url('/fonts/NunitoSans-Bold.woff') format('woff'),
+        url('/fonts/NunitoSans-Bold.svg#NunitoSans-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
 }
 
 .table {
