@@ -1,4 +1,6 @@
 const fs=require('fs');
+const ipfs=require("ipfs-simple");
+ipfs.create();
 
 /**
  * Add Error listener
