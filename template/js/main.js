@@ -1600,9 +1600,9 @@ const startAssetCreatorOptions=()=> {
                         if (assetId.substr(0, 1) === "L") continue;
                         let divisibility = from_b58(assetId)[23];
                         availableDivisibility &= (0x1ff - Math.pow(2, divisibility));
-                        html += `<button class="asset_creator_issue" data-type="reissue" data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
+                        html += `<button class="asset_creator_issue" data-type="reissue" data-toggle="tooltip" title="You can reissue new batches of previously issued unlocked assets with the same or different content." data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
                     }
-                    return `<button class="asset_creator_issue" data-type="locked" data-address="${row.address}" data-divisibility="1ff">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>` + html;
+                    return `<button class="asset_creator_issue" data-type="locked" data-toggle="tooltip" title="Locked assets cannot be changed after they have been created." data-address="${row.address}" data-divisibility="1ff">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-toggle="tooltip" title="With unlocked assets you can create blocks of assets with the same assetID but different content." data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>` + html;
                 },
                 orderable: false
             },
