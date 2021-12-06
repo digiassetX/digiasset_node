@@ -39,10 +39,13 @@
     "digiassetx-digibyte-stream-types": "^1.0.8"
   },
   "pkg": {
-    "outputPath": "bin"
+    "outputPath": "bin",
+    "assets": [
+      "node_modules/leveldown/**/*"
+    ]
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/digiassetX/digiasset_ipfs_metadata_server"
+    "url": "https://github.com/digiassetX/digiasset_node"
   }
 }

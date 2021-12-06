@@ -1328,7 +1328,7 @@ $(document).on('click','#menu_debug',async()=>{
     (new bootstrap.Modal(document.getElementById('DebugModal'))).show();
 });
 $(document).on('click','#debug_clear_cache',async()=>{
-    await api.stream.clearCache();
+    await api.stream.clearCache(true);
     location.reload();
 });
 $(document).on('click','#debug_fix_labels',async()=>{

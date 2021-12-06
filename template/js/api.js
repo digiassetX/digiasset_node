@@ -496,7 +496,7 @@ api.stream.get=async(Key,useCache=true)=>post('/api/stream/get.json',{Key,useCac
  * Clears the local cache
  * @return {Promise<void>}
  */
-api.stream.clearCache=async(height)=>post('/api/stream/clear.json',{height});
+api.stream.clearCache=async(full=false)=>post('/api/stream/clear.json',{full});
 
 /**
  * Searches entire chain for the files hash.  Optionally a start and end block height can be provided.
