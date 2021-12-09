@@ -16,7 +16,7 @@ npm install -g pkg
 "c:\Program Files\nodejs\nodevars.bat"
 
 #compile
-pkg . --no-bytecode --public-packages "*"
+pkg . --no-bytecode --public-packages "*" --compress GZip
 ```
 
 
