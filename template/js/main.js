@@ -480,8 +480,15 @@ const startWallet=(type)=>{
             className: 'columnWalletAssetId',
             data: null,
             render: (data,type,row)=>{
-                if (row.cid===undefined) return row.assetId;
-                return `${row.assetId}<br><span class="assetSubType">${row.cid}</span>`;
+                if (row.assetId==="DigiByte") return "Name: DigiByte";
+                let details=[];
+                try {
+                    if (typeof row.metadata.data.assetName!=="string") throw "Not Available";
+                    details.push("Name: "+row.metadata.data.assetName);
+                } catch (e) {}
+                details.push("Asset Id: "+row.assetId);
+                if (row.cid!==undefined) details.push("CID: "+row.cid);
+                return details.join("<br>");
             }
         },
         {

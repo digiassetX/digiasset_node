@@ -1,6 +1,6 @@
 {
   "name": "digiasset_node",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Clones DigiAsset Meta Data so there are many sources.",
   "main": "index.js",
   "bin": "index.js",
