@@ -415,26 +415,36 @@
             </div>
 
             <div class="asset_creator_step" id="asset_creator_step3">
-                <h3 style="margin-top:20px">Recipients:</h3>
-                <h5>Addresses</h5>
-                <table class="table table-bordered table-striped" id="asset_creator_addresses">
-                    <thead><tr><th></th><th>issuingAddress/assetId</th><th>Quantity</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-                <!-- todo make nicer  try putting D or U in first box to test -->
-                <table class="table table-responsive" style="background-color: transparent">
-                    <tr>
-                        <td><input type="text" class="form-control col-12" id="asset_creator_new_address" placeholder="Address or AssetId"></td>
-                        <td><input type="number" class="form-control col-12" id="asset_creator_new_quantity" placeholder="Quantity"></td>
-                        <td><button id="asset_creator_new" class="form-control btn btn-primary col-12">Add</button></td>
-                    </tr>
-                </table>
-
-                <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
-                <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
+                <div class="x-section-heading">
+                    <h2>Recipients:</h2>
+                </div>
+                <div class="x-section-info" style="padding-left: 20px;">
+                    <h5>Addresses</h5>
+                </div>
+                
+                <div class="x-section-main">
+                    <table class="table table-bordered table-striped" id="asset_creator_addresses">
+                        <thead><tr><th></th><th>issuingAddress/assetId</th><th>Quantity</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <!-- todo make nicer  try putting D or U in first box to test -->
+                
+                    <table class="table table-responsive" style="background-color: transparent">
+                        <tr>
+                            <td><input type="text" class="form-control col-12" id="asset_creator_new_address" placeholder="Address or AssetId"></td>
+                            <td><input type="number" class="form-control col-12" id="asset_creator_new_quantity" placeholder="Quantity"></td>
+                            <td><button id="asset_creator_new" class="form-control btn btn-primary col-12">Add</button></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="x-section-after">
+                    <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
+                    <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
+                </div>  
                 <!-- todo end -->
-
-                <h3 style="margin-top:20px">Costs:</h3>
+                <div class="x-section-heading">
+                    <h2>Costs:</h2>
+                </div>
                 <table class="table table-bordered table-striped" id="asset_creator_costs">
                     <thead><tr><th>Type</th><th>Amount</th></tr></thead>
                 </table>
