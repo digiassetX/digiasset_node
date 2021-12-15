@@ -13,8 +13,10 @@
     <link rel="stylesheet" href="/css/flags.css" type="text/css">
     <link rel="stylesheet" href="/css/main.css" type="text/css">
     <link rel="stylesheet" href="/css/font-awesome-6.0.0.css">
+    
 </head>
 <body>
+    <button onclick="topFunction()" id="myBtn">Top</button>
     <video autoplay muted loop id="videoBackground">
         <source src="/images/background-globe-nodes.mp4" type="video/mp4">
     </video>
@@ -78,7 +80,7 @@
     </nav>
 
     <!-- Page File Hasher -->
-    <div class="page" id="page_filehasher" style="padding:10px;">
+    <div class="page" id="page_filehasher">
         <div class="container">
         
             <div class="x-section-heading">
@@ -125,7 +127,7 @@
     <!-- Page Hasher end -->
 
     <!-- Page Block Explorer -->
-    <div class="page" id="page_explorer" style="padding:10px">
+    <div class="page" id="page_explorer">
         <div class="container">
             <div class="x-section-heading"><h2>Block Explorer</h2></div>
             <div class="x-section-info"><p>Enter a block height,hash,address,txid,or assetId:</p>
@@ -139,7 +141,7 @@
     <!-- Page Block Explorer end -->
 
     <!-- Page Meta Data -->
-    <div class="page" id="page_metadata" style="padding:10px">
+    <div class="page" id="page_metadata">
         <div>
             <button id="updateBtn" class="btn btn-success" >Update Available</button>
         </div>
@@ -150,12 +152,13 @@
             <div class="x-section-info">
                 <p>You can subscribe to other peoples approved/rejected lists.  ✓ means subscribed to approve list.  X means subscribed to reject list.  Click to change.</p>
             </div>
-            <div class="table-responsive col-md-12">
-                <table class="table table-bordered table-striped" id="subscription">
-                    <thead><tr><th>✓</th><th>X</th><th>Url</th></tr></thead>
-                </table>
+            <div class="x-section-main">
+                <div class="table-responsive col-md-12">
+                    <table class="table table-bordered table-striped" id="subscription">
+                        <thead><tr><th>✓</th><th>X</th><th>Url</th></tr></thead>
+                    </table>
+                </div>
             </div>
-    
             <div class="x-section-after">
                 <label for="subscription_new">New Subscription:</label><input type="url" id="subscription_new"><button class="subscription_add btn btn-warning" data-type="both">Both</button><button class="subscription_add btn btn-danger" data-type="rejected">Reject List</button><button class="subscription_add btn btn-success" data-type="approved">Approved List</button><br>
             </div>
@@ -169,10 +172,12 @@
             </div>
         
             <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
-            <div class="table-responsive col-md-12">
-                <table class="table table-bordered table-striped" id="unsorted">
-                    <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead>
-                </table>
+            <div class="x-section-main">
+                <div class="table-responsive col-md-12">
+                    <table class="table table-bordered table-striped" id="unsorted">
+                        <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead>
+                    </table>
+                </div>
             </div>
             <br>
     
@@ -184,18 +189,20 @@
                 <p>Add explainer text here</p>
             </div>
         
-            <div class="table-responsive col-md-12">
-                <table class="table table-bordered table-striped" id="approved">
-                    <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead><tbody>
-                </table>
+            <div class="x-section-main">
+                <div class="table-responsive col-md-12">
+                    <table class="table table-bordered table-striped" id="approved">
+                        <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead><tbody>
+                    </table>
+                </div>
             </div>
-            
+
         </div>
 
     </div>
     <!-- Page Meta Data end -->
 
-    <div id="window">
+    <div id="window" style="padding-top: 50px; background: lightgrey; border-radius: 20px;">
         <iframe id="window_data"></iframe><br>
         <button id="window_approve" class="approve arbig btn btn-success" data-column="cid">Approve</button>
         <button id="window_reject" class="reject arbig btn btn-danger" data-column="cid">Reject</button>
@@ -206,7 +213,7 @@
 
 
     <!-- Page Asset Creator -->
-    <div class="page" id="page_assetcreator" style="padding:10px">
+    <div class="page" id="page_assetcreator">
         
         <div class="container">
             <div class="asset_creator_step" id="asset_creator_step1">
@@ -250,15 +257,15 @@
                     <table class="table table-responsive">
                         <tr>
                             <td><label for="asset_creator_assetName">Asset Name </label></td>
-                            <td><input id="asset_creator_assetName" type="text" class="form-control col-md-12"></td>
+                            <td><input id="asset_creator_assetName" type="text" class="form-control col-md-6"></td>
                         </tr>
-                        <tr>    <!--todo change to multi line input -->
+                        <tr>    <!--changed to multi line input -->
                             <td><label for="asset_creator_description">Description </label></td>
-                            <td><input id="asset_creator_description" type="text" class="form-control col-md-12"></td>
+                            <td><textarea id="asset_creator_description" rows="5" cols="50" type="text" class="form-control col-md-12"></textarea></td>
                         </tr>
                         <tr>
                             <td><label for="asset_creator_aggregation">Aggregation </label>
-                            <td><select id="asset_creator_aggregation" class="form-control col-md-12">
+                            <td><select id="asset_creator_aggregation" class="form-control col-md-3">
                                 <option value="aggregatable">Aggregatable(Normal)</option>
                                 <option value="hybrid">Hybrid</option>
                                 <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(NFT)</option>
@@ -266,7 +273,7 @@
                         </tr>
                         <tr>
                             <td><label for="asset_creator_divisibility">Divisibility: </label></td>
-                            <td><select id="asset_creator_divisibility" class="form-control col-md-12">
+                            <td><select id="asset_creator_divisibility" class="form-control col-md-2">
                                 <option value="0">1</option>
                                 <option value="1">0.1</option>
                                 <option value="2">0.01</option>
@@ -281,7 +288,7 @@
                         </tr>
                         <tr>
                             <td><label for="asset_creator_site">Web Site: </label></td>
-                            <td><input id="asset_creator_site" type="url" class="form-control col-md-12"></td>
+                            <td><input id="asset_creator_site" type="url" class="form-control col-md-6"></td>
                         </tr>
                     </table>
                 </div>
@@ -290,7 +297,7 @@
                     <h2>Rules</h2>
                 </div>
                 <div class="x-section-main">
-                    <label for="asset_creator_rulesEnabled">Enable Rules: </label><input type="checkbox" id="asset_creator_rulesEnabled"><br>
+                    <label for="asset_creator_rulesEnabled">Enable Rules:&nbsp;&nbsp;</label><input type="checkbox" id="asset_creator_rulesEnabled"><br>
                     <div id="asset_creator_rulesSettingBox" class="table">
                         <table class="table table-responsive"><!-- todo this really should not be a table -->
 
@@ -302,14 +309,14 @@
                             <tr>
                                 <td><label for="asset_creator_kyc">KYC Required </label></td>
                                 <td>
-                                    <select id="asset_creator_kyc" class="form-control col-md-12 asset_creator_rule_input" style="display: inline-block;">
+                                    <select id="asset_creator_kyc" class="form-control col-md-3 asset_creator_rule_input" style="display: inline-block;">
                                         <option value="false">Not Required</option>
                                         <option value="true">Required</option>
                                         <option value="allow">Only following countries</option>
                                         <option value="ban">Ban following countries</option>
                                     </select>
                                     <div id="asset_creator_kycList_div">
-                                        <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_kycList">
+                                        <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_kycList">
                                             <thead><tr><th>Country</th></tr></thead><tbody>
                                         </table>
                                     </div>
@@ -322,7 +329,7 @@
                                     <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_royalties">
                                         <thead><tr><th></th><th>Address</th><th>Amount</th></tr></thead><tbody>
                                     </table>
-                                    <label for="asset_creator_currency">Royalty Base Currency</label><select id="asset_creator_currency" class="asset_creator_rule_input">
+                                    <label for="asset_creator_currency">Royalty Base Currency&nbsp;&nbsp;&nbsp;</label><select id="asset_creator_currency" class="asset_creator_rule_input">
                                         <optgroup label="Crypto">
                                             <option value="DGB" selected>DigiByte</option>
                                             <option value="BTC">Bitcoin</option>
@@ -355,8 +362,7 @@
                             <tr>
                                 <td><label for="asset_creator_deflate">Deflation:</label></td>
                                 <td>
-                                    <input type="number" id="asset_creator_deflate" value="0" class="form-control   asset_creator_rule_input">
-                                <p style="color: white">Should usually be zero.  If not 0 that many assets must be burned every time someone sends the asset to someone</p>
+                                    <input type="number" id="asset_creator_deflate" title="Should usually be zero. If not 0 that many assets must be burned every time someone sends the asset to someone" value="0" class="form-control col-md-3 asset_creator_rule_input">
                                 </td>
                             </tr>
                                 
@@ -366,7 +372,7 @@
                                     <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_voteOptions">
                                         <thead><tr><th></th><th>Option</th></tr></thead><tbody>
                                     </table>
-                                    <label for="asset_creator_voteMovable">Votes Movable</label><input type="checkbox" id="asset_creator_voteMovable" class="asset_creator_rule_input">
+                                    <label for="asset_creator_voteMovable">Votes Movable&nbsp;&nbsp;&nbsp;</label><input type="checkbox" id="asset_creator_voteMovable" class="asset_creator_rule_input">
                                 </td>
                             </tr>
                              <tr>
@@ -460,11 +466,11 @@
 
 
     <!-- Page KYC -->
-    <div class="page" id="page_kyc" style="padding:10px">
+    <div class="page" id="page_kyc">
         
         <div class="container">
             <div class="x-section-heading">
-                <h3 class="col-md-12">DigiByte Address Verifier</h3>
+                <h2 class="col-md-12">DigiByte Address Verifier</h2>
             </div>
             <div class="x-section-info">
                 <p class="col-md-12">This tool proves you own an issuingAddress and tags it as KYC verified. Will cost $4+$1/issuingAddress</p>
@@ -526,7 +532,7 @@
 
 
     <!-- Page Wallet -->
-    <div class="page" id="page_wallet" style="padding:10px">
+    <div class="page" id="page_wallet">
         
         <div class="container">
             <div class="x-section-heading">
@@ -537,12 +543,12 @@
             </div>
             <div class="table-responsive col-md-12 wallet" id="wallet_div_assets">
                 <table class="table table-bordered table-striped" id="wallet_list_assets">
-                    <thead><tr><th>Icon</th><th>Details</th><th>Balance</th><th>Send</th></tr></thead>
+                    <thead><tr><th>Icon</th><th>assetId</th><th>Balance</th><th>Send</th></tr></thead>
                 </table>
             </div>
             <div class="table-responsive col-md-12 wallet" id="wallet_div_assetsbylabel">
                 <table class="table table-bordered table-striped" id="wallet_list_assetsbylabel">
-                    <thead><tr><th>label</th><th>Icon</th><th>Details</th><th>Balance</th><th>Send</th></tr></thead>
+                    <thead><tr><th>label</th><th>Icon</th><th>assetId</th><th>Balance</th><th>Send</th></tr></thead>
                 </table>
             </div>
         </div>
@@ -698,9 +704,7 @@
                             </div><br>
                             <div class="form-check">
                               <input class="form-check-input" type="checkbox" id="im_paidContent">
-                              <label class="form-check-label" for="im_paidContent">
-                                All Paid Content
-                              </label>
+                              <label class="form-check-label" for="im_paidContent"><span style="margin-left: 40px; padding-top: 3px;">All Paid Content</span></label>
                             </div>
                           <!--end-->
                       </div>
@@ -786,8 +790,8 @@
                     <h5 class="modal-title" id="DLabel">Debug</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <button id="debug_clear_cache">Clear Cache</button>
-                <button id="debug_fix_labels">Fix Labels</button>
+                <button id="debug_clear_cache" class="btn btn-primary" style="margin-bottom: 10px;">Clear Cache</button>
+                <button id="debug_fix_labels" class="btn btn-primary" style="margin-bottom: 10px;">Fix Labels</button>
 
             </div>
         </div>
@@ -885,7 +889,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <h5>Addresses</h5>
+                    <h2>Addresses</h2>
                     <table class="table table-bordered table-striped" id="send_assets_addresses">
                         <thead><tr><th>Issuing Address / Asset Id</th><th>Quantity</th><th></th></tr></thead>
                         <tbody></tbody>
@@ -893,7 +897,7 @@
                     <!-- todo make nicer  try putting D or U in first box to test -->
                     <table class="table table-responsive" style="background-color: transparent">
                         <tr>
-                            <td><input type="text" class="form-control col-12" id="send_assets_new_address" placeholder="Send to Address"></td>
+                            <td style="width: 60%"><input type="text" class="form-control col-12" id="send_assets_new_address" placeholder="Send to Address"></td>
                             <td><input type="number" class="form-control col-12" id="send_assets_new_quantity" placeholder="Asset Quantity"></td>
                             <td><button id="send_assets_new" class="form-control btn btn-primary col-12">Add</button></td>
                         </tr>
@@ -903,7 +907,7 @@
                     <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per asset" id="send_asset_assetId_type_asset">Per Asset
                     <!-- todo end -->
 
-                    <h5>Costs</h5>
+                    <h2>Costs</h2>
                     <table class="table table-bordered table-striped" id="send_assets_costs">
                         <thead><tr><th>Type</th><th>Amount</th></tr></thead>
                     </table>
@@ -1042,9 +1046,9 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="tosMLabel">Terms Of Service</h5>
+                    <h1 class="modal-title" id="tosMLabel">Terms Of Service</h1>
                 </div>
-                <h1>Simplified:</h1>
+                <h2>Simplified:</h2>
                 <p>We wanted to just write</p>
                 <ul>
                     <li>Don't be evil</li>
@@ -1052,17 +1056,17 @@
                     <li>This is an open source project.  Find a problem or want to improve it please fix.</li>
                 </ul>
                 <p>But the lawyers said this wasn't good enough so here is there version.</p>
-                <h1>Full Terms of Service:</h1>
+                <h2>Full Terms of Service:</h2>
                 <div id="tosLegal"></div>
                 <h1>Opt In:</h1>
                 <p>Want to get paid for hosting a IPFS Node?  If so agree to the fields below and provide us an address to pay you with:</p>
                 <div>
                     <input type="checkbox" id="tosShow">I would like my node to be displayed on node map(locations are not exact)<br>
                     <input type="checkbox" id="tosPeer">I would like to publish my IPFS Peer Id<br>
-                    <input type="text" id="tosPayout">Payout Address
+                    <span style="margin-left: 22px;">Payout Address: </span><input style="width: 350px;" type="text" id="tosPayout">
                 </div>
                 <div class="modal-footer">
-                    <button id="tosAgree">Agree to the Terms of Service</button>
+                    <button class="btn btn-success" id="tosAgree">Agree to the Terms of Service</button>
                 </div>
             </div>
         </div>

@@ -1,3 +1,25 @@
+// Add scroll to top button
+//Get the button:
+mybutton = document.getElementById("myBtn");
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0; // For Safari
+  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+
+
 // noinspection JSUnfilteredForInLoop,JSJQueryEfficiency
 
 const fileCostPerByte=0.0000012;    //$1.20/MB
@@ -278,7 +300,7 @@ $("#window_data").on('load',async()=>{
             let chainData = await api.stream.get(assetId);
             let postHtml=`<h1>Chain Data:<button class="btn btn-primary" id="refreshChain" data-assetid="${assetId}">Refresh</button></h1><div id="chainData" class="json">${JSON.stringify(chainData, null, 4)}</div>`;
             post.html(postHtml);
-            let preHtml='<h1>Verified Asset:</h1>';
+            let preHtml='<h1>Asset Creator Status:</h1>';
             if (chainData.kyc===undefined) {
                 preHtml += "Unverified";
             } else if (chainData.kyc.name!==undefined) {
@@ -443,7 +465,7 @@ let walletTable={active:""};
  * @param {"vote_asset"|"send_asset"|"visit_site"}  triggerClass
  */
 const createAssetSendButton=(row,label,triggerClass)=>{
-    let html=`<button class="cell button btn ${triggerClass}"`;
+    let html=`<button class="btn btn-primary ${triggerClass}"`;
     for (let index in row) {
         if (index==="data") continue;  //skip data
         html+=` data-${index.toLowerCase()}="${row[index].toString()}"`;
@@ -1607,9 +1629,9 @@ const startAssetCreatorOptions=()=> {
                         if (assetId.substr(0, 1) === "L") continue;
                         let divisibility = from_b58(assetId)[23];
                         availableDivisibility &= (0x1ff - Math.pow(2, divisibility));
-                        html += `<button class="asset_creator_issue" data-type="reissue" data-toggle="tooltip" title="You can reissue new batches of previously issued unlocked assets with the same or different content." data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
+                        html += `<button class="asset_creator_issue btn btn-primary " data-type="reissue" data-toggle="tooltip" title="You can reissue new batches of previously issued unlocked assets with the same or different content." data-address="${row.address}" data-assetid="${assetId}">Reissue ${assetId}</button>`;
                     }
-                    return `<button class="asset_creator_issue" data-type="locked" data-toggle="tooltip" title="Locked assets cannot be changed after they have been created." data-address="${row.address}" data-divisibility="1ff">Locked</button><button class="asset_creator_issue" data-type="unlocked" data-toggle="tooltip" title="With unlocked assets you can create blocks of assets with the same assetID but different content." data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>` + html;
+                    return `<button class="asset_creator_issue btn btn-primary" data-type="locked" data-toggle="tooltip" title="Locked assets cannot be changed after they have been created." data-address="${row.address}" data-divisibility="1ff">Locked</button><button class="asset_creator_issue btn btn-primary" data-type="unlocked" data-toggle="tooltip" title="With unlocked assets you can create blocks of assets with the same assetID but different content." data-address="${row.address}" data-divisibility="${availableDivisibility.toString(16)}">Unlocked</button>` + html;
                 },
                 orderable: false
             },
