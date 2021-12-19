@@ -26,12 +26,12 @@ const fileCostPerByte=0.0000012;    //$1.20/MB
 
 let getHeight=async()=>{
     let height=await api.height();
-    $("#last_block").html("<strong>Last Block Scanned</strong> : "+height);
+    $("#last_block").html("<strong><small>Last Block Scanned<br>For Asset Data:<br></small></strong>"+height);
     let dailyStats = await api.digiassetX.payout.daily();
     let sats=dailyStats.padStart(9,'0');
     let i=sats.length-8;
     let dgb=sats.substr(0,i)+"."+sats.substr(i);
-    $("#daily_total_reward").html("Daily Payout : ~"+dgb+" DGB");
+    $("#daily_total_reward").html("<strong><small>Daily Payout</small></strong>:<br>~"+dgb+" DGB");
 }
 
 /**
@@ -2357,7 +2357,13 @@ const redrawFileTable=()=>{
         }
         let sizeText=(Math.round(size*100)/100).toString()+prefix.pop();
         //todo asset_creator_fileDelete should be changed to X in corner or something.
-        html+=`<div class="asset_creator_fileEntry"><div class="asset_creator_fileName" contenteditable="true" data-index="${index}">${name}</div><div class="asset_creator_fileType">${type}</div><div class="asset_creator_fileSize">${sizeText}</div><canvas class="asset_creator_filePreview" id="preview-${index}"></canvas><div class="asset_creator_fileDelete" data-index="${index}">Delete</div></div>`;
+        html+=`<div class="asset_creator_fileEntry">
+        <div class="asset_creator_fileName" contenteditable="true" data-index="${index}">${name}</div>
+        <canvas class="asset_creator_filePreview" id="preview-${index}"></canvas>
+        <div class="asset_creator_fileType">${type}</div>
+        <button class="asset_creator_fileDelete btn-close x-btn-close" data-index="${index}" aria-label="Close"></button>
+        <div class="asset_creator_fileSize">${sizeText}</div>
+        </div>`;
     }
     assetCreator_uploadedFiles.innerHTML=html+'<div class="clear"></div>';
 
@@ -2373,7 +2379,7 @@ const redrawFileTable=()=>{
 
     //show publishing cost
     let cost=totalSize*fileCostPerByte;
-    $("#asset_creator_fileCost").html(cost.toFixed(3));
+    $("#asset_creator_fileCost").html(cost.toFixed(2));
 }
 let timerFileUploader;
 assetCreator_fileInput.addEventListener('change', ()=>{
@@ -2612,12 +2618,12 @@ $(document).on('click','#asset_creator_create',async()=>{
         let state=await api.digiassetX.asset.permanent(sha256Hash);
         switch (state) {
             case 2:
-                $("#creatingAssetPermanent").text("✓");
+                $("#creatingAssetPermanent").text("Metadata downloaded succesfully");
                 clearInterval(timer);
                 $("#creatingAssetWarning").hide();
                 $("#creatingAssetDone").show();
             case 1:
-                $("#creatingAssetDetect").text("✓");
+                $("#creatingAssetDetect").text("Transaction detected succesfully");
                 $("#creatingAssetPermanentLi").show();
             case 0:
         }
