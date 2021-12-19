@@ -244,14 +244,7 @@ thead{
     display: none;
 }
 
-.asset_creator_fileEntry {
-    border:         black;
-    border-style:   solid;
-    border-width:   thick;
-    position:       relative;
-    float:          left;
-    width:          150px;
-}
+/*Dup0licate of class .asset:_creator_fileEntry combine on line 539 */
 
 .asset_creator_fileName {
     font-size: small;
@@ -287,8 +280,8 @@ thead{
 }
 
 .asset_creator_filePreview {
-    width:          150px;
-    height:         100px;
+    width:          170px;
+    height:         170px;
 }
 
 .clear {
@@ -390,13 +383,12 @@ table {border-radius: 15px;}
 }
 
 .navbar .navbar-brand img {
-    max-width: 200px;
+    max-width: 150px;
 }
 
 #videoBackground {
     position: fixed;
     right: 0;
-    /*bottom: 0;*/
     min-width: 100%;
     min-height: 100%;
     z-index: -1;
@@ -438,7 +430,7 @@ table {border-radius: 15px;}
 }
 
 /* Increase size of checkboxes */
-input[type=checkbox]
+input[type=checkbox], input[type=radio]
 {
   -ms-transform: scale(1.5); /* IE */
   -moz-transform: scale(1.5); /* FF */
@@ -537,13 +529,16 @@ border-radius: 30px 0 0 30px;
 }
 
 .asset_creator_fileEntry {
-    vertical-align: middle;
     box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
-    border: 1px solid #ddd;
     border-radius: 15px;
-    padding: 10px;
-    width: 170px;
     margin-right: 10px;
+    position:       relative;
+    float:          left;
+    width: 180px;
+    padding: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background: #ffffffeb;    height: 225px;
 }
 
 #filehasher_hashdata table {background: white!important;}
@@ -551,6 +546,10 @@ border-radius: 30px 0 0 30px;
 /* additional customisations*/
 
 /* general modal styling*/ 
+
+.modal {
+    background: #00000054;
+}
 
 .modal-content {
     padding: 20px;
@@ -642,13 +641,13 @@ border-radius: 30px 0 0 30px;
 
 /* improve spinner visibility */
 
-#wallet_list_assets_processing.dataTables_processing {
+#send_assets_costs_processing.dataTables_processing, #wallet_list_assets_processing.dataTables_processing {
     display: contents;
     position: initial;
 }
 
 .spinner:before {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     width: 50px;
@@ -721,7 +720,7 @@ border-radius: 30px 0 0 30px;
 
 .navbar {
     background-color: #00000085 !important;
-  height:100px;
+  height:80px;
   
   margin:0 auto;
   width:100%;
@@ -741,7 +740,7 @@ border-radius: 30px 0 0 30px;
 #myBtn {
     display: none; /* Hidden by default */
     position: fixed; /* Fixed/sticky position */
-    bottom: 20px; /* Place the button at the bottom of the page */
+    bottom: 130px; /* Place the button at the bottom of the page */
     right: 30px; /* Place the button 30px from the right */
     z-index: 999; /* Make sure it does not overlap */
     border: none; /* Remove borders */
@@ -759,3 +758,70 @@ border-radius: 30px 0 0 30px;
     background-color: #2964af; /* Add background color on hover */
   }
 
+  .description {
+    border: none;
+    padding: 20px;
+    background: #dfdfdf;
+    margin: 10px;
+    font-size: 110%;
+    font-family: 'Nunito Sans';
+  }
+
+
+.footer-data {
+    position: fixed; 
+    bottom:20px;
+     right:20px;
+     background:rgb(0 0 0 / 19%);
+     padding: 10px;
+     border-radius: 10px;
+}
+
+#daily_total_reward {text-align: center;}
+
+.modal-footer {
+    border-top: none;
+    background: #dee2e6;
+    border-radius: 10px;
+}
+#WalletModal .modal-dialog {
+    max-width: 700px;}
+
+.x-page-title h1 {color: white; margin-bottom: 40px;}
+
+.x-form-line {padding-bottom: 10px;}
+
+.x-rules-panel {
+    margin-bottom: 10px;
+    /*-webkit-box-shadow: 0 10px 20px rgba(0,0,0,.19),0 6px 6px rgba(0,0,0,.23)!important;
+    box-shadow: 0 10px 20px rgba(0,0,0,.19),0 6px 6px rgba(0,0,0,.23)!important;*/
+}
+.form-switch .form-check-input {
+    width: 2em;
+    margin-left: 0;}
+
+    #asset_creator_kycList_filter .dataTables_wrapper .dataTables_filter input {width: 200px;}
+
+.x-btn-close {
+    float: right;
+}
+
+.x-publishing-cost {
+background: #dee2e6;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    font-size: 110%;}
+
+.timer {
+    font-size: 2.5em;
+    padding: 10px;
+    text-align: center;
+    margin: 0 auto;
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.modal-content #txid, #creatingAssetTXID {overflow-wrap: anywhere;}
+
+#creatingAssetPermanent, #creatingAssetDetect {color: green;}
