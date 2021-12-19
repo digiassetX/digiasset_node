@@ -23,7 +23,7 @@
     
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand clickable" style="color:white"><img src="/images/dgaXnode-logoV2.png" alt="digiassetx logo" width="200px"></a>
+        <a class="navbar-brand clickable" style="color:white"><img src="/images/dgaXnode-logoV2.png" alt="digiassetx logo" width="150px"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -73,9 +73,9 @@
           </ul>
         </div>
         <div class="pull-right">
-            <div id="last_block" style="color:white">Loading</div>
-            <div id="daily_total_reward" style="color:white" title="Daily payout estimation for all nodes.">Loading</div>
+            <div id="daily_total_reward" style="color:white" title="Daily payout estimation for all nodes.">Loading</div>    
         </div>
+        <div class="footer-data" id="last_block" style="color:white">Loading</div>
       </div>
     </nav>
 
@@ -148,6 +148,7 @@
         <div class="container">
             <div class="x-section-heading">
                 <h2>Subscriptions</h2>
+                
             </div>
             <div class="x-section-info">
                 <p>You can subscribe to other peoples approved/rejected lists.  ✓ means subscribed to approve list.  X means subscribed to reject list.  Click to change.</p>
@@ -214,250 +215,362 @@
 
     <!-- Page Asset Creator -->
     <div class="page" id="page_assetcreator">
+
+        <!-- Step 1: Select issueing wallet -->
+        <div class="asset_creator_step" id="asset_creator_step1">
+            
+            <div class="container">                
+                <div class="x-page-title">
+                    <h1>DigiAsset Creator</h1>
+                </div>                
+            </div>
+            
+            <div class="container">       
+                <div class="row-fluid">
+                
+                    <div class="col-12">
+                        <div class="x-section-heading">
+                            <h2>Issuing Address</h2>
+                        </div>
         
-        <div class="container">
-            <div class="asset_creator_step" id="asset_creator_step1">
-                <div class="x-section-heading">
-                    <h2>Issuing Address</h2>
-                </div>
-                <div class="x-section-info" style="padding-left: 20px;">
-                    <input type="checkbox" id="asset_creator_useKyc" checked>Create Verified Asset
-                </div>
-                <div class="table-responsive col-md-12">
-                    <table class="table table-bordered table-striped" id="asset_creator_addressOptions">
-                        <thead><tr><th></th><th>Address</th><th>Balance</th></tr></thead><tbody>
-                    </table>
+                        <div class="x-section-info" style="padding-left: 20px;">
+                            <input type="checkbox" id="asset_creator_useKyc" checked>Create Verified Asset
+                        </div>
+                        <div class="x-section-main">
+                            <div class="table-responsive col-md-12">
+                                <table class="table table-bordered table-striped" id="asset_creator_addressOptions">
+                                    <thead><tr><th></th><th>Address</th><th>Balance</th></tr></thead><tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                
                 </div>
             </div>
-
-            <div class="asset_creator_step" id="asset_creator_step2">
-                <div class="x-section-heading">
-                    <h2>Asset Creator</h2>
-                </div>
         
-                <div class="x-section-main">
-                    <label for="asset_creator_assetIssuer">Your Name</label>
-                    <input id="asset_creator_assetIssuer" type="text" class="form-control col-md-12" style="display: inline-block;">
-              </div>
+        </div>
 
-                <div class="x-section-heading">
-                    <h2>Files</h2>
-                </div>
-                <div class="x-section-main">
-                    <p>Wallets will use what ever image is named icon as the thumbnail</p>
-                    <input type="file" id="asset_creator_files" multiple><br>
-                    <div id="asset_creator_uploadedFiles"></div>
-                    <div>Publishing Cost: $<span id="asset_creator_fileCost">0.000</span> USD</div>
-                </div>                        
-                    
-                <div class="x-section-heading">
-                    <h2>Data</h2>
-                </div>
-                <div class="x-section-main" STYLE="background: white;">
-                    <table class="table table-responsive">
-                        <tr>
-                            <td><label for="asset_creator_assetName">Asset Name </label></td>
-                            <td><input id="asset_creator_assetName" type="text" class="form-control col-md-6"></td>
-                        </tr>
-                        <tr>    <!--changed to multi line input -->
-                            <td><label for="asset_creator_description">Description </label></td>
-                            <td><textarea id="asset_creator_description" rows="5" cols="50" type="text" class="form-control col-md-12"></textarea></td>
-                        </tr>
-                        <tr>
-                            <td><label for="asset_creator_aggregation">Aggregation </label>
-                            <td><select id="asset_creator_aggregation" class="form-control col-md-3">
-                                <option value="aggregatable">Aggregatable(Normal)</option>
-                                <option value="hybrid">Hybrid</option>
-                                <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(NFT)</option>
-                            </select></td>
-                        </tr>
-                        <tr>
-                            <td><label for="asset_creator_divisibility">Divisibility: </label></td>
-                            <td><select id="asset_creator_divisibility" class="form-control col-md-2">
-                                <option value="0">1</option>
-                                <option value="1">0.1</option>
-                                <option value="2">0.01</option>
-                                <option value="3">0.001</option>
-                                <option value="4">0.0001</option>
-                                <option value="5">0.00001</option>
-                                <option value="6">0.000001</option>
-                                <option value="7">0.0000001</option>
-                                <option value="8">0.00000001</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label for="asset_creator_site">Web Site: </label></td>
-                            <td><input id="asset_creator_site" type="url" class="form-control col-md-6"></td>
-                        </tr>
-                    </table>
-                </div>
+        <!-- Step 2: Assets details: files, name, description, etc., rules and legal-->
+        <div class="asset_creator_step" id="asset_creator_step2">
+                
+            <div class="container">                
+                <div class="x-page-title">
+                    <h1>DigiAsset Creator</h1>
+                </div>                
+            </div>
 
-                <div class="x-section-heading">
-                    <h2>Rules</h2>
-                </div>
-                <div class="x-section-main">
-                    <label for="asset_creator_rulesEnabled">Enable Rules:&nbsp;&nbsp;</label><input type="checkbox" id="asset_creator_rulesEnabled"><br>
-                    <div id="asset_creator_rulesSettingBox" class="table">
-                        <table class="table table-responsive"><!-- todo this really should not be a table -->
+            <div class="container-md">
+                <div class="row-fluid">
+                    <!-- Panel: Files-->
+                    <div class="col-xl-4 col-12" style="float: left; margin-right: 10px;">
+                        <div class="x-section-heading" style="margin: 25px 0 0 20px; width: 50%;">
+                            <h2>Files</h2>
+                        </div>        
+                        
+                        <div class="x-section-main">
+                            <p>Wallets will use what ever image is named icon as the thumbnail</p>
+                            <input type="file" id="asset_creator_files" multiple><br>
+                            <div id="asset_creator_uploadedFiles"></div>
+                            <div class="x-publishing-cost">Publishing Cost: $<span id="asset_creator_fileCost">0.00</span> USD</div>
+                        </div>                 
+                    </div>
+                    <!-- Panel: Data, rules, legal-->
+                    <div class="col-xl-7 col-12" style="float: left;">
+                        
+                        <!-- subpanel: Data-->
+                        <div class="x-section-heading" style="margin: 25px 0 0 20px; width: 50%;">
+                            <h2>Data</h2>
+                        </div>
+                        
+                        <div class="x-section-main">
+                            
+                            <div class="row-fluid x-form-line">
+                                <div class="col-12">
+                                    <label for="asset_creator_assetIssuer">Your Name</label>
+                                    <input id="asset_creator_assetIssuer" type="text" class="form-control col-md-6">    
+                                </div>
+                            </div>
 
-                            <tr class="asset_creator_unlockedOnly">
-                                <td><label for="asset_creator_rewritable">Make rules rewritable </label></td>
-                                <td><input type="checkbox" id="asset_creator_rewritable" class="asset_creator_rule_input"><br></td>
-                            </tr>
+                            <div class="row-fluid x-form-line">
+                                <div class="col-5" style="float: left;">
+                                    <label for="asset_creator_assetName">Asset Name </label>
+                                    <input id="asset_creator_assetName" type="text" class="form-control">
+                                </div>
+                                <div class="col-7" style="float: left;">
+                                    <label for="asset_creator_site">Web Site: </label></td>
+                                    <input id="asset_creator_site" type="url" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="row-fluid x-form-line" style="clear: both;"></div>
 
-                            <tr>
-                                <td><label for="asset_creator_kyc">KYC Required </label></td>
-                                <td>
-                                    <select id="asset_creator_kyc" class="form-control col-md-3 asset_creator_rule_input" style="display: inline-block;">
-                                        <option value="false">Not Required</option>
-                                        <option value="true">Required</option>
-                                        <option value="allow">Only following countries</option>
-                                        <option value="ban">Ban following countries</option>
+                            <div class="row-fluid x-form-line">
+                                <div class="col-12">
+                                    <label for="asset_creator_description">Description </label>
+                                    <textarea id="asset_creator_description" rows="5" cols="50" type="text" class="form-control col-md-12"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row-fluid x-form-line">
+                                <div class="col-6" style="float: left;">
+                                    <label for="asset_creator_aggregation">Aggregation </label>
+                                    <select id="asset_creator_aggregation" class="form-control col-8">
+                                        <option value="aggregatable">Aggregatable(Normal)</option>
+                                        <option value="hybrid">Hybrid</option>
+                                        <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(NFT)</option>
                                     </select>
-                                    <div id="asset_creator_kycList_div">
-                                        <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_kycList">
-                                            <thead><tr><th>Country</th></tr></thead><tbody>
-                                        </table>
+                                </div>
+                                <div class="col-6" style="float: left;">
+
+                                    <label for="asset_creator_divisibility">Divisibility: </label></td>
+                                    <select id="asset_creator_divisibility" class="form-control col-6">
+                                        <option value="0">1</option>
+                                        <option value="1">0.1</option>
+                                        <option value="2">0.01</option>
+                                        <option value="3">0.001</option>
+                                        <option value="4">0.0001</option>
+                                        <option value="5">0.00001</option>
+                                        <option value="6">0.000001</option>
+                                        <option value="7">0.0000001</option>
+                                        <option value="8">0.00000001</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row-fluid x-form-line" style="clear: both;"></div>
+                        </div>
+                        
+                        <!-- subpanel: Rules-->        
+                        <div class="x-section-heading" style="margin: 25px 0 0 20px; width: 50%;">
+                            <h2>Rules</h2>
+                        </div>
+                        <div class="x-section-main">
+                        
+                            <div class="row-fluid x-form-line" style="margin-bottom: 10px;margin-top: 10px;">
+                                <div class="col-12 form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="asset_creator_rulesEnabled">
+                                    <label class="form-check-label" style="margin-left: 3em; padding-top: 2px;" for="asset_creator_rulesEnabled">Enable Rules</label>
+                                    
+                                </div>
+                            </div>
+
+                            <!-- New Rules--> 
+                            <div id="asset_creator_rulesSettingBox">
+                                 
+                                <div class="row-fluid x-section-main x-rules-panel" style="margin-bottom: 10px;">
+                                    <div class="col-12 asset_creator_unlockedOnly">
+                                        <h5><label for="asset_creator_rewritable">Make rules rewritable&nbsp;&nbsp;</label>
+                                        <input type="checkbox" id="asset_creator_rewritable" class="asset_creator_rule_input"></h5>
                                     </div>
-                                </td>
-                            </tr>
+                                </div>
 
-                            <tr>
-                                <td style="color: white">Royalties</td>
-                                <td>
-                                    <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_royalties">
-                                        <thead><tr><th></th><th>Address</th><th>Amount</th></tr></thead><tbody>
-                                    </table>
-                                    <label for="asset_creator_currency">Royalty Base Currency&nbsp;&nbsp;&nbsp;</label><select id="asset_creator_currency" class="asset_creator_rule_input">
-                                        <optgroup label="Crypto">
-                                            <option value="DGB" selected>DigiByte</option>
-                                            <option value="BTC">Bitcoin</option>
-                                            <option value="ETH">Ethereum</option>
-                                            <option value="LTC">Litecoin</option>
-                                            <option value="DCR">Decred</option>
-                                            <option value="ZIL">Zilliqa</option>
-                                            <option value="RVN">Ravencoin</option>
-                                            <option value="XVG">Verge</option>
-                                            <option value="RDD">ReddCoin</option>
-                                            <option value="NXS">Nexus</option>
-                                            <option value="POT">PotCoin</option>
-                                        </optgroup>
-                                        <optgroup label="Fiat">
-                                            <option value="CAD">Canadian Dollars</option>
-                                            <option value="USD">United States Dollars</option>
-                                            <option value="EUR">Euro</option>
-                                            <option value="GBP">Pound</option>
-                                            <option value="AUD">Australian Dollars</option>
-                                            <option value="JPY">Japanese Yen</option>
-                                            <option value="CNY">Chinese Yuan</option>
-                                            <option value="TRY">Turkish Lira</option>
-                                            <option value="BRL">Brazilian Real</option>
-                                            <option value="CHF">Swiss Franc</option>
-                                        </optgroup>
-                                    </select>
-                                </td>
-                            </tr>
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                    <div class="col-12">
+                                    <h5><label for="asset_creator_kyc">KYC Required&nbsp;&nbsp;</label>
+                                        <select id="asset_creator_kyc" class="form-control col-md-6 asset_creator_rule_input" style="display: inline-block;">
+                                            <option value="false">Not Required</option>
+                                            <option value="true">Required</option>
+                                            <option value="allow">Only following countries</option>
+                                            <option value="ban">Ban following countries</option>
+                                        </select></h5>
+                                        <div id="asset_creator_kycList_div">
+                                            <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_kycList">
+                                                <thead><tr><th>Country</th></tr></thead><tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <tr>
-                                <td><label for="asset_creator_deflate">Deflation:</label></td>
-                                <td>
-                                    <input type="number" id="asset_creator_deflate" title="Should usually be zero. If not 0 that many assets must be burned every time someone sends the asset to someone" value="0" class="form-control col-md-3 asset_creator_rule_input">
-                                </td>
-                            </tr>
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                                                                                      
+                                    <div class="col-12">
+                                        <h5>Royalties</h5>
+                                        <label for="asset_creator_currency">Royalty Base Currency&nbsp;&nbsp;</label>
+                                        <select id="asset_creator_currency" class="asset_creator_rule_input">
+                                            <optgroup label="Crypto">
+                                                <option value="DGB" selected>DigiByte</option>
+                                                <option value="BTC">Bitcoin</option>
+                                                <option value="ETH">Ethereum</option>
+                                                <option value="LTC">Litecoin</option>
+                                                <option value="DCR">Decred</option>
+                                                <option value="ZIL">Zilliqa</option>
+                                                <option value="RVN">Ravencoin</option>
+                                                <option value="XVG">Verge</option>
+                                                <option value="RDD">ReddCoin</option>
+                                                <option value="NXS">Nexus</option>
+                                                <option value="POT">PotCoin</option>
+                                            </optgroup>
+                                            <optgroup label="Fiat">
+                                                <option value="CAD">Canadian Dollars</option>
+                                                <option value="USD">United States Dollars</option>
+                                                <option value="EUR">Euro</option>
+                                                <option value="GBP">Pound</option>
+                                                <option value="AUD">Australian Dollars</option>
+                                                <option value="JPY">Japanese Yen</option>
+                                                <option value="CNY">Chinese Yuan</option>
+                                                <option value="TRY">Turkish Lira</option>
+                                                <option value="BRL">Brazilian Real</option>
+                                                <option value="CHF">Swiss Franc</option>
+                                            </optgroup>
+                                        </select>   
+                                        <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_royalties">
+                                            <thead><tr><th style="width: 10%;"></th><th style="width: 60%;">Address</th><th style="width: 30%;">Amount</th></tr></thead><tbody>
+                                        </table>
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                    <div class="col-12">
+                                        <h5><label for="asset_creator_deflate">Deflation</label></h5>
+                                        <div class="row-fluid">
+                                            <div class="col-4" style="float: left;">Should usually be zero. <input type="number" id="asset_creator_deflate" value="0" class="form-control asset_creator_rule_input"></div>
+                                            <div class="col-8" style="float: left; padding-top: 17px;">If not zero then the number of assets that you specify here will be burned by the sender for each asset sent.</div>
+                                        </div>
+                                        <div class="row-fluid x-form-line" style="clear: both;"></div>
+                                    </div>
+                                </div>
+                                    
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                    <div class="col-12">
+                                        <h5>Vote</h5>
+                                        <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_voteOptions">
+                                            <thead><tr><th></th><th>Option</th></tr></thead><tbody>
+                                        </table>
+                                        <label for="asset_creator_voteMovable">Votes Movable&nbsp;&nbsp;&nbsp;</label><input type="checkbox" id="asset_creator_voteMovable" class="asset_creator_rule_input">
+                                    </div>
+                                </div>
                                 
-                            <tr>
-                                <td style="color: white">Vote: </td>
-                                <td>
-                                    <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_voteOptions">
-                                        <thead><tr><th></th><th>Option</th></tr></thead><tbody>
-                                    </table>
-                                    <label for="asset_creator_voteMovable">Votes Movable&nbsp;&nbsp;&nbsp;</label><input type="checkbox" id="asset_creator_voteMovable" class="asset_creator_rule_input">
-                                </td>
-                            </tr>
-                             <tr>
-                                <td><label>Expiry: </label></td>
-                                <td style="color: white">
-                                    <span></span><input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_never" name="asset_creator_expiry" value="never" checked>Never
-                                    <br><strong>&nbsp;&nbsp;&nbsp;&nbsp;OR</strong><br>
-                                    <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_height" name="asset_creator_expiry" value="height">Block Height: <input type="number" id="asset_creator_expiry_height" value="0"  class="form-control asset_creator_expiry asset_creator_rule_input" style="width: 200px">
-                                    <strong>&nbsp;&nbsp;&nbsp;&nbsp;OR</strong><br>
-                                    <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_time" name="asset_creator_expiry" value="time" >Time: <input type="datetime-local" id="asset_creator_expiry_time" min="2020-01-01T00:00" class="form-control asset_creator_expiry asset_creator_rule_input" style="width: 200px"></span>
-                                </td>
-                            </tr>
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                    <div class="col-12">
+                                        <h5><label>Expiry: </label></h5>
+                                        <div class="col-3" style="float: left;">
+                                            <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_never" name="asset_creator_expiry" value="never" checked>Never
+                                        </div>                                                                    
+                                        <div class="col-4" style="float: left;">
+                                            <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_height" name="asset_creator_expiry" value="height"><em>or</em>&nbsp;Block Height: 
+                                            <input type="number" id="asset_creator_expiry_height" value="0"  class="form-control asset_creator_expiry asset_creator_rule_input">
+                                        </div>
+                                        <div class="col-5" style="float: left;">
+                                            <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_time" name="asset_creator_expiry" value="time" ><em>or</em>&nbsp;Time: 
+                                            <input type="datetime-local" id="asset_creator_expiry_time" min="2020-01-01T00:00" class="form-control asset_creator_expiry asset_creator_rule_input">
+                                        </div>
+                                        <div class="row-fluid x-form-line" style="clear: both;"></div>
+                                    </div>
+                                </div>
 
-                        </table>
+
+                            </div>
+                        
+                        </div>
+
+                        <div class="x-section-heading" style="margin: 25px 0 0 20px; width: 50%;">
+                            <h2>Legal</h2>
+                        </div>
+                            <!-- subpanel: Legal-->
+                        <div class="x-section-main">
+                            <div class="x-section-main">
+                                <div class="row-fluid x-form-line" style="padding-top: 10px;">
+                                    <div class="col-12">
+                                        <label for="tax_location">Tax Location:</label>
+                                    
+                                        <select id="tax_location" class="legal_checks">
+                                            <option value="x">-----</option>
+                                            <option value="CAN.AB">Canada, Alberta</option>
+                                            <option value="CAN.BC">Canada, British Columbia</option>
+                                            <option value="CAN.MB">Canada, Manitoba</option>
+                                            <option value="CAN.NB">Canada, New Brunswick</option>
+                                            <option value="CAN.NL">Canada, Newfoundland and Labrador</option>
+                                            <option value="CAN.NT">Canada, Northwest Territories</option>
+                                            <option value="CAN.NS">Canada, Nova Scotia</option>
+                                            <option value="CAN.NU">Canada, Nunavut</option>
+                                            <option value="CAN.ON">Canada, Ontario</option>
+                                            <option value="CAN.PE">Canada, Prince Edward Island</option>
+                                            <option value="CAN.QC">Canada, Quebec</option>
+                                            <option value="CAN.SK">Canada, Saskatchewan</option>
+                                            <option value="CAN.YT">Canada, Yukon</option>
+                                            <option value="NA">Outside Canada</option>
+                                        </select>&nbsp;(does not affect price)<br>
+                                    
+                                    </div>  
+                                </div>
+                                
+                                <div class="row-fluid x-form-line" style="padding-top: 10px;">
+                                    <div class="col-12">
+                                        <input type="checkbox" id="asset_creator_rights" class="legal_checks">
+                                        <label for="asset_creator_rights">All content is legal in Canada and I have the rights to publish it</label><br>
+                                    </div>  
+                                </div>
+                                                            
+                                <div class="row-fluid x-form-line" style="padding-top: 10px;">
+                                    <div class="col-12" style="text-align: center;"">
+                                        <button class="btn btn-primary" id="asset_creator_goToOutputs" disabled>Save Files to IPFS and collect recipients</button>
+                                    </div>  
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-
-                <div class="x-section-heading">
-                    <h2>Legal</h2>
-                </div>
-
-                <div class="x-section-main">
-                    <label for="tax_location">Tax Location:(does not affect price so select correct location)</label>
-                        <select id="tax_location" class="legal_checks">
-                            <option value="x">-----</option>
-                            <option value="CAN.AB">Canada, Alberta</option>
-                            <option value="CAN.BC">Canada, British Columbia</option>
-                            <option value="CAN.MB">Canada, Manitoba</option>
-                            <option value="CAN.NB">Canada, New Brunswick</option>
-                            <option value="CAN.NL">Canada, Newfoundland and Labrador</option>
-                            <option value="CAN.NT">Canada, Northwest Territories</option>
-                            <option value="CAN.NS">Canada, Nova Scotia</option>
-                            <option value="CAN.NU">Canada, Nunavut</option>
-                            <option value="CAN.ON">Canada, Ontario</option>
-                            <option value="CAN.PE">Canada, Prince Edward Island</option>
-                            <option value="CAN.QC">Canada, Quebec</option>
-                            <option value="CAN.SK">Canada, Saskatchewan</option>
-                            <option value="CAN.YT">Canada, Yukon</option>
-                            <option value="NA">Outside Canada</option>
-                        </select><br>
-                    <input type="checkbox" id="asset_creator_rights" class="legal_checks"><label for="asset_creator_rights">All content is legal in Canada and I have the rights to publish it</label><br>
-
-                    <button id="asset_creator_goToOutputs" disabled>Save Files to IPFS and collect recipients</button>
-                </div>
-
             </div>
+            
+        </div>
 
+        </div>
+            <!--Step 3: Issuance -->
             <div class="asset_creator_step" id="asset_creator_step3">
-                <div class="x-section-heading">
-                    <h2>Recipients:</h2>
-                </div>
-                <div class="x-section-info" style="padding-left: 20px;">
-                    <h5>Addresses</h5>
+                
+                               
+                <div class="container">                
+                    <div class="x-page-title">
+                        <h1>DigiAsset Creator</h1>
+                    </div>                
                 </div>
                 
-                <div class="x-section-main">
-                    <table class="table table-bordered table-striped" id="asset_creator_addresses">
-                        <thead><tr><th></th><th>issuingAddress/assetId</th><th>Quantity</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                    <!-- todo make nicer  try putting D or U in first box to test -->
-                
-                    <table class="table table-responsive" style="background-color: transparent">
-                        <tr>
-                            <td><input type="text" class="form-control col-12" id="asset_creator_new_address" placeholder="Address or AssetId"></td>
-                            <td><input type="number" class="form-control col-12" id="asset_creator_new_quantity" placeholder="Quantity"></td>
-                            <td><button id="asset_creator_new" class="form-control btn btn-primary col-12">Add</button></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="x-section-after">
-                    <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
-                    <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
+                <div class="container-md">
+                    <div class="row-fluid">
+                        <div class="x-section-heading">
+                            <h2>Recipients:</h2>
+                        </div>
+                        <div class="x-section-info" style="padding-left: 20px;">
+                            <h5>Addresses</h5>
+                        </div>
+                        <div class="x-section-main">
+                            <table class="table table-bordered table-striped" id="asset_creator_addresses">
+                                <thead><tr><th></th><th>issuingAddress/assetId</th><th>Quantity</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                            <!-- todo make nicer  try putting D or U in first box to test -->
+                        
+                            <table class="table table-responsive" style="background-color: transparent">
+                                <tr>
+                                    <td><input type="text" class="form-control col-12" id="asset_creator_new_address" placeholder="Address or AssetId"></td>
+                                    <td><input type="number" class="form-control col-12" id="asset_creator_new_quantity" placeholder="Quantity"></td>
+                                    <td><button id="asset_creator_new" class="form-control btn btn-primary col-12">Add</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="x-section-after">
+                            <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
+                            <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
+                        </div>
+                    </div>
                 </div>  
-                <!-- todo end -->
-                <div class="x-section-heading">
-                    <h2>Costs:</h2>
+                        <!-- todo end -->
+                <div class="container-md">
+                    <div class="row-fluid">
+                        <div class="x-section-heading">
+                            <h2>Costs:</h2>
+                        </div>
+                        <div class="x-section-main">
+                            <table class="table table-bordered table-striped" id="asset_creator_costs">
+                                <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                            </table>
+
+                            <button id="asset_creator_create" class="btn btn-secondary">Create Asset</button>
+                        </div>
+                    </div>
                 </div>
-                <table class="table table-bordered table-striped" id="asset_creator_costs">
-                    <thead><tr><th>Type</th><th>Amount</th></tr></thead>
-                </table>
-
-                <button id="asset_creator_create" class="btn btn-secondary">Create Asset</button>
             </div>
-
         </div>
 
     </div>
@@ -989,9 +1102,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-floating mb-3">
+                    <div class="form-floating mb-3" style="text-align: center;">
                         <!-- todo need white boarder around qr code at least 4 dots wide also center -->
-                        <img id="new_address_qr"><br>
+                        <div style="margin: 15px!important;"><img id="new_address_qr"></div>
                         <div id="new_address" data-size="300"></div>
                     </div>
                 </div>
@@ -1012,8 +1125,23 @@
                 </div>
                 <h5>TXID:</h5>
                 <div id="txid"></div>
-                <!-- todo please include a warning.  "Do to limits of this wallet please wait 4 min before trying to make another transaction" -->
-                <!-- todo please include a progress indicator with 240sec count down -->
+
+                <div style="text-align: center; padding-top: 15px;">
+                    <h5 style="color: #d58a00;">Due to limits of this wallet please wait</h5>
+                    <h5><span class="timer">240</span> seconds</h5>
+                    <h5 style="color: #d58a00;">before making another transaction</h5>
+                </div>
+                
+
+                <script>
+                var timer = 240;
+                var interval = setInterval(function() {
+                    timer--;
+                    $('.timer').text(timer);
+                    if (timer === 0) clearInterval(interval);
+                }, 1000);
+                </script>
+
             </div>
         </div>
     </div>
@@ -1029,12 +1157,12 @@
                 </div>
                 <h5>Progress:</h5>
                 <ol>
-                    <li>Transmitting To DigiByte: <span id="creatingAssetTXID">Processing<!-- todo put small spinner here --></span></li>
-                    <li id="creatingAssetDetectLi" class="creatingAssetHideAtStart">Waiting for digiassetX to detect transaction: <span id="creatingAssetDetect">Processing<!-- todo put small spinner here --></span></li>
-                    <li id="creatingAssetPermanentLi" class="creatingAssetHideAtStart">Waiting for digiassetX to download metadata: <span id="creatingAssetPermanent">Processing<!-- todo put small spinner here --></span></li>
+                    <li><strong>Transmitting&nbsp;To&nbsp;DigiByte:</strong><br><span id="creatingAssetTXID">Processing&nbsp;<img src="/images/loading-progress-bar.gif" alt="Processing, please wait"></span></li>
+                    <li id="creatingAssetDetectLi" class="creatingAssetHideAtStart"><strong>Waiting&nbsp;for&nbsp;digiassetX&nbsp;to&nbsp;detect&nbsp;transaction:</strong><br><span id="creatingAssetDetect">Processing&nbsp;<img src="/images/loading-progress-bar.gif" alt="Processing, please wait"></span></li>
+                    <li id="creatingAssetPermanentLi" class="creatingAssetHideAtStart"><strong>Waiting&nbsp;for&nbsp;digiassetX&nbsp;to&nbsp;download&nbsp;metadata:</strong><br><span id="creatingAssetPermanent">Processing&nbsp;<img src="/images/loading-progress-bar.gif" alt="Processing, please wait"></span></li>
                 </ol>
-                <h5 id="creatingAssetWarning">Do not shut down your node</h5>
-                <button id="creatingAssetDone" class="creatingAssetHideAtStart" data-bs-dismiss="modal" aria-label="Close">Close</button>
+                <h5 id="creatingAssetWarning" class="alert alert-info">Do not shut down your node</h5>
+                <button id="creatingAssetDone" class="creatingAssetHideAtStart btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Close</button>
             </div>
         </div>
     </div>
@@ -1062,7 +1190,7 @@
                 <div>
                     <input type="checkbox" id="tosShow">I would like my node to be displayed on node map(locations are not exact)<br>
                     <input type="checkbox" id="tosPeer">I would like to publish my IPFS Peer Id<br>
-                    <span style="margin-left: 22px;">Payout Address: </span><input style="width: 350px;" type="text" id="tosPayout">
+                    <p style="padding-top: 10px; margin-left: 22px;">Payout Address: </span><input style="width: 350px;" type="text" id="tosPayout"></p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success" id="tosAgree">Agree to the Terms of Service</button>
