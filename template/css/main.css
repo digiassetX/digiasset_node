@@ -1,6 +1,119 @@
+/* Add custom fonts */
+
+/* Chivo light */
+
+@font-face {
+    font-family: 'Chivo';
+    src: url('/fonts/Chivo-Light.eot');
+    src: url('/fonts/Chivo-Light.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/Chivo-Light.woff2') format('woff2'),
+        url('/fonts/Chivo-Light.woff') format('woff'),
+        url('/fonts/Chivo-Light.svg#Chivo-Light') format('svg');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Chivo regular */
+
+@font-face {
+    font-family: 'Chivo';
+    src: url('/fonts/Chivo-Regular.eot');
+    src: url('/fonts/Chivo-Regular.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/Chivo-Regular.woff2') format('woff2'),
+        url('/fonts/Chivo-Regular.woff') format('woff'),
+        url('/fonts/Chivo-Regular.svg#Chivo-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Chivo bold */
+
+@font-face {
+    font-family: 'Chivo';
+    src: url('/fonts/Chivo-Bold.eot');
+    src: url('/fonts/Chivo-Bold.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/Chivo-Bold.woff2') format('woff2'),
+        url('/fonts/Chivo-Bold.woff') format('woff'),
+        url('/fonts/Chivo-Bold.svg#Chivo-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Nunito regular */
+
+@font-face {
+    font-family: 'Nunito Sans';
+    src: url('/fonts/NunitoSans-Regular.eot');
+    src: url('/fonts/NunitoSans-Regular.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/NunitoSans-Regular.woff2') format('woff2'),
+        url('/fonts/NunitoSans-Regular.woff') format('woff'),
+        url('/fonts/NunitoSans-Regular.svg#NunitoSans-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Nunito bold */
+
+@font-face {
+    font-family: 'Nunito Sans';
+    src: url('/fonts/NunitoSans-Bold.eot');
+    src: url('/fonts/NunitoSans-Bold.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/NunitoSans-Bold.woff2') format('woff2'),
+        url('/fonts/NunitoSans-Bold.woff') format('woff'),
+        url('/fonts/NunitoSans-Bold.svg#NunitoSans-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
 .table {
-    display: table;
-    width: auto;
+    vertical-align: middle;
+}
+table {
+    width: 100%;
+}
+
+td > label {
+    color:  white;
+}
+.unsortedControl {
+    width:207px;
+}
+.view {
+    width:  57px;
+    height: 32px;
+    padding: 4px;
+}
+.approve {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+}
+.reject {
+    width:  32px;
+    height: 32px;
+    padding: 4px;
+}
+.arbig {
+    width:  20%;
+    height: 32px;
+    padding: 4px;
+}
+.columnAssetId {
+    max-width:  45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.columnCid {
+    max-width:  45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .row {
     display: table-row;
@@ -53,6 +166,7 @@
 }
 #updateBtn {
     margin-bottom: 10px;
+    display: none;
 }
 table {
     background-color:#0066CC;
@@ -72,7 +186,642 @@ thead{
     padding: 18px;
 }
 
+.page {
+    display: none;
+}
+
+#page_metadata {
+    display: block;
+}
+.wallet {
+    display: none;
+}
+.send_asset_assetId {
+    display: none;
+}
+
+@keyframes spinner {
+    to {transform: rotate(360deg);}
+}
+
+.spinner:before {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    border-top-color: #333;
+    animation: spinner .6s linear infinite;
+}
+
+
+.kycStep {
+    display: none;
+}
+#kycStep1 {
+    display: block;
+}
+.kyc_option {
+    display: none;
+}
+
+.asset_creator_step {
+    display: none;
+}
+#asset_creator_step1 {
+    display: block;
+}
+#asset_creator_dispersedFormulaBox {
+    display: none;
+}
+#asset_creator_rulesSettingBox {
+    display: none;
+}
+
+/*Dup0licate of class .asset:_creator_fileEntry combine on line 539 */
+
+.asset_creator_fileName {
+    font-size: small;
+}
+.asset_creator_fileName::before {
+    font-size: small;
+    font-weight:    bold;
+    font-style:     italic;
+    content:        "Name: ";
+    width:          50px;
+}
+
+.asset_creator_fileType {
+    font-size: small;
+}
+.asset_creator_fileType::before {
+    font-size: small;
+    font-weight:    bold;
+    font-style:     italic;
+    content:        "Type: ";
+    width:          50px;
+}
+
+.asset_creator_fileSize {
+    font-size: small;
+}
+.asset_creator_fileSize::before {
+    font-size: small;
+    font-weight:    bold;
+    font-style:     italic;
+    content:        "Size: ";
+    width:          50px;
+}
+
+.asset_creator_filePreview {
+    width:          170px;
+    height:         170px;
+}
+
+.clear {
+    clear:          both;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+a {
+    cursor: pointer;
+}
+
 a[disabled] {
     color:grey !important;
     cursor: default;
 }
+
+input:invalid {
+    background-color: #ffdddd;
+}
+
+.asset_creator_assetId {
+    display: none;
+}
+.hidden {
+    display: none
+}
+.smallVerified {
+    height: 35px;
+}
+.media-link {
+    color: black !important;
+}
+.assetSubType {
+    font-size: small;
+    color: #707070;
+}
+.description {
+    border: black;
+    border-width: thin;
+    border-style: dashed;
+    border-radius: 15px;
+    margin: 0% 5% 0% 5%;
+    padding: 5px;
+}
+
+#asset_creator_addressOptions_alt {
+    border: black;
+    border-style: dashed;
+    border-radius: 20px;
+    margin: 10px 10%;
+    width: 80%;
+}
+
+/* ############# */ 
+/* Customisation */
+/* ############# */ 
+
+p, body {
+    font-family: "Chivo",sans-serif;
+    font-weight: 400;
+    color: #333;}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Chivo",sans-serif;
+    font-weight: 600;
+    color: #333; 
+}
+
+h4 {color: black; font-size: calc(1.275rem + .3vw);font-weight: 800;}
+
+body {background: black;}
+
+table {
+    max-width: 95%;
+}
+
+.dgaXcol1 {color: #2964af;}
+.dgaXcol2 {color: #07b2a9;}
+.dgaXgradientFill, .table>thead, table {
+    background: rgb(41,100,175);
+    background: -moz-linear-gradient(74deg, rgba(41,100,175,1) 0%, rgba(41,100,175,1) 35%, rgba(7,178,169,1) 100%); 
+    background: -webkit-linear-gradient(74deg, rgba(41,100,175,1) 0%, rgba(41,100,175,1) 35%, rgba(7,178,169,1) 100%);
+    background: linear-gradient(74deg, rgba(41,100,175,1) 0%, rgba(41,100,175,1) 35%, rgba(7,178,169,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#2964af",endColorstr="#07b2a9",GradientType=1);
+}
+table {border-radius: 15px;}
+
+.navbar-expand-lg .navbar-nav {
+    font-family: 'Chivo';
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.bg-light {
+    background-color: #00225200 !important;
+}
+
+.navbar .navbar-brand img {
+    max-width: 150px;
+}
+
+#videoBackground {
+    position: fixed;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+    background-position: center center;
+  }
+  
+.x-section-heading {
+    margin: 50px 0 0 50px;
+    width: 40%;
+    background: #ffffffeb;
+    padding: 10px;
+    border-radius: 20px 20px 0 0;
+}
+.x-section-info {
+    margin: 0 0 0 50px;
+    width: 60%;
+    background: white;
+    padding: 10px;
+    border-radius: 0 20px 0 0;
+}
+.x-section-main, .dataTables_wrapper {
+    background: #ffffffeb;
+    padding: 10px;
+    border-radius: 20px;  
+}
+.x-section-after {
+    margin: 0 0 0 50px;
+    width: 50%;
+    background: white;
+    padding: 10px;
+    border-radius: 0 0 20px 20px;
+}
+.navbar-light .navbar-nav .nav-link {
+    font-family: 'Nunito Sans';
+    font-weight: 800;
+    line-height: 20px;
+    border-radius: 20px;
+    margin: 0 0 0 20px;
+}
+
+/* Increase size of checkboxes */
+input[type=checkbox], input[type=radio]
+{
+  -ms-transform: scale(1.5); /* IE */
+  -moz-transform: scale(1.5); /* FF */
+  -webkit-transform: scale(1.5); /* Safari and Chrome */
+  -o-transform: scale(1.5); /* Opera */
+  transform: scale(1.5);
+  padding: 10px;
+  margin-right: 10PX;
+}
+
+/* make input boxes big enough for CID to be entered */
+.dataTables_wrapper .dataTables_filter input {
+    width: 475px;
+}
+/* make input boxes big enough for address/assetID to be entered */
+#SendAssetsModal .dataTables_wrapper .dataTables_filter input {
+    width: 435px;
+}
+
+.dataTables_wrapper .dataTables_length select, .dataTables_wrapper .dataTables_filter input {
+    background-color: #ffffff;
+}
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    margin: 10px;
+}
+
+.btn {
+    border-radius: 20px;
+    margin: 0 3px;
+}
+
+/* table styling */
+
+table.dataTable.no-footer {
+    background: #ffffff00;
+}
+
+table.dataTable tbody tr {
+    margin: 5px 0;
+}
+
+table.dataTable tbody td {
+    border-spacing: 5px;
+    border: solid 5px #ededed;
+    border-width: 5px 0 5px 0;
+}
+
+.columnApproved, .columnRejected, .columnControls, .columnHeight, .columnWalletLabel, .columnWalletIcon, .columnWalletBalance {
+    text-align: center;
+}
+
+table.dataTable tbody .odd .columnWalletIcon, table.dataTable tbody .even .columnWalletIcon {
+    border: 5px solid #ebebed;
+    border-width: 5px 0 5px 0;
+}
+
+.cell {
+    border-width: 2px;
+    background: white;
+}
+
+.view {padding: 3px;}
+
+table.dataTable.no-footer {
+    border-bottom: none;
+}
+
+.th {background: linear-gradient(
+    74deg, rgba(41,100,175,1) 0%, rgba(41,100,175,1) 35%, rgba(7,178,169,1) 100%);
+}
+
+.columnWalletIcon img, .asset_data_image {
+    vertical-align: middle; 
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 5px;
+    width: 100px;
+}
+
+.asset_data_image {
+    width: auto;
+    max-width: 80%!important;
+}
+
+#wallet_list_assets .columnWalletIcon {
+border-radius: 30px 0 0 30px;
+}
+
+.columnWalletLabel, .columnApproved, .columnControls, .columnNarrowControls {
+    border-radius: 30px 0 0 30px;
+}
+
+.columnSend, .columnCid, .columnUrl {
+    border-radius: 0 30px 30px 0;
+}
+
+.asset_creator_fileEntry {
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+    border-radius: 15px;
+    margin-right: 10px;
+    position:       relative;
+    float:          left;
+    width: 180px;
+    padding: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background: #ffffffeb;    height: 225px;
+}
+
+#filehasher_hashdata table {background: white!important;}
+
+/* additional customisations*/
+
+/* general modal styling*/ 
+
+.modal {
+    background: #00000054;
+}
+
+.modal-content {
+    padding: 20px;
+    border-radius: 20px;
+    min-width: fit-content;
+}
+
+.modal-header { 
+    margin-bottom: 20px;
+    background: #dee2e6;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+#tosModal .modal-dialog {
+    min-width: 800px;
+}
+
+#tosPayout {
+    width: 350px;
+}
+
+#tosModal .modal-dialog .modal-content .modal-footer {
+    justify-content: space-evenly;
+}
+
+/* standardise buttons styling */
+
+.btn-close {
+    border: 2px solid black;
+    border-radius: 20px;}
+
+.btn, .button {
+    font-family: 'Nunito Sans';
+}
+
+.btn-primary, .btn-outline-dark {
+    margin: 2px!important;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+    line-height: 1.5;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    }
+.btn-outline-dark.hover, .btn-outline-dark:hover, .btn-primary:not(:disabled):not(.disabled).hover, .btn-primary:not(:disabled):not(.disabled):hover {
+    background-color: #09afaa;
+    border-color: #09afaa;
+}
+.btn-outline-dark.active, .btn-outline-dark:active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active {
+    background-color: #0b5ed7;
+    border-color: #0b5ed7;
+}
+.btn-outline-dark.focus, .btn-outline-dark:focus, .btn-primary:not(:disabled):not(.disabled).active.focus, .btn-primary:not(:disabled):not(.disabled):active:focus {
+    box-shadow: 0 0 0 0.2rem rgb(114 133 255 / 50%);
+}
+
+.paginate_button {border-radius: 20px!important;}
+
+/* Hide options if status is disabled */
+.paginate_button.previous.disabled, .paginate_button.next.disabled {display: none;}
+
+/* prettify asset/Cid view display */
+
+#window {
+    width: 800px;
+}
+
+#pre, #window_data {
+    padding: 10px;    background-color: white!important; border-radius: 20px;
+}
+
+#pre h1, #window_data h1, #post h1 {
+    font-family: "Chivo",sans-serif;
+    font-weight: 600;
+    color: #333;
+}
+
+#post {
+    padding: 10px; 
+    margin: 10px; 
+    background-color: #dfdfdf!important; 
+    border-radius: 20px;
+}
+
+.json {
+    white-space: pre-wrap;
+}
+
+/* improve spinner visibility */
+
+#send_assets_costs_processing.dataTables_processing, #wallet_list_assets_processing.dataTables_processing {
+    display: contents;
+    position: initial;
+}
+
+.spinner:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    border: 10px solid #ccc;
+    border-top-color: #2964af;
+    z-index: 100;
+}
+
+.view {
+    width: auto;
+    height: auto;}
+
+/* styling of nav menu dropdown */
+
+.navbar-expand-lg .navbar-nav .dropdown-menu {
+    border-radius: 5px 5px 20px 20px;
+}
+.dropdown-item {
+    width: 93%;
+    margin: 5px;
+    border-radius: 10px;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    color: #fff!important;
+}
+
+/* ##################### */ 
+/* End of customisations */ 
+/* ##################### */ 
+
+
+.asset_data_image {
+    max-width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.asset_data_video {
+    max-width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+/**/
+
+#asset_creator_kycList_wrapper {margin-top: 10px;}
+#asset_creator_royalties_wrapper, #asset_creator_voteOptions_wrapper {margin-bottom: 10px;}
+
+.input-w p, .input-w input {
+    /*float: none; /* if you had floats before? otherwise inline-block will behave differently */
+    display: inline-block;
+    vertical-align: middle;    
+}
+
+/* STYLE TOOLTIPS */
+/*button {
+    position: relative;
+    display: inline-block;
+    margin-top: 20px;
+  }*/
+  
+  button[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -100%;
+    left: 0;
+  }
+
+.navbar {
+    background-color: #00000085 !important;
+  height:80px;
+  
+  margin:0 auto;
+  width:100%;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:999;
+}
+
+.page {
+    padding-top: 100px!important;
+}
+
+/* Add scroll to top button */ 
+
+#myBtn {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    bottom: 130px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 999; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: #555; /* Set a background color */
+    color: white; /* Text color */
+    font-family: "Chivo",sans-serif;
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 50%; /* Rounded corners */
+    font-size: 18px; /* Increase font size */
+  }
+  
+  #myBtn:hover {
+    background-color: #2964af; /* Add background color on hover */
+  }
+
+  .description {
+    border: none;
+    padding: 20px;
+    background: #dfdfdf;
+    margin: 10px;
+    font-size: 110%;
+    font-family: 'Nunito Sans';
+  }
+
+
+.footer-data {
+    position: fixed; 
+    bottom:20px;
+     right:20px;
+     background:rgb(0 0 0 / 19%);
+     padding: 10px;
+     border-radius: 10px;
+}
+
+#daily_total_reward {text-align: center;}
+
+.modal-footer {
+    border-top: none;
+    background: #dee2e6;
+    border-radius: 10px;
+}
+#WalletModal .modal-dialog {
+    max-width: 700px;}
+
+.x-page-title h1 {color: white; margin-bottom: 40px;}
+
+.x-form-line {padding-bottom: 10px;}
+
+.x-rules-panel {
+    margin-bottom: 10px;
+    /*-webkit-box-shadow: 0 10px 20px rgba(0,0,0,.19),0 6px 6px rgba(0,0,0,.23)!important;
+    box-shadow: 0 10px 20px rgba(0,0,0,.19),0 6px 6px rgba(0,0,0,.23)!important;*/
+}
+.form-switch .form-check-input {
+    width: 2em;
+    margin-left: 0;}
+
+    #asset_creator_kycList_filter .dataTables_wrapper .dataTables_filter input {width: 200px;}
+
+.x-btn-close {
+    float: right;
+}
+
+.x-publishing-cost {
+background: #dee2e6;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    font-size: 110%;}
+
+.timer {
+    font-size: 2.5em;
+    padding: 10px;
+    text-align: center;
+    margin: 0 auto;
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.modal-content #txid, #creatingAssetTXID {overflow-wrap: anywhere;}
+
+#creatingAssetPermanent, #creatingAssetDetect {color: green;}

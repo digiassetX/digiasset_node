@@ -1,81 +1,704 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MetaServer</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/main.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.min.css">
+    <title>DigiAsset Node</title>
+    <link rel="stylesheet" href="/css/style-starter.css" type="text/css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/jquery.dataTables.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/buttons.dataTables.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/flags.css" type="text/css">
+    <link rel="stylesheet" href="/css/main.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome-6.0.0.css">
+    
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #002252 !important;">
+    <button onclick="topFunction()" id="myBtn">Top</button>
+    <video autoplay muted loop id="videoBackground">
+        <source src="/images/background-globe-nodes.mp4" type="video/mp4">
+    </video>
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="color:white">DigiAsset</a>
+        <a class="navbar-brand clickable" style="color:white"><img src="/images/dgaXnode-logoV2.png" alt="digiassetx logo" width="150px"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Meta Data</a>
+              <a class="nav-link nav_page av_page active clickable" aria-current="page" data-page="page_metadata" style="font-family: Chivo;">Meta Data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" onclick="alert('Coming Soon')" disabled>Asset Creator</a>
+              <a class="nav-link nav_page needWalletAndStream clickable" data-page="page_wallet" data-tooltip="Requires Wallet and Stream Setup" disabled>DigiAsset Wallet</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link nav_page needWallet clickable" data-page="page_kyc" data-tooltip="Requires Wallet Setup" disabled>Address Verifier</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link nav_page needWalletAndStream asset_creator_reset clickable" data-page="page_assetcreator" data-tooltip="Requires Wallet and Stream Setup" disabled>Asset Creator</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link nav_page clickable" data-page="page_filehasher">File Hasher</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link nav_page clickable needStream" data-page="page_explorer" data-tooltip="Requires Stream Setup" disabled>Block Explorer</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
+              <a class="nav-link dropdown-toggle clickable" id="menu_settings" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled="disabled">
                 Settings
               </a>
               <ul class="dropdown-menu" aria-labelledby="menu_settings">
-                <li><a class="dropdown-item" href="#" id="menu_add_user">Add User</a></li>
-                <li><a class="dropdown-item" href="#" id="menu_remove_user" style="display: none">Remove User</a></li>
+                <li><a class="dropdown-item clickable" id="menu_add_user">Add User</a></li>
+                <li><a class="dropdown-item clickable" id="menu_remove_user" style="display: none">Remove User</a></li>
+                <li><a class="dropdown-item clickable" id="menu_included_media">Set Media Limits</a></li>
+                <li><a class="dropdown-item clickable" id="menu_wallet">Wallet</a></li>
+                <li><a class="dropdown-item clickable" id="menu_stream">Stream</a></li>
+                <li><a class="dropdown-item clickable" id="menu_publishing">Publishing</a></li>
+                <li><a class="dropdown-item clickable" id="menu_debug">Debug</a></li>
               </ul>
             </li>
+              <li class="nav-item">
+                  <a class="nav-link clickable" id="menu_tos">TOS</a>
+              </li>
             <li class="nav-item">
-              <a class="nav-link" style="display: none;" id="menu_login" href="#">Login</a>
+              <a class="nav-link clickable" style="display: none;" id="menu_login">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" style="display: none;" id="menu_logout" href="#">Logout</a>
+              <a class="nav-link clickable" style="display: none;" id="menu_logout">Logout</a>
             </li>
           </ul>
         </div>
         <div class="pull-right">
-            <div id="last_block" style="color:white">Loading</div>
+            <div id="daily_total_reward" style="color:white" title="Daily payout estimation for all nodes.">Loading</div>    
         </div>
+        <div class="footer-data" id="last_block" style="color:white">Loading</div>
       </div>
     </nav>
-    <div style="padding:10px">
+
+    <!-- Page File Hasher -->
+    <div class="page" id="page_filehasher">
+        <div class="container">
+        
+            <div class="x-section-heading">
+                <h2>File Hasher</h2>
+            </div>
+        
+            <div class="x-section-info">
+                <p>Select a file below you want analysed:</p>
+            </div>
+        
+            <div class="x-section-main">
+                <input type="file" id="filehasher_files"><br>
+                <div id="filehasher_hashdata" class="hidden">
+                    <h2><br>File Hashes</h2>
+                    <table>
+                        <tr><th>Hash Algo</th><th>Value</th></tr>
+                        <tr><td>MD5</td><td id="hash_md5"></td></tr>
+                        <tr><td>SHA1</td><td id="hash_sha1"></td></tr>
+                        <tr><td>SHA256</td><td id="hash_sha256"></td></tr>
+                        <tr><td>SHA384</td><td id="hash_sha384"></td></tr>
+                        <tr><td>SHA512</td><td id="hash_sha512"></td></tr>
+                    </table>
+                    
+                    <h2><br>Store in Chain:</h2>
+                    <p>Store the hash to the chain as a permanent time stamp that you had this file at this date.</p>
+                    <label for="filehasher_saveAddress">Address to use(Must have funds):</label><select id="filehasher_saveAddress"></select><br>
+                    <button id="filehasher_save256" class="needWallet" data-tooltip="requires wallet" disabled>Store SHA256 on chain</button>
+                </div>  
+            </div>
+            <div class="x-section-after">
+                <h2>Search Chain:</h2>
+                <p>Search all or part of the chain for these hashes.  This can use a lot of data.</p>
+                <label for="filehasher_searchStart">Block height to start search at:</label><input type="number" id="filehasher_searchStart" value="1"><br>
+                <button id="filehasher_search" class="needStream" data-tooltip="requires stream" disabled>Search Chain</button><br>
+                <div id="filehasher_searchresults"></div>
+                <h4>OR</h4>
+                <label for="filehasher_hash">Hash:</label><input type="text" id="filehasher_hash"><br>
+                <label for="filehasher_searchhashStart">Start from:</label><input type="number" id="filehasher_searchhashStart" value="1"><br>
+                <button id="filehasher_searchhash" class="needStream" data-tooltip="requires stream" disabled>Search Chain</button><br>
+                <div id="filehasher_searchhashresults"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Hasher end -->
+
+    <!-- Page Block Explorer -->
+    <div class="page" id="page_explorer">
+        <div class="container">
+            <div class="x-section-heading"><h2>Block Explorer</h2></div>
+            <div class="x-section-info"><p>Enter a block height,hash,address,txid,or assetId:</p>
+                <input type="text" id="explorer_searchText" style="width: 620px;">
+                <button id="explorer_search" class="btn btn-outline-dark">Search</button>
+            </div>
+            <div class="x-section-main" style="overflow: auto; color: black;" id="explorer_searchResults">
+            </div>
+        </div>
+    </div>
+    <!-- Page Block Explorer end -->
+
+    <!-- Page Meta Data -->
+    <div class="page" id="page_metadata">
         <div>
             <button id="updateBtn" class="btn btn-success" >Update Available</button>
         </div>
-        <h4>Meta Data:</h4>
-        <hr class="col-md-8">
-        <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
-        <div class="table-responsive col-md-12">
-            <table class="table table-bordered table-striped" id="unsorted">
-                <thead><tr><th>Cid</th><th></th><th></th><th></th></tr></thead>
-            </table>
-        </div>
-        <br>
-        <h4>Approved Meta Data</h4>
-        <hr class="col-md-8">
-        <div class="table-responsive col-md-12">
-            <table class="table table-bordered" id="approved">
-                <thead><tr><th>Cid</th><th></th></tr></thead><tbody>
-            </table>
+        <div class="container">
+            <div class="x-section-heading">
+                <h2>Subscriptions</h2>
+                
+            </div>
+            <div class="x-section-info">
+                <p>You can subscribe to other peoples approved/rejected lists.  ✓ means subscribed to approve list.  X means subscribed to reject list.  Click to change.</p>
+            </div>
+            <div class="x-section-main">
+                <div class="table-responsive col-md-12">
+                    <table class="table table-bordered table-striped" id="subscription">
+                        <thead><tr><th>✓</th><th>X</th><th>Url</th></tr></thead>
+                    </table>
+                </div>
+            </div>
+            <div class="x-section-after">
+                <label for="subscription_new">New Subscription:</label><input type="url" id="subscription_new"><button class="subscription_add btn btn-warning" data-type="both">Both</button><button class="subscription_add btn btn-danger" data-type="rejected">Reject List</button><button class="subscription_add btn btn-success" data-type="approved">Approved List</button><br>
+            </div>
+        
+            <div class="x-section-heading">
+                <h2>Unsorted Meta Data</h2>
+            </div>
+        
+            <div class="x-section-info">
+                <p>This is a list of asset contents that have not been sorted through.  If you approve any contents it will be moved to the approved list.  If you reject any contents it will be removed from your machine.</p>
+            </div>
+        
+            <!--<div id="unsorted" class="table table-responsive">Loading</div>-->
+            <div class="x-section-main">
+                <div class="table-responsive col-md-12">
+                    <table class="table table-bordered table-striped" id="unsorted">
+                        <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead>
+                    </table>
+                </div>
+            </div>
+            <br>
+    
+            <div class="x-section-heading">
+                <h2>Approved Meta Data</h2>
+            </div>
+    
+            <div class="x-section-info">
+                <p>Add explainer text here</p>
+            </div>
+        
+            <div class="x-section-main">
+                <div class="table-responsive col-md-12">
+                    <table class="table table-bordered table-striped" id="approved">
+                        <thead><tr><th></th><th>Height</th><th>assetId</th><th>Cid</th></tr></thead><tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
 
-        <div id="window">
-            <iframe id="window_data"></iframe><br>
-            <button id="window_approve" class="approve btn btn-success">Approve</button>
-            <button id="window_reject" class="reject btn btn-danger">Reject</button>
-            <button id="window_close" class="close btn btn-primary">Close</button>
-        </div>
-        <div id="shadow"></div>
     </div>
+    <!-- Page Meta Data end -->
 
-    <!-- Modal -->
+    <div id="window" style="padding-top: 50px; background: lightgrey; border-radius: 20px;width: 100%;">
+        <iframe id="window_data"></iframe><br>
+        <button id="window_approve" class="approve arbig btn btn-success" data-column="cid">Approve</button>
+        <button id="window_reject" class="reject arbig btn btn-danger" data-column="cid">Reject</button>
+        <button id="window_reject_all" class="reject arbig btn btn-danger" data-column="assetId">Reject Entire Asset</button>
+        <button id="window_close" class="close arbig btn btn-primary">Close</button>
+    </div>
+    <div id="shadow"></div>
+
+
+    <!-- Page Asset Creator -->
+    <div class="page" id="page_assetcreator">
+
+        <!-- Step 1: Select issueing wallet -->
+        <div class="asset_creator_step" id="asset_creator_step1">
+            
+            <div class="container">                
+                <div class="x-page-title">
+                    <h1>DigiAsset Creator</h1>
+                </div>                
+            </div>
+            
+            <div class="container">       
+                <div class="row-fluid">
+                
+                    <div class="col-12">
+                        <div class="x-section-heading">
+                            <h2>Issuing Address</h2>
+                        </div>
+        
+                        <div class="x-section-info" style="padding-left: 20px;">
+                            <input type="checkbox" id="asset_creator_useKyc" checked>Create Verified Asset
+                        </div>
+                        <div class="x-section-main">
+                            <div class="table-responsive col-md-12">
+                                <table class="table table-bordered table-striped" id="asset_creator_addressOptions">
+                                    <thead><tr><th></th><th>Address</th><th>Balance</th></tr></thead><tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+        
+        </div>
+
+        <!-- Step 2: Assets details: files, name, description, etc., rules and legal-->
+        <div class="asset_creator_step" id="asset_creator_step2">
+                
+            <div class="container">                
+                <div class="x-page-title">
+                    <h1>DigiAsset Creator</h1>
+                </div>                
+            </div>
+
+            <div class="container-md">
+                <div class="row-fluid">
+                    <!-- Panel: Files-->
+                    <div class="col-xl-4 col-12" style="float: left; margin-right: 10px;">
+                        <div class="x-section-heading" style="margin: 25px 0 0 20px; width: 50%;">
+                            <h2>Files</h2>
+                        </div>        
+                        
+                        <div class="x-section-main">
+                            <p>Wallets will use what ever image is named icon as the thumbnail</p>
+                            <input type="file" id="asset_creator_files" multiple><br>
+                            <div id="asset_creator_uploadedFiles"></div>
+                            <div class="x-publishing-cost">Publishing Cost: $<span id="asset_creator_fileCost">0.00</span> USD</div>
+                        </div>                 
+                    </div>
+                    <!-- Panel: Data, rules, legal-->
+                    <div class="col-xl-7 col-12" style="float: left;">
+                        
+                        <!-- subpanel: Data-->
+                        <div class="x-section-heading" style="margin: 25px 0 0 20px; width: 50%;">
+                            <h2>Data</h2>
+                        </div>
+                        
+                        <div class="x-section-main">
+                            
+                            <div class="row-fluid x-form-line">
+                                <div class="col-12">
+                                    <label for="asset_creator_assetIssuer">Your Name</label>
+                                    <input id="asset_creator_assetIssuer" type="text" class="form-control col-md-6">    
+                                </div>
+                            </div>
+
+                            <div class="row-fluid x-form-line">
+                                <div class="col-5" style="float: left;">
+                                    <label for="asset_creator_assetName">Asset Name: </label>
+                                    <input id="asset_creator_assetName" type="text" class="form-control">
+                                </div>
+                                <div class="col-7" style="float: left;">
+                                    <label for="asset_creator_site">Web Site: </label></td>
+                                    <input id="asset_creator_site" type="url" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="row-fluid x-form-line" style="clear: both;"></div>
+
+                            <div class="row-fluid x-form-line">
+                                <div class="col-12">
+                                    <label for="asset_creator_description">Description: </label>
+                                    <textarea id="asset_creator_description" rows="5" cols="50" type="text" class="form-control col-md-12"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row-fluid x-form-line">
+                                <div class="col-6" style="float: left;">
+                                    <label for="asset_creator_aggregation">Aggregation </label>
+                                    <select id="asset_creator_aggregation" class="form-control col-8">
+                                        <option value="aggregatable">Aggregatable(Normal)</option>
+                                        <option value="hybrid">Hybrid</option>
+                                        <option value="dispersed" class="asset_creator_unlockedOnly">Dispersed(NFT)</option>
+                                    </select>
+                                </div>
+                                <div class="col-6" style="float: left;">
+
+                                    <label for="asset_creator_divisibility">Divisibility: </label></td>
+                                    <select id="asset_creator_divisibility" class="form-control col-6">
+                                        <option value="0">1</option>
+                                        <option value="1">0.1</option>
+                                        <option value="2">0.01</option>
+                                        <option value="3">0.001</option>
+                                        <option value="4">0.0001</option>
+                                        <option value="5">0.00001</option>
+                                        <option value="6">0.000001</option>
+                                        <option value="7">0.0000001</option>
+                                        <option value="8">0.00000001</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row-fluid x-form-line" style="clear: both;"></div>
+                        </div>
+                        
+                        <!-- subpanel: Rules-->        
+                        <div class="x-section-heading" style="margin: 25px 0 0 20px; width: 50%;">
+                            <h2>Rules</h2>
+                        </div>
+                        <div class="x-section-main">
+                        
+                            <div class="row-fluid x-form-line" style="margin-bottom: 10px;margin-top: 10px;">
+                                <div class="col-12 form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="asset_creator_rulesEnabled">
+                                    <label class="form-check-label" style="margin-left: 3em; padding-top: 2px;" for="asset_creator_rulesEnabled">Enable Rules</label>
+                                    
+                                </div>
+                            </div>
+
+                            <!-- New Rules--> 
+                            <div id="asset_creator_rulesSettingBox">
+                                 
+                                <div class="row-fluid x-section-main x-rules-panel" style="margin-bottom: 10px;">
+                                    <div class="col-12 asset_creator_unlockedOnly">
+                                        <h5><label for="asset_creator_rewritable">Make rules rewritable&nbsp;&nbsp;</label>
+                                        <input type="checkbox" id="asset_creator_rewritable" class="asset_creator_rule_input"></h5>
+                                    </div>
+                                </div>
+
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                    <div class="col-12">
+                                    <h5><label for="asset_creator_kyc">KYC Required&nbsp;&nbsp;</label>
+                                        <select id="asset_creator_kyc" class="form-control col-md-6 asset_creator_rule_input" style="display: inline-block;">
+                                            <option value="false">Not Required</option>
+                                            <option value="true">Required</option>
+                                            <option value="allow">Only following countries</option>
+                                            <option value="ban">Ban following countries</option>
+                                        </select></h5>
+                                        <div id="asset_creator_kycList_div">
+                                            <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_kycList">
+                                                <thead><tr><th>Country</th></tr></thead><tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                                                                                      
+                                    <div class="col-12">
+                                        <h5>Royalties</h5>
+                                        <label for="asset_creator_currency">Royalty Base Currency&nbsp;&nbsp;</label>
+                                        <select id="asset_creator_currency" class="asset_creator_rule_input">
+                                            <optgroup label="Crypto">
+                                                <option value="DGB" selected>DigiByte</option>
+                                                <option value="BTC">Bitcoin</option>
+                                                <option value="ETH">Ethereum</option>
+                                                <option value="LTC">Litecoin</option>
+                                                <option value="DCR">Decred</option>
+                                                <option value="ZIL">Zilliqa</option>
+                                                <option value="RVN">Ravencoin</option>
+                                                <option value="XVG">Verge</option>
+                                                <option value="RDD">ReddCoin</option>
+                                                <option value="NXS">Nexus</option>
+                                                <option value="POT">PotCoin</option>
+                                            </optgroup>
+                                            <optgroup label="Fiat">
+                                                <option value="CAD">Canadian Dollars</option>
+                                                <option value="USD">United States Dollars</option>
+                                                <option value="EUR">Euro</option>
+                                                <option value="GBP">Pound</option>
+                                                <option value="AUD">Australian Dollars</option>
+                                                <option value="JPY">Japanese Yen</option>
+                                                <option value="CNY">Chinese Yuan</option>
+                                                <option value="TRY">Turkish Lira</option>
+                                                <option value="BRL">Brazilian Real</option>
+                                                <option value="CHF">Swiss Franc</option>
+                                            </optgroup>
+                                        </select>   
+                                        <table class="table table-bordered table-striped asset_creator_rule_input" id="asset_creator_royalties">
+                                            <thead><tr><th style="width: 10%;"></th><th style="width: 60%;">Address</th><th style="width: 30%;">Amount</th></tr></thead><tbody>
+                                        </table>
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                    <div class="col-12">
+                                        <h5><label for="asset_creator_deflate">Deflation</label></h5>
+                                        <div class="row-fluid">
+                                            <div class="col-4" style="float: left;">Should usually be zero. <input type="number" id="asset_creator_deflate" value="0" class="form-control asset_creator_rule_input"></div>
+                                            <div class="col-8" style="float: left; padding-top: 17px;">If not zero then the number of assets that you specify here will be burned by the sender for each asset sent.</div>
+                                        </div>
+                                        <div class="row-fluid x-form-line" style="clear: both;"></div>
+                                    </div>
+                                </div>
+                                    
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                    <div class="col-12">
+                                        <h5>Vote</h5>
+                                        <table class="table table-bordered table-striped asset_creator_rule_input"  id="asset_creator_voteOptions">
+                                            <thead><tr><th></th><th>Option</th></tr></thead><tbody>
+                                        </table>
+                                        <label for="asset_creator_voteMovable">Votes Movable&nbsp;&nbsp;&nbsp;</label><input type="checkbox" id="asset_creator_voteMovable" class="asset_creator_rule_input">
+                                    </div>
+                                </div>
+                                
+                                <div class="row-fluid x-section-main x-rules-panel">
+                                    <div class="col-12">
+                                        <h5><label>Expiry: </label></h5>
+                                        <div class="col-3" style="float: left;">
+                                            <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_never" name="asset_creator_expiry" value="never" checked>Never
+                                        </div>                                                                    
+                                        <div class="col-4" style="float: left;">
+                                            <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_height" name="asset_creator_expiry" value="height"><em>or</em>&nbsp;Block Height: 
+                                            <input type="number" id="asset_creator_expiry_height" value="0"  class="form-control asset_creator_expiry asset_creator_rule_input">
+                                        </div>
+                                        <div class="col-5" style="float: left;">
+                                            <input type="radio" class="asset_creator_expiry asset_creator_rule_input" id="asset_creator_expiry_radio_time" name="asset_creator_expiry" value="time" ><em>or</em>&nbsp;Time: 
+                                            <input type="datetime-local" id="asset_creator_expiry_time" min="2020-01-01T00:00" class="form-control asset_creator_expiry asset_creator_rule_input">
+                                        </div>
+                                        <div class="row-fluid x-form-line" style="clear: both;"></div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        
+                        </div>
+
+                        <div class="x-section-heading" style="margin: 25px 0 0 20px; width: 50%;">
+                            <h2>Legal</h2>
+                        </div>
+                            <!-- subpanel: Legal-->
+                        <div class="x-section-main">
+                            <div class="x-section-main">
+                                <div class="row-fluid x-form-line" style="padding-top: 10px;">
+                                    <div class="col-12">
+                                        <label for="tax_location">Tax Location:</label>
+                                    
+                                        <select id="tax_location" class="legal_checks">
+                                            <option value="x">-----</option>
+                                            <option value="CAN.AB">Canada, Alberta</option>
+                                            <option value="CAN.BC">Canada, British Columbia</option>
+                                            <option value="CAN.MB">Canada, Manitoba</option>
+                                            <option value="CAN.NB">Canada, New Brunswick</option>
+                                            <option value="CAN.NL">Canada, Newfoundland and Labrador</option>
+                                            <option value="CAN.NT">Canada, Northwest Territories</option>
+                                            <option value="CAN.NS">Canada, Nova Scotia</option>
+                                            <option value="CAN.NU">Canada, Nunavut</option>
+                                            <option value="CAN.ON">Canada, Ontario</option>
+                                            <option value="CAN.PE">Canada, Prince Edward Island</option>
+                                            <option value="CAN.QC">Canada, Quebec</option>
+                                            <option value="CAN.SK">Canada, Saskatchewan</option>
+                                            <option value="CAN.YT">Canada, Yukon</option>
+                                            <option value="NA">Outside Canada</option>
+                                        </select>&nbsp;(does not affect price)<br>
+                                    
+                                    </div>  
+                                </div>
+                                
+                                <div class="row-fluid x-form-line" style="padding-top: 10px;">
+                                    <div class="col-12">
+                                        <input type="checkbox" id="asset_creator_rights" class="legal_checks">
+                                        <label for="asset_creator_rights">All content is legal in Canada and I have the rights to publish it</label><br>
+                                    </div>  
+                                </div>
+                                                            
+                                <div class="row-fluid x-form-line" style="padding-top: 10px;">
+                                    <div class="col-12" style="text-align: center;"">
+                                        <button class="btn btn-primary" id="asset_creator_goToOutputs" disabled>Save Files to IPFS and collect recipients</button>
+                                    </div>  
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        </div>
+            <!--Step 3: Issuance -->
+            <div class="asset_creator_step" id="asset_creator_step3">
+                
+                               
+                <div class="container">                
+                    <div class="x-page-title">
+                        <h1>DigiAsset Creator</h1>
+                    </div>                
+                </div>
+                
+                <div class="container-md">
+                    <div class="row-fluid">
+                        <div class="x-section-heading">
+                            <h2>Recipients:</h2>
+                        </div>
+                        <div class="x-section-info" style="padding-left: 20px;">
+                            <h5>Addresses</h5>
+                        </div>
+                        <div class="x-section-main">
+                            <table class="table table-bordered table-striped" id="asset_creator_addresses">
+                                <thead><tr><th></th><th>issuingAddress/assetId</th><th>Quantity</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                            <!-- todo make nicer  try putting D or U in first box to test -->
+                        
+                            <table class="table table-responsive" style="background-color: transparent">
+                                <tr>
+                                    <td><input type="text" class="form-control col-12" id="asset_creator_new_address" placeholder="Address or AssetId"></td>
+                                    <td><input type="number" class="form-control col-12" id="asset_creator_new_quantity" placeholder="Quantity"></td>
+                                    <td><button id="asset_creator_new" class="form-control btn btn-primary col-12">Add</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="x-section-after">
+                            <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per holder" id="asset_creator_assetId_type_holder" checked>Per Holder
+                            <input class="asset_creator_assetId" type="radio" name="asset_creator_assetId_type" value="per asset" id="asset_creator_assetId_type_asset">Per Asset
+                        </div>
+                    </div>
+                </div>  
+                        <!-- todo end -->
+                <div class="container-md">
+                    <div class="row-fluid">
+                        <div class="x-section-heading">
+                            <h2>Costs:</h2>
+                        </div>
+                        <div class="x-section-main">
+                            <table class="table table-bordered table-striped" id="asset_creator_costs">
+                                <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                            </table>
+
+                            <button id="asset_creator_create" class="btn btn-secondary">Create Asset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Page Asset Creator end -->
+
+
+
+    <!-- Page KYC -->
+    <div class="page" id="page_kyc">
+        
+        <div class="container">
+            <div class="x-section-heading">
+                <h2 class="col-md-12">DigiByte Address Verifier</h2>
+            </div>
+            <div class="x-section-info">
+                <p class="col-md-12">This tool proves you own an issuingAddress and tags it as KYC verified. Will cost $4+$1/issuingAddress</p>
+            </div>
+        </div>
+        
+        <div class="kycStep" id="kycStep1">
+            <div class="container">
+                <div class="x-section-main">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 content-left">
+                            <p class="mt-3 mb-lg-5 mb-4">Download and install Yoti. Create your identity profile with your drivers license and passport.</p>
+                            <a class="btn btn-outline-primary theme-button clickable" id="kycDone1">Get Started</a>
+                        </div>
+                        <div class="col-lg-6 mt-lg-0 mt-5">
+                            <img src="images/kyc.png" class="img-fluid" alt="main image">
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="kycStep" id="kycStep2">
+            <div class="container">
+                <div class="x-section-main">
+
+                    <div class="row align-items-center">
+                        <p style="font-size: 14px;font-weight: 600;margin-top: 15px">Verify Type (Select from Dropdown Below)</p>
+                        <select class="kyc_option" style="display: block;outline: none;padding: 15px 20px;-webkit-appearance: none;border-radius: 0;color: #000;font-weight: 400;width: 100%;font-size: 16px;line-height: 26px;margin-bottom: 15px;border-radius: var(--card-curve);border: 1px solid #eee;background: var(--light-bg-color);" id="kycType">
+                            <option value="public">Public(Name and country will be publicly viewable)</option>
+                            <option value="donate">Donate(Name and country will be publicly viewable-listed on donate.digiassetX.com)</option>
+                            <option value="secret">Secret(Country will be publicly viewable)</option>
+                            <option value="voter">Register as Voter(Anonymous)</option>
+                        </select>
+
+                        <label style="font-size: 14px;font-weight: 600" for="kycPin" class="for_secret">Pin:</label>
+                        <input type="text" name="w3lName" placeholder="" class="contact-input for_secret kyc_option" id="kycPin" required="" />
+                        <label style="font-size: 14px;font-weight: 600" for="kycLabel" class="for_donate">Label:</label>
+                        <input type="text" name="w3lName" placeholder="" class="contact-input for_donate kyc_option" id="kycLabel"/>
+                        <label style="font-size: 14px;font-weight: 600" for="kycGoal" class="for_donate">Goal(0 for no goal):</label>
+                        <input type="number" name="w3lName" placeholder="" class="contact-input for_donate kyc_option" id="kycGoal" value="0"/>
+
+                        Addresses:  (check 1 or more addresses you want to prove you own-only 1 for voter registration):
+                        <table class="table table-bordered table-striped" id="kycAddresses">
+                            <thead><tr><th>Address</th><th>Label</th><th>Balance</th><th>KYC</th></tr></thead>
+                        </table>
+                    </div>
+                    <div class="clear"></div>
+                    <button id="kycDone2" disabled>Validate</button>
+                </div>
+            </div>
+        </div> 
+        
+    </div> 
+    <br>
+    <!-- Page KYC end -->
+
+
+
+    <!-- Page Wallet -->
+    <div class="page" id="page_wallet">
+        
+        <div class="container">
+            <div class="x-section-heading">
+                <h2>Balance</h2>
+            </div>
+            <div class="x-section-info">
+                <input type="checkbox" id="wallet_split_by_label"><label for="wallet_split_by_label">Split By Label</label><button id="wallet_refresh" class="button btn btn-outline-dark">Refresh</button>
+            </div>
+            <div class="table-responsive col-md-12 wallet" id="wallet_div_assets">
+                <table class="table table-bordered table-striped" id="wallet_list_assets">
+                    <thead><tr><th>Icon</th><th>Details</th><th>Balance</th><th>Send</th></tr></thead>
+                </table>
+            </div>
+            <div class="table-responsive col-md-12 wallet" id="wallet_div_assetsbylabel">
+                <table class="table table-bordered table-striped" id="wallet_list_assetsbylabel">
+                    <thead><tr><th>label</th><th>Icon</th><th>Details</th><th>Balance</th><th>Send</th></tr></thead>
+                </table>
+            </div>
+        </div>
+            
+        <div class="container">
+            <div class="x-section-heading">
+                <h2>Receive</h2>
+            </div>
+            <div class="x-section-info">
+                <p>To generate a new wallet please click the corresponding button below. For your refrence you can optionally add a label to easily reference it <em>eg. Payment from Matthew</em> </p>
+            </div>
+            <div class="x-section-main">
+                <label for="wallet_new_label">Label(Optional)</label><input type="text" style="width: 250px;" id="wallet_new_label"><button class="button btn btn-outline-dark newAddress" data-type="bech32">Bech32 Address(All good wallets)</button><button class="button btn btn-outline-dark newAddress" data-type="legacy">Legacy Address(Lazy programmers need to update)</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="x-section-heading">
+                <h2>Old addresses</h2>
+            </div>
+            <div class="x-section-info">
+                <p>Here is a list of your existing addresses.  It is not recommended to ever reuse an address.</p>
+            </div>
+            <div class="x-section-main">
+                <table class="table table-bordered table-striped" id="wallet_addresses">
+                    <thead><tr><th>Address</th><th>Label</th><th>Balance</th></tr></thead>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <br>
+    <!-- Page Wallet end -->
+
+
+
+    <!-- Modal Login -->
     <div class="modal fade" id="LoginModal" tabindex="-1" aria-labelledby="MLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -94,14 +717,16 @@
                 </div>
            </div>
           <div class="modal-footer">
-            <button type="button" id="login_submit"class="btn btn-primary">Login</button>
+            <button type="button" id="login_submit" class="btn btn-primary">Login</button>
           </div>
         </div>
       </div>
     </div>
-    <!--modal end-->
+    <!--modal Login end-->
 
-    <!-- Modal -->
+
+
+    <!-- Modal Add User -->
     <div class="modal fade" id="AddModal" tabindex="-1" aria-labelledby="AMLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -120,14 +745,16 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="add_submit"class="btn btn-primary">Add User</button>
+                    <button type="button" id="add_submit" class="btn btn-primary">Add User</button>
                 </div>
             </div>
         </div>
     </div>
-    <!--modal end-->
+    <!--modal Add User end-->
 
-    <!-- Modal -->
+
+
+    <!-- Modal Remove User -->
     <div class="modal fade" id="RemoveModal" tabindex="-1" aria-labelledby="RMLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -141,17 +768,450 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="remove_submit"class="btn btn-primary">Remove User</button>
+                    <button type="button" id="remove_submit" class="btn btn-primary">Remove User</button>
                 </div>
             </div>
         </div>
     </div>
-    <!--modal end-->
+    <!--modal Remove User end-->
 
+
+
+    <!-- Modal Included Media -->
+    <div class="modal fade" id="IncludedMediaModal" tabindex="-1" aria-labelledby="IMMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="IMMLabel">Media to Include</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <a class="clickable nav-link media-link" id="media_tab_off" data-bs-toggle="tab" role="tab" data-tab="off" aria-selected="true">Off</a>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <a class="clickable nav-link media-link" id="media_tab_custom" data-bs-toggle="tab" role="tab" data-tab="custom" aria-selected="false">Custom</a>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <a class="clickable nav-link media-link" id="media_tab_on" data-bs-toggle="tab" role="tab" data-tab="on" aria-selected="false">On</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                      <div class="tab-pane media-tab-pane fade" id="media_off" role="tabpanel" aria-labelledby="media_tab_off">Only metadata will be stored</div>
+                      <div class="tab-pane media-tab-pane fade" id="media_custom" role="tabpanel" aria-labelledby="media_tab_custom">
+                          <!--custom--><br>
+                            <p>Put 0 in box if you wish to accept all values and set max size to -1 if dont want to allow any</p>
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="im_maxsize" placeholder="Max Size">
+                                <label for="im_maxsize">Max Size</label>
+                            </div><br>
+                            <div class="form-floating">
+                                <textarea class="form-control" id="im_names" style="height: 100px"></textarea>
+                                <label for="im_names">Names</label>
+                            </div><br>
+                            <div class="form-floating">
+                                <textarea class="form-control" id="im_mimeTypes" style="height: 100px"></textarea>
+                                <label for="im_mimeTypes">Mime Types</label>
+                            </div><br>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" id="im_paidContent">
+                              <label class="form-check-label" for="im_paidContent"><span style="margin-left: 40px; padding-top: 3px;">All Paid Content</span></label>
+                            </div>
+                          <!--end-->
+                      </div>
+                      <div class="tab-pane media-tab-pane fade" id="media_on" role="tabpanel" aria-labelledby="media_tab_on">All metadata and media files will be stored</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="included_media_submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Included Media end-->
+
+    <!-- Modal Publishing -->
+    <!-- todo current setup is difficult to use.  needs something more interactive. -->
+    <div class="modal fade" id="PublishingModal" tabindex="-1" aria-labelledby="PMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="PMLabel">Reject/Approve Publishing</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p>If you wish to share your reject/approve list with others then enter a port number in the field bellow(Recommend try 9000)</p>
+                <div class="modal-body">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="pm_port" placeholder="Max Size">
+                        <label for="pm_port">Publishing Port</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="pm_submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Publishing end-->
+
+    <!-- Modal Wallet -->
+    <div class="modal fade" id="WalletModal" tabindex="-1" aria-labelledby="WMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="WMLabel">Wallet Setup</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p>For DigiAsset Creator to function you must have core wallet setup with rpc interface on</p>
+                <p>Step 1) Modify your digibyte.conf(in Core Wallet "Settings->Options->Open Config File") and make sure you have the following lines.(values are randomly generated you can use if not already set)</p>
+                <p id="config_values" class="json"></p>
+                <p>Step 2) Restart your core wallet</p>
+                <p>Step 3) When wallet is running again enter the rpcuser and rpc password from config file</p>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="wallet_user" placeholder="User">
+                        <label for="wallet_user">User</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="wallet_pass" placeholder="Password">
+                        <label for="wallet_pass">Password</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="wallet_host" placeholder="Host" value="127.0.0.1">
+                        <label for="wallet_host">Host</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="wallet_port" placeholder="Port" value="14022">
+                        <label for="wallet_port">Port</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="wallet_auto" class="btn btn-primary">Try to auto set</button><button type="button" id="wallet_submit" class="btn btn-primary">Save Wallet Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Wallet end-->
+
+    <!-- Modal Stream -->
+    <div class="modal fade" id="DebugModal" tabindex="-1" aria-labelledby="DLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="DLabel">Debug</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <button id="debug_clear_cache" class="btn btn-primary" style="margin-bottom: 10px;">Clear Cache</button>
+                <button id="debug_fix_labels" class="btn btn-primary" style="margin-bottom: 10px;">Fix Labels</button>
+
+            </div>
+        </div>
+    </div>
+    <!--modal Debug end-->
+
+
+    <!-- Modal Stream -->
+    <div class="modal fade" id="StreamModal" tabindex="-1" aria-labelledby="SMLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content container">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="SMLabel">digiassetX Data Stream Setup</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p>Some features of DigiAsset Creator require access to DigiByte data stream.  Signing up for API Keys is free and Amazon only charges for bandwidth used with free levels covering most users.</p>
+                <ol type="1">
+                    <li>Create an account at https://aws.amazon.com/</li>
+                    <li>Services->IAM</li>
+                    <li>In left column: Policies</li>
+                    <li>Blue Create policy button</li>
+                    <li>JSON
+
+                <div class="json">
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObjectAcl",
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*/*",
+                "arn:aws:s3:::chaindata-digibyte"
+            ]
+        }
+    ]
+}</div></li>
+
+                    <li>Blue Review policy button</li>
+                    <li>name: digiassetX_data</li>
+                    <li>Blue Create policy</li>
+                    <li>In left Column: Groups</li>
+                    <li>Blue Create Group Button</li>
+                    <li>Group Name: digiassetX_data</li>
+                    <li>Type digi into search then select digiassetX_data</li>
+                    <li>Blue Next Step Button</li>
+                    <li>Blue Create Group Button</li>
+                    <li>On left panel select Users</li>
+                    <li>Blue add user button</li>
+                    <li>user name: digiassetX_data</li>
+                    <li>Select: Programmatic access</li>
+                    <li>Blue Next: Permissions button</li>
+                    <li>select: digiassetX_data</li>
+                    <li>Blue Next: Tags button</li>
+                    <li>Blue Next: Review button</li>
+                    <li>Blue Create user button</li>
+                    <li>Copy Access key ID and Secret access key below:</li>
+                    <li>click Close(make sure you have copied keys there will not be a second chance.</li>
+                    <li>Click on policies, select digiassetx_data from the list > actions button > attach. </li>
+                    <li>Search for digiassetx_data search bar -> Select digiassetx_data -> Attach Policy</li>
+                </ol>
+
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="stream_accessKeyId" placeholder="accessKeyId">
+                        <label for="stream_accessKeyId">accessKeyId</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="stream_secretAccessKey" placeholder="secretAccessKey">
+                        <label for="stream_secretAccessKey">secretAccessKey</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="stream_submit" class="btn btn-primary">Save Stream Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Stream end-->
+
+
+
+    <!-- Modal Send Assets -->
+    <div class="modal fade" id="SendAssetsModal" tabindex="-1" aria-labelledby="SAMLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="SAMLabel">Send Assets</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <h2>Addresses</h2>
+                    <table class="table table-bordered table-striped" id="send_assets_addresses">
+                        <thead><tr><th>Issuing Address / Asset Id</th><th>Quantity</th><th></th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <!-- todo make nicer  try putting D or U in first box to test -->
+                    <table class="table table-responsive" style="background-color: transparent">
+                        <tr>
+                            <td style="width: 60%"><input type="text" class="form-control col-12" id="send_assets_new_address" placeholder="Send to Address"></td>
+                            <td><input type="number" class="form-control col-12" id="send_assets_new_quantity" placeholder="Asset Quantity"></td>
+                            <td><button id="send_assets_new" class="form-control btn btn-primary col-12">Add</button></td>
+                        </tr>
+                    </table>
+
+                    <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per holder" id="send_asset_assetId_type_holder" checked>Per Holder
+                    <input class="send_asset_assetId" type="radio" name="send_asset_assetId_type" value="per asset" id="send_asset_assetId_type_asset">Per Asset
+                    <!-- todo end -->
+
+                    <h2>Costs</h2>
+                    <table class="table table-bordered table-striped" id="send_assets_costs">
+                        <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                    </table>
+                </div>
+
+                <div class="modal-footer">
+                    <!-- todo Cancel does not work -->
+                    <button type="button" id="send_asset_cancel" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button type="button" id="send_asset_send" class="btn btn-primary sendTX" disabled>Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Send Assets end-->
+
+
+
+    <!-- Modal Vote Assets -->
+    <div class="modal fade" id="VoteAssetsModal" tabindex="-1" aria-labelledby="VAMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="VAMLabel">Vote Assets</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <h5>Votes:</h5>
+                <table class="table table-bordered table-striped" id="vote_assets_options">
+                    <thead><tr><th>Label</th><th>Count</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+
+                <h5>Costs:</h5>
+                <table class="table table-bordered table-striped" id="vote_assets_costs">
+                    <thead><tr><th>Type</th><th>Amount</th></tr></thead>
+                </table>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button type="button" id="vote_asset_send" class="btn btn-primary sendTX" disabled>Vote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Vote User end-->
+
+
+
+    <!-- Modal Wallet Password -->
+    <div class="modal fade" id="WalletPasswordModal" tabindex="-1" aria-labelledby="WPMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="WPMLabel">Unlock Wallet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="walletpassword_close"></button>
+                </div>
+                <p id="walletpassword_message"></p>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="walletpassword_pass" placeholder="Password">
+                        <label for="walletpassword_pass">Password</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="walletpassword_submit" class="btn btn-primary">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Wallet Password end -->
+
+
+
+    <!-- Modal Wallet New Address -->
+    <div class="modal fade" id="WalletNewAddressModal" tabindex="-1" aria-labelledby="WNAMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="WNAMLabel">New Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3" style="text-align: center;">
+                        <!-- todo need white boarder around qr code at least 4 dots wide also center -->
+                        <div style="margin: 15px!important;"><img id="new_address_qr"></div>
+                        <div id="new_address" data-size="300"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal Wallet New Address end -->
+
+
+
+    <!-- Modal TXID -->
+    <div class="modal fade" id="txidModal" tabindex="-1" aria-labelledby="txidMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="txidMLabel">Transaction Successful</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="txidClose"></button>
+                </div>
+                <h5>TXID:</h5>
+                <div id="txid"></div>
+
+                <div style="text-align: center; padding-top: 15px;">
+                    <h5 style="color: #d58a00;">Due to limits of this wallet please wait</h5>
+                    <h5><span class="timer" id="txidTimer">240</span> seconds</h5>
+                    <h5 style="color: #d58a00;">before making another transaction</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal TXID end -->
+
+    <!-- Modal Asset Creating -->
+    <div class="modal fade" id="creatingAssetModal" tabindex="-1" aria-labelledby="creatingAssetMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="creatingAssetMLabel">Creating Asset <span id="creatingAssetId"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <h5>Progress:</h5>
+                <ol>
+                    <li><strong>Transmitting&nbsp;To&nbsp;DigiByte:</strong><br><span id="creatingAssetTXID">Processing&nbsp;<img src="/images/loading-progress-bar.gif" alt="Processing, please wait"></span></li>
+                    <li id="creatingAssetDetectLi" class="creatingAssetHideAtStart"><strong>Waiting&nbsp;for&nbsp;digiassetX&nbsp;to&nbsp;detect&nbsp;transaction:</strong><br><span id="creatingAssetDetect">Processing&nbsp;<img src="/images/loading-progress-bar.gif" alt="Processing, please wait"></span></li>
+                    <li id="creatingAssetPermanentLi" class="creatingAssetHideAtStart"><strong>Waiting&nbsp;for&nbsp;digiassetX&nbsp;to&nbsp;download&nbsp;metadata:</strong><br><span id="creatingAssetPermanent">Processing&nbsp;<img src="/images/loading-progress-bar.gif" alt="Processing, please wait"></span></li>
+                </ol>
+                <h5 id="creatingAssetWarning" class="alert alert-info">Do not shut down your node</h5>
+                <button id="creatingAssetDone" class="creatingAssetHideAtStart btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            </div>
+        </div>
+    </div>
+    <!--modal Asset Creating -->
+
+    <!-- Modal TOS -->
+    <div class="modal fade" id="tosModal" tabindex="-1" aria-labelledby="tosMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="tosMLabel">Terms Of Service</h1>
+                </div>
+                <h2>Simplified:</h2>
+                <p>We wanted to just write</p>
+                <ul>
+                    <li>Don't be evil</li>
+                    <li>We did our best so you can't sue us if anything goes wrong</li>
+                    <li>This is an open source project.  Find a problem or want to improve it please fix.</li>
+                </ul>
+                <p>But the lawyers said this wasn't good enough so here is there version.</p>
+                <h2>Full Terms of Service:</h2>
+                <div id="tosLegal"></div>
+                <h1>Opt In:</h1>
+                <p>Want to get paid for hosting a IPFS Node?  If so agree to the fields below and provide us an address to pay you with:</p>
+                <div>
+                    <input type="checkbox" id="tosShow">I would like my node to be displayed on node map(locations are not exact)<br>
+                    <input type="checkbox" id="tosPeer">I would like to publish my IPFS Peer Id<br>
+                    <p style="padding-top: 10px; margin-left: 22px;">Payout Address: </span><input style="width: 350px;" type="text" id="tosPayout"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" id="tosAgree">Agree to the Terms of Service</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal TOS ends -->
+
+
+
+    <!-- Modal Error -->
+    <div class="modal fade" id="ErrorModal" tabindex="-1" aria-labelledby="EMLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="EMLabel">Error</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p id="error_message"></p>
+            </div>
+        </div>
+    </div>
+    <!--modal Error end-->
+
+    <script src="/js/digiQR.min.js"></script>
     <script src="/js/jquery-3.5.1.js"></script>
+    <script src="/js/flags.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/jquery.dataTables.min.js"></script>
+    <script src="/js/dataTables.buttons.min.js"></script>
     <script src="/js/main.js"></script>
 </body>
 </html>
