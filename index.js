@@ -10,9 +10,14 @@
     await require("./lib/installer")(`${__dirname}/node_modules/leveldown/prebuilds/`);
 
     //load file system and ipfs
+    let mainConfig=require('./lib/config').get("main");
     const fs = require('fs');
     const ipfs = require("ipfs-simple");
-    ipfs.create();
+    if ((mainConfig.ipfs===undefined)||(mainConfig.ipfs===true)) {
+        await ipfs.create();
+    } else {
+        ipfs.path=mainConfig.ipfs;
+    }
 
     /**
      * Add Error listener
